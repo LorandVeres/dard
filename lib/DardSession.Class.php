@@ -13,9 +13,12 @@ class DardSession {
     private $gcp = 100;
     // max garbage life lenght default to 1 day
     private $max_g_life = 86400;
+    //max utd cookie life 1 year
+    private $utd_life = 31536000;
 
     function __construct() {
         $this -> init_session();
+        $this -> user_cookie('la');
     }
 
     public function init_session() {
@@ -26,6 +29,7 @@ class DardSession {
             session_start();
             setcookie('PHPSESSID', session_id(), time() + $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE);
         }
+        $this -> user_session();
     }
 
     public function end_session() {
@@ -51,6 +55,45 @@ class DardSession {
                 }
             }
         }
+    }
+
+    // User Transmited Data cookie
+    public function user_cookie($la) {
+        $_SERVER['HTTPS'] = 'ON' ? $http = TRUE : $http = FALSE;
+        $time = time() + $this -> utd_life;
+        if (!isset($_COOKIE['d_utd'])) {
+            setcookie('d_utd', $this -> utd_str($la), $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http);
+        } else {
+            $n = explode('|', $_COOKIE['d_utd']);
+            $string = $n[0] . '|' . $la;
+            setcookie('d_utd', $string, $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http);
+        }
+    }
+
+    private function utd_str($la) {
+        $str = time();
+        $str .= $_SERVER['HTTP_USER_AGENT'];
+        $r = rand(5, 15);
+        while ($r) {
+            $name = md5($str);
+            $r--;
+        }
+        return substr($name, 0, -16) . '|' . $la;
+    }
+
+    public function logout() {
+        $this -> end_session();
+        $this -> init_session();
+        $this -> user_session();
+    }
+
+    private function user_session($value = '') {
+        if (!isset($_SESSION['user_name']))
+            $_SESSION['user_name'] = 'user_anonymous';
+        if (!isset($_SESSION['user_loged']))
+            $_SESSION['user_loged'] = FALSE;
+        if (!isset($_SESSION['user_priv']))
+            $_SESSION['user_priv'] = 'public';
     }
 
 }

@@ -1,6 +1,5 @@
 db.mwb
 db.mwb.bak
-logs/access.log
-logs/error.log
 .project
 session/*
+logs/*

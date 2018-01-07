@@ -95,7 +95,7 @@ h1{
 .email{
     background-image: url(../../images/icons/389-mail2.svg);
 }
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="email"]{
   background-color: #e0f8ff;/*#3b4148;*/
   border-radius: 0px 5px 5px 0px;
   border-collapse: collapse;

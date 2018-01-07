@@ -94,7 +94,7 @@ class GetMyPage {
                 `type`,
                 `parentpage`,
                 `title`,
-                `grantedto` AS privilege,
+                `user_priv`,
                 `pageURI`
             FROM
                 `page`
@@ -117,7 +117,7 @@ class GetMyPage {
 
     }
 
-    protected function getMeta($config, $DBconect) {
+    private function getMeta($config, $DBconect) {
         $query = "
             SELECT
                 `name`, 
@@ -130,7 +130,7 @@ class GetMyPage {
         $this -> Meta = $DBconect -> selectDB($this -> isPage, $config, $query, TRUE, self::A);
     }
 
-    protected function setPageUri() {
+    private function setPageUri() {
         $this -> pageUri = $this -> allPage[0]['pageURI'];
         return;
     }

@@ -30,6 +30,8 @@ $tag = new simpleTag($config, $DBconect);
 
 $tag->addDocHtml($config);
 
+// Below this point all process what are not
+// important for data output
 
 $_DARDSESSI->gc_session();
 

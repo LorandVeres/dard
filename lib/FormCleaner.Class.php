@@ -46,7 +46,7 @@ class FormCleaner {
         if (!empty($string) && isset($string)) {
             if (preg_match($patern, $string)) {
                 $result = TRUE;
-            }else{
+            } else {
                 array_push($this -> errors, $error_number);
             }
         } else {
@@ -56,8 +56,12 @@ class FormCleaner {
     }
 
     protected function clean_email($email) {
-
         return $this -> match($this -> regex_email, $email, 1);
+    }
+
+    protected function clean_login($email, $passwd) {
+        $this -> match($this -> regex_email, $email, 4);
+        $this -> match($this -> regex_paswd, $passwd, 4);
     }
 
     protected function clean_paswd($paswd) {
@@ -67,7 +71,7 @@ class FormCleaner {
     protected function clean_captcha($captcha) {
         $result = FALSE;
         $captcha = trim($captcha);
-        if(isset($_SESSION['captcha']))
+        if (isset($_SESSION['captcha']))
             $captcha === $_SESSION['captcha'] ? $result = TRUE : $result = FALSE;
         if (!$result)
             array_push($this -> errors, 3);
@@ -87,7 +91,7 @@ class FormCleaner {
                 }
             }
         }
-        return $query .= $where . ";";
+        return $query .= $where . " AND `module_name` = 'user';";
     }
 
     protected function retrive_error_msg($config, $DBconect) {
