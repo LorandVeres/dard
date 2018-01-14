@@ -4,8 +4,7 @@ if (!defined('DARDSTATUS'))
 /**
  *
  */
-
-class FormCleaner {
+class FormCleaner{
 
     protected $post = FALSE;
     protected $errors = array();

@@ -1,42 +1,45 @@
 <?php
 
+include_once '../config.php';
+$config = new DardConfig();
+
+
+include_once '../lib/dbConect.Class.php';
+$DBconect = new dbConect();
+
 class GetMyPage {
 
     const S = 'string';
     const A = 'array';
     const D = 'default';
 
-    protected $main;
-    protected $mainLinks;
+    protected $links;
     protected $top;
     public $pageUri;
     public $relativePath;
-    protected $topLinks;
     protected $subPage;
     protected $class;
     protected $Meta;
-    protected $nextSubPage;
-    protected $arg;
+    protected $linkTag;
     protected $URI;
     protected $isPage = 1;
-    protected $haveArgument = FALSE;
-    protected $pageArguments;
+    public $pageArguments;
     protected $allPage;
+    protected $userPriv;
+    protected $headers = array();
 
     function __construct($config, $DBconect) {
-        $this -> genURI();
-        $this -> getTopPageName();
         $this -> setIsPage($config, $DBconect);
         $this -> getAllPage($config, $DBconect);
-        $this -> getMeta($config, $DBconect);
         $this -> setPageUri();
         $this -> generate_relative_path();
-        //$this->GetMainPages($config, $DBconect);
+        $this->sendDoc($config);
     }
 
     protected function fullURL() {
         $pageURL = 'http';
-        //if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}   can be puted on if the https is on
+        if ($_SERVER["HTTPS"] == "on")
+            $pageURL .= "s";
         $pageURL .= "://";
         if ($_SERVER["SERVER_PORT"] != "80") {
             $pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
@@ -48,7 +51,7 @@ class GetMyPage {
     }
 
     private function genURI() {
-        $_SERVER["REQUEST_URI"] === "/" ? $this -> URI = NULL : $this -> URI = explode("/", trim($_SERVER["REQUEST_URI"], "/"));
+        $_SERVER["REQUEST_URI"] === "/" ? $this -> URI = NULL : $this -> URI = explode("/", trim($_SERVER["REQUEST_URI"], '/'));
     }
 
     private function generate_relative_path() {
@@ -63,38 +66,108 @@ class GetMyPage {
         !$this -> URI ? $this -> top = 'home' : $this -> top = $this -> URI[0];
     }
 
-    private function setIsPage($config, $DBconect) {
-        if ($this -> URI !== NULL) {
-            $arg = $this -> URI[0];
-            $where = "`pagename` = '$arg'";
-        } elseif ($this -> URI === NULL) {
-            $where = "`pagename` = 'home'";
-            $arg = 'home';
+    private function setIfTopPage($config, $DBconect) {
+        if (preg_match("/^[\w-]*$/", $this -> top)) {
+            $this -> sqlTopPage($config, $DBconect);
+        } else {
+            $this -> isPage = 1;
+            $this->top = error;
         }
-        $query = "SELECT `id`, `arg` FROM `page` WHERE " . $where . ";";
+    }
+
+    private function sqlTopPage($config, $DBconect) {
+        $arg = $this -> top;
+        $query = "SELECT `id`, `type`, `user_priv`, `parentpage` FROM `page` WHERE `pagename` = '$arg';";
         $result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
-        if ($result === null || (count($this -> URI) > 1 && $result['arg'] == 0))
-            $result['id'] = 1;
-        $this -> isPage = $result['id'];
-        if (isset($result['arg'])) {
-            if ($result['arg'] > 0)
-                $this -> haveArgument = TRUE;
+        if(!$result['id']){
+            $this -> isPage = 1;
+            $this->top = 'error';
+        }elseif($result['id']){
+            if($result['parentpage'] && ($result['type'] !=='top' || $result['type'] !=='main')){
+                $this -> isPage = 1;
+            }else{
+                $this -> isPage = $result['id'];
+                $this->userPriv = $result['user_priv'];
+            }
+        }
+    }
+
+    private function setIfSubPage($config, $DBconect) {
+        $pos = strpos($this->URI[1], '?');
+        if($pos !== false){
+            $sub_page = substr($this->URI[1], 0, $pos);
+            $this->setLinkArguments(substr($this->URI[1], $pos));
+            preg_match("/^[\w-]*$/", $sub_page) ? $this->sqlSubPage($config, $DBconect, $sub_page) : $this->subPage = 1;
+        }else{
+            preg_match("/^[\w-]*$/", $this->URI[1]) ? $this->sqlSubPage($config, $DBconect, $this->URI[1]) : $this->subPage = 1;
+        }
+    }
+
+    private function sqlSubPage($config, $DBconect, $sub_page) {
+        $arg =$sub_page;
+        $parent_id ="
+                    SELECT
+                        `parentpage`
+                    FROM
+                        `page`
+                    WHERE
+                        `pagename` = '$arg'
+                    ";
+        $query = "SELECT
+                    S.`id`,
+                    S.`pagename`,
+                    S.`user_priv`,
+                    P.`pagename` AS top_page
+                FROM
+                    `page` AS S,
+                    `page` AS P
+                WHERE
+                    P.`id` = ($parent_id) AND S.`pagename` = '$arg';";
+        $result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
+        if(!$result || $result['top_page'] !== $this->top){
+            $this->subPage = 1;
+            $this->top = 'error';
+        }elseif($result){
+            if($result['top_page'] !== $this->top){
+                $this->subPage = 1;
+                $this->top = 'error';
+            }else{
+                $this->subPage = $result['id'];
+                $this->userPriv = $result['user_priv'];
+            }
+        }
+    }
+    
+    private function setIsPage($config, $DBconect){
+        $this -> genURI();
+        $this -> getTopPageName();
+        if(count($this->URI) <=1 || $this->URI === null){
+            $this->setIfTopPage($config, $DBconect);
+        }elseif(count($this->URI) == 2){
+            $this->setIfSubPage($config, $DBconect);
+        }else{
+            $this->isPage = 1;
+        }
+    }
+
+    private function prepAllPage() {
+        if(count($this->URI) > 1 && $this->subPage > 1){
+            $this->isPage = $this->subPage;
+        }elseif(count($this->URI) <= 1 && $this->isPage > 1){
+            $this->isPage;
+        }else{
+            $this->isPage = 1;
+            $this->top = 'error';
         }
     }
 
     private function getAllPage($config, $DBconect) {
-        if (!$this -> isPage) {
-            $this -> top = 'error';
-            return;
-        } else {
+            $this -> prepAllPage();
             $arg = $this -> isPage;
             $query = " 
             SELECT
                 `pagename`,
-                `type`,
-                `parentpage`,
                 `title`,
-                `user_priv`,
                 `pageURI`
             FROM
                 `page`
@@ -112,13 +185,7 @@ class GetMyPage {
                 `pageid` = '$arg' OR
                 `general` = 1 
             ;";
-            $this -> allPage = $DBconect -> selectDB($arg, $config, $query, TRUE, self::D);
-        }
-
-    }
-
-    private function getMeta($config, $DBconect) {
-        $query = "
+            $query .= "
             SELECT
                 `name`, 
                 `content`
@@ -126,22 +193,92 @@ class GetMyPage {
                 `pagemeta`
             WHERE 
                 `active` = 1 AND `general` = 1 OR `pageid` = '$this->isPage'
-        ;";
-        $this -> Meta = $DBconect -> selectDB($this -> isPage, $config, $query, TRUE, self::A);
+            ;";
+            $result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'default');
+            $this -> allPage = $result[0];
+            $this -> Meta = $result[2];
+            $this ->linkTag = $result[1];
+            $result = array();
+            unset ($result);
     }
+
 
     private function setPageUri() {
-        $this -> pageUri = $this -> allPage[0]['pageURI'];
-        return;
+        $this -> pageUri = $this -> allPage['pageURI'];
     }
 
-    private function GetLinkArguments() {
-        $arg = explode("/", $this -> CurentPageURL());
-        $arg = array_slice($arg, 5);
-        $this -> Arguments = $arg;
-
-        unset($arg);
+    private function setLinkArguments($arg) {
+        $arg = explode("&", ltrim($arg, '?'));
+        $i = 0;
+        foreach ($arg as $value) {
+            $this->pageArguments[$i]['param'] = substr($value, 0, strpos($value, '='));
+            $this->pageArguments[$i]['value'] = substr($value, (strpos($value, '=')+1));
+            $i++;
+        }
     }
 
+    private function createDocOut($config){
+        $doc = "<!DOCTYPE html>\n";
+        $doc .= "<html lang=".$config->language.">\n";
+        $doc .= $this->createHtmlHead();
+        $doc .="\t<body>\n";
+        return $doc;
+    }
+    
+    private function createHtmlHead(){
+        $head = "\t<head>\n";
+        $head .= $this->createHtmlMetaTags();
+        $head .= $this->createHtmlLinkTags();
+        $head .= "\t</head>\n";
+        return $head;
+    }
+    
+    private function createHtmlMetaTags(){
+        $meta = "\t\t<title>".$this->allPage['title']."</title>\n";
+        foreach ($this->Meta as $key => $value) {
+            $meta .= "\t\t<meta name=\"" . $this->Meta[$key]['name']."\" content=\"" . $this->Meta[$key]['content'] . "\">\n";
+        }
+        return $meta;
+    }
+    
+    private function createHtmlLinkTags(){
+        $link = "";
+        foreach ($this->linkTag as $key => $value) {
+            $rel = $this->linkTag[$key]['rel'];
+            $type = $this->linkTag[$key]['type'];
+            $href = $this->relativePath . $this->linkTag[$key]['href'];
+            $link .= "\t\t<link rel=\"". $rel ."\" type=\"" . $type . "\" href=\"". $href ."\" />\n";
+        }
+        return $link;
+    }
+    
+    private function sendDoc($config){
+        $this->sendHeaders();
+        if(printf("%s", $this->createDocOut($config))){
+            if($this->pageUri && file_exists($this->pageUri)){
+                if(!isset($myPage)) $myPage = $this;
+                include_once $this->pageUri;
+            }elseif(!$this->pageUri || $this->isPage === 1){
+                array_push($this->headers, header('HTTP/1.0 404 Not Found'));
+                if(file_exists($this -> pageUri)){
+                    include_once $this->pageUri;
+                }else{
+                    //unknow internal error redirection should be here
+                }
+                
+            }
+        }
+        $doc ="\t</body>\n";
+        $doc .="</html>\n";
+        printf("%s", $doc);
+    }
+    
+    private function sendHeaders(){
+        foreach ($this->headers as $value) {
+            $value;
+        }
+    }
+    
+    
 }// end of class
 ?>

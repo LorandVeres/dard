@@ -1,6 +1,7 @@
 <?php
 include '../module/user/login.Class.php';
-$new_login = new login($config, $DBconect, $tag);
+include_once '../lib/functions.php';
+$new_login = new login($config, $DBconect, $tag, $myPage);
 ?>
 
 <div id="login">
@@ -22,8 +23,8 @@ $new_login = new login($config, $DBconect, $tag);
 
         </form>
         <nav>
-            <span class="left hr"> <a href="register">Register account</a> </span>
-            <span class="right hr"> <a href="forgot-password">Forgot password</a> </span>
+            <span class="left hr"> <a href="<?php mylink('register'); ?> ">Register account</a> </span>
+            <span class="right hr"> <a href="<?php mylink('forgot-password'); ?>">Forgot password</a> </span>
         </nav>
     </div>
 </div>

@@ -29,7 +29,7 @@ class DardSession {
             session_start();
             setcookie('PHPSESSID', session_id(), time() + $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE);
         }
-        $this -> user_session();
+        $this -> init_user_session();
     }
 
     public function end_session() {
@@ -84,16 +84,16 @@ class DardSession {
     public function logout() {
         $this -> end_session();
         $this -> init_session();
-        $this -> user_session();
+        $this -> init_user_session();
     }
 
-    private function user_session($value = '') {
+    private function init_user_session($value = '') {
         if (!isset($_SESSION['user_name']))
             $_SESSION['user_name'] = 'user_anonymous';
         if (!isset($_SESSION['user_loged']))
             $_SESSION['user_loged'] = FALSE;
         if (!isset($_SESSION['user_priv']))
-            $_SESSION['user_priv'] = 'public';
+            $_SESSION['user_priv'] = null;
     }
 
 }

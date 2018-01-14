@@ -3,104 +3,14 @@
 /**
  *
  */
-class simpleTag extends GetMyPage {
+class simpleTag {
 
     public $Doc = array();
     public $inline_tag = array('a', 'b', 'big', 'i', 'small', 'tt', 'abbr', 'acronym', 'cite', 'code', 'dfn', 'em', 'kbd', 'strong', 'samp', 'time', 'var', 'bdo', 'br', 'img', 'map', 'object', 'q', 'script', 'span', 'sub', 'sup', 'button', 'input', 'label', 'select', 'textarea', 'meta', 'link');
     public $single_tag = array('!DOCTYPE html', 'meta', 'link', 'br', 'img', 'hr', 'input', 'embed', 'bgsound', 'base', 'col', 'source');
     private $countNum = 0;
-    private $myfiles = array('template/home.php', 'template/subhome.php');
 
     function __construct($config, $DBconect) {
-        parent::__construct($config, $DBconect);
-        //$this -> addDocHtml($config);
-    }
-
-    public function addDocHtml($config) {
-        $this -> printHeaders();
-        $this -> append_tag($this -> Doc, $this -> tag("!DOCTYPE html", '', ''));
-        $html = $this -> tag('html', 'lang="'.$config -> language.'"', '');
-        $head = $this -> tag('head', '', '');
-        $body = $this -> tag('body', '', '');
-        $head = $this -> group_meta_tags($this -> Meta, $head);
-        $head = $this -> group_css_tags($this -> allPage[1], $head);
-        $this -> append_tag($body, $this -> fileBuffer($this -> pageUri));
-        $this -> append_tag($html, $head);
-        $this -> append_tag($html, $body);
-        $this -> append_tag($this -> Doc, $html);
-        $this -> docOutput($this -> Doc);
-    }
-
-    private function group_meta_tags($meta, $head) {
-        $out = array();
-        $out[] = $this -> tag('meta', 'http-equiv="content-type" content="text/html; charset=UTF-8"', '');
-        $out[] = " <title>" . $this -> allPage[0]['title'] . "</title>";
-        foreach ($meta as $key => $value) {
-            $j = 0;
-            foreach ($value as $k => $v) {
-                if ($k === 'name') {
-                    $n['name'] = $v;
-                    $j++;
-                }
-                if ($k === 'content') {
-                    $n['content'] = $v;
-                    $j++;
-                }
-                if ($j >= 2) {
-                    $out[] = $this -> tag('meta', $n, '');
-                    $j = 0;
-                    $n = '';
-                    $c = '';
-                }
-            }
-        }
-        foreach ($out as $val) {
-            $j == 0 ? $this -> append_tag($head, $val) : $this -> append_tag($head, "\n\t\t" . $val);
-            $j++;
-        }
-        return $head;
-    }
-
-    private function group_css_tags($css, $head) {
-        $out = array();
-        $rel = array();
-        if ($this -> isPage !== 1 || is_array($css[0])) {
-            foreach ($css as $key => $value) {
-                $out = $this -> link_text_css_tag($value, $rel, $out);
-            }
-        } elseif (is_string($css[0])) {
-            $out = $this -> link_text_css_tag($value, $rel, $out);
-        }
-        foreach ($out as $value) {
-            if ($this -> isPage === 1 && preg_match("/main.css/i", $value))
-                continue;
-            $this -> append_tag($head, "\n\t\t" . $value);
-        }
-        return $head;
-    }
-
-    private function link_text_css_tag($value, $rel, $out) {
-        $i = 0;
-        foreach ($value as $key => $val) {
-            if ($key === 'rel') {
-                $rel['rel'] = $val;
-                $i++;
-            }
-            if ($key === 'type') {
-                $rel['type'] = $val;
-                $i++;
-            }
-            if ($key === 'href') {
-                $rel['href'] = $this -> relativePath . $val;
-                $i++;
-            }
-            if ($i >= 3) {
-                $out[] = $this -> tag('link', $rel, '');
-                $i = 0;
-                $rel = array();
-            }
-        }
-        return $out;
     }
 
     public function append_tag(&$into, $tag) {

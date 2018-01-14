@@ -19,6 +19,14 @@ function redirect($where, $http_status_code){
     header("Location:".$where, TRUE, $http_status_code);
 }
 
+function mylink($link){
+    $url = '';
+    $host = $_SERVER['HTTP_HOST'];
+    $_SERVER["HTTPS"] == "on" ? $url .= 'https://'.$host : $url .= 'http://'.$host ;
+    $url .= '/'.$link;
+    printf("%s", $url);
+    
+}
 
 function postecho($value){
 	if(isset($_POST[$value])){
