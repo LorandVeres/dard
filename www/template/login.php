@@ -1,6 +1,5 @@
 <?php
 include '../module/user/login.Class.php';
-include_once '../lib/functions.php';
 $new_login = new login($config, $DBconect, $tag, $myPage);
 ?>
 

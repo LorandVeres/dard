@@ -1,15 +1,7 @@
 <?php
 include_once '../module/user/User.Class.php';
 
-include_once '../config.php';
-$config = new DardConfig();
 
-
-include_once '../lib/dbConect.Class.php';
-$DBconect = new dbConect();
-
-include_once '../lib/simpleTag.Class.php';
-$tag = new simpleTag($config, $DBconect);
 /**
  *
  */
@@ -21,7 +13,6 @@ class login extends User {
     function __construct($config, $DBconect, $tag, $myPage) {
         parent::__construct($config, $DBconect);
         $this -> login_user($config, $DBconect);
-        $myPage->pageUri = 'goggo';
     }
 
     private function check_error_msg() {

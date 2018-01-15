@@ -1,17 +1,6 @@
 <?php
 include_once '../module/user/User.Class.php';
 
-include_once '../module/user/User.Class.php';
-
-include_once '../config.php';
-$config = new DardConfig();
-
-
-include_once '../lib/dbConect.Class.php';
-$DBconect = new dbConect();
-
-include_once '../lib/simpleTag.Class.php';
-$tag = new simpleTag($config, $DBconect);
 /**
  *
  */

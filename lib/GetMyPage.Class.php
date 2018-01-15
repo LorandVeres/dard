@@ -1,12 +1,5 @@
 <?php
 
-include_once '../config.php';
-$config = new DardConfig();
-
-
-include_once '../lib/dbConect.Class.php';
-$DBconect = new dbConect();
-
 class GetMyPage {
 
     const S = 'string';
@@ -28,12 +21,12 @@ class GetMyPage {
     protected $userPriv;
     protected $headers = array();
 
-    function __construct($config, $DBconect) {
+    function __construct($config, $DBconect, $_DARDSESSI, $tag) {
         $this -> setIsPage($config, $DBconect);
         $this -> getAllPage($config, $DBconect);
         $this -> setPageUri();
         $this -> generate_relative_path();
-        $this->sendDoc($config);
+        $this->sendDoc($config, $DBconect, $tag);
     }
 
     protected function fullURL() {
@@ -252,11 +245,12 @@ class GetMyPage {
         return $link;
     }
     
-    private function sendDoc($config){
+    private function sendDoc($config, $DBconect, $tag){
         $this->sendHeaders();
         if(printf("%s", $this->createDocOut($config))){
             if($this->pageUri && file_exists($this->pageUri)){
                 if(!isset($myPage)) $myPage = $this;
+                
                 include_once $this->pageUri;
             }elseif(!$this->pageUri || $this->isPage === 1){
                 array_push($this->headers, header('HTTP/1.0 404 Not Found'));
