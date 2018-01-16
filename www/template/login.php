@@ -1,6 +1,6 @@
 <?php
 include '../module/user/login.Class.php';
-$new_login = new login($config, $DBconect, $tag, $myPage);
+$new_login = new login($config, $DBconect, $tag);
 ?>
 
 <div id="login">

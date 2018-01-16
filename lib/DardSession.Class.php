@@ -29,7 +29,6 @@ class DardSession {
             session_start();
             setcookie('PHPSESSID', session_id(), time() + $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE);
         }
-        $this -> init_user_session();
     }
 
     public function end_session() {
@@ -70,7 +69,7 @@ class DardSession {
         }
     }
 
-    private function utd_str($la) {
+    public function utd_str($la) {
         $str = time();
         $str .= $_SERVER['HTTP_USER_AGENT'];
         $r = rand(5, 15);
@@ -81,19 +80,26 @@ class DardSession {
         return substr($name, 0, -16) . '|' . $la;
     }
 
-    public function logout() {
+    public function logout($config, $DBconect) {
         $this -> end_session();
         $this -> init_session();
-        $this -> init_user_session();
+        $this -> init_user_session($config, $DBconect);
     }
 
-    private function init_user_session($value = '') {
+    public function init_user_session($config, $DBconect) {
         if (!isset($_SESSION['user_name']))
-            $_SESSION['user_name'] = 'user_anonymous';
+            $_SESSION['user_name'] = 'anonymous';
         if (!isset($_SESSION['user_loged']))
             $_SESSION['user_loged'] = FALSE;
-        if (!isset($_SESSION['user_priv']))
-            $_SESSION['user_priv'] = null;
+        if (!isset($_SESSION['user_priv'])){
+            $query = "SELECT `priv` FROM `user_group` WHERE `id` = 32;";
+            $result = $DBconect -> selectDB(32, $config, $query, TRUE, 'string');
+            if($result) $_SESSION['user_priv'] = $result;
+        }
+    }
+    
+    public function ela (){
+        echo "helooooo";
     }
 
 }

@@ -10,7 +10,7 @@ class login extends User {
     private $mesage = array();
     private $is_error = FALSE;
 
-    function __construct($config, $DBconect, $tag, $myPage) {
+    function __construct($config, $DBconect, $tag) {
         parent::__construct($config, $DBconect);
         $this -> login_user($config, $DBconect);
     }

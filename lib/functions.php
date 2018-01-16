@@ -14,9 +14,10 @@ function check_and_do($to_be_checked, $do){
 // $http_status_code 302 Found
 // $http_status_code 303 See Other
 // $http_status_code 307 Temporary Redirect
+// $http_status_code 403 Forbiden
 
-function redirect($where, $http_status_code){
-    header("Location:".$where, TRUE, $http_status_code);
+function redirect($myPage, $where, $http_status_code){
+    array_push ($myPage, header("Location:".$where, TRUE, $http_status_code));
 }
 
 function mylink($link){
