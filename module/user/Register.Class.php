@@ -7,7 +7,7 @@ include_once '../module/user/User.Class.php';
 class RegisterUser extends User {
 
     private $mesage = array();
-    private $is_error = FALSE;
+    protected $is_error = FALSE;
 
     function __construct($config, $DBconect,$tag) {
         parent::__construct($config, $DBconect);
@@ -50,7 +50,7 @@ class RegisterUser extends User {
         if ($this -> post) {
             $this -> check_inputs($_POST['email'], $_POST['password'],$_POST['password1'], $_POST['captcha']);
             if ($this -> check_error_msg()) {
-                $this -> retrive_error_msg($config, $DBconect);
+                $this -> retrive_error_msg($config, $DBconect, 'user');
             } else {
                 $this -> insert_user($config, $DBconect);
             }

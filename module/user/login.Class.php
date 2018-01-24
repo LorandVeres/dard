@@ -8,7 +8,6 @@ include_once '../module/user/User.Class.php';
 class login extends User {
 
     private $mesage = array();
-    private $is_error = FALSE;
 
     function __construct($config, $DBconect, $tag) {
         parent::__construct($config, $DBconect);
@@ -19,17 +18,6 @@ class login extends User {
         if (count($this -> errors) > 0) {
             $this -> is_error = TRUE;
             return TRUE;
-        }
-    }
-
-    public function html_wrap_errors($config, $DBconect, $tag) {
-        $wrap = array();
-        if ($this -> is_error) {
-            $wrap = $tag -> tag('div', 'id="error_msg"', '');
-            foreach ($this->error_msg as $value) {
-                $tag -> append_tag($wrap, $tag -> tag('p', 'class="error_msg_id"', $value));
-            }
-            $tag -> docOutput($wrap);
         }
     }
 
@@ -48,8 +36,8 @@ class login extends User {
 
     private function failed_login($config, $DBconect) {
         array_push($this -> errors, 4);
-        $this -> generate_query();
-        $this -> retrive_error_msg($config, $DBconect);
+        $this -> generate_query('user');
+        $this -> retrive_error_msg($config, $DBconect, 'user');
         $this -> is_error = TRUE;
     }
 
@@ -73,7 +61,7 @@ class login extends User {
             //here some more filtering functions would have to come
 
             if ($this -> check_error_msg()) {
-                $this -> retrive_error_msg($config, $DBconect);
+                $this -> retrive_error_msg($config, $DBconect, 'user');
             } else {
                 $is_user = $this -> check_user_login_credentials($config, $DBconect);
                 if (!$is_user) {

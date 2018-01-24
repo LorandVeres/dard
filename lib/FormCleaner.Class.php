@@ -1,14 +1,17 @@
 <?php
-if (!defined('DARDSTATUS'))
-    exit();
+//if (!defined('DARDSTATUS'))
+//    exit();
 /**
  *
  */
 class FormCleaner{
 
-    protected $post = FALSE;
+    public $post = FALSE;
+        // $error store an array of error id's
     protected $errors = array();
+        // $error_msg store an array of error message
     protected $error_msg = array();
+    protected $is_error = false;
     private $regex_paswd = "/^(\S){6,24}$/";
     private $regex_user = "/^(\w){3,24}$/";
     private $regex_email = "/^([\w\.\-\+]){1,70}@[a-zA-Z0-9\-\.]{3,}[\.]{1}[a-zA-Z]{2,}$/";
@@ -76,8 +79,8 @@ class FormCleaner{
             array_push($this -> errors, 3);
         return $result;
     }
-
-    protected function generate_query() {
+    
+    protected function generate_query($module) {
         $query = "SELECT `message` FROM `error_message` WHERE";
         $where = '';
         if (count($this -> errors) > 0) {
@@ -90,13 +93,24 @@ class FormCleaner{
                 }
             }
         }
-        return $query .= $where . " AND `module_name` = 'user';";
+        return $query .= $where . " AND `module_name` = '$module';";
     }
 
-    protected function retrive_error_msg($config, $DBconect) {
+    protected function retrive_error_msg($config, $DBconect, $module) {
 
-        $query = $this -> generate_query();
+        $query = $this -> generate_query($module);
         $this -> error_msg = $DBconect -> selectDB($this -> errors, $config, $query, FALSE, 'array');
+    }
+    
+    public function html_wrap_errors($config, $DBconect, $tag) {
+        $wrap = array();
+        if ($this -> is_error) {
+            $wrap = $tag -> tag('div', 'id="error_msg"', '');
+            foreach ($this->error_msg as $value) {
+                $tag -> append_tag($wrap, $tag -> tag('p', 'class="error_msg_id"', $value));
+            }
+            $tag -> docOutput($wrap);
+        }
     }
 
 }

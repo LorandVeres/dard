@@ -2,12 +2,7 @@ body {
   background: #ffffff;/*#05274f;#2c3338;*/
   color: #606468;
 }
-a{
-    color: #015e68;
-    text-decoration: none;
-    line-height: 1.1rem;
-    font-size: 1rem;
-}
+
 @media (max-width: 420px){
     a{
         font-size: 0.9rem;
@@ -43,6 +38,13 @@ after { clear: both; }
   max-width: 420px;
 }
 
+#login a{
+    color: #015e68;
+    text-decoration: none;
+    line-height: 1.1rem;
+    font-size: 1rem;
+}
+
 .inner{
   margin: auto;
   padding: 5%;
@@ -50,7 +52,9 @@ after { clear: both; }
   width: 90%;
   border-radius: 8px;
   background: #c2cfd1;/*#282e33;*/
-  box-shadow: 0px 0px 12px 3px#888888;
+  box-shadow: 0px 0px 12px 3px #888888;
+  -webkit-box-shadow: 0px 0px 12px 3px #888888;
+  -moz-box-shadow: 0px 0px 12px 3px #888888;
 }
 
 .inner nav{

@@ -21,6 +21,7 @@ function redirect($myPage, $where, $http_status_code){
 }
 
 function mylink($link){
+    if($link === '/')$link = ''; 
     $url = '';
     $host = $_SERVER['HTTP_HOST'];
     $_SERVER["HTTPS"] == "on" ? $url .= 'https://'.$host : $url .= 'http://'.$host ;

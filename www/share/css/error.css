@@ -26,11 +26,12 @@ body{
 }
 
 h1{
-    font-size: 5em;
+    font-size: 3rem;
     font-weight: 800;
     color: #222;
     margin: 5%;
 }
+
 p{
     line-height: 1.5em;
     color: #fff;

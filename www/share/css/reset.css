@@ -15,6 +15,7 @@ time, mark, audio, video {
 	padding: 0;
 	border: 0;
 	font: inherit;
+	box-sizing: border-box;
 	vertical-align: baseline;
 }
 :root {
@@ -24,6 +25,9 @@ font-size: 15px;
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
 	display: block;
+}
+html, body{
+    height: 100%;
 }
 body {
 	line-height: 1;
@@ -63,12 +67,13 @@ audio:not([controls]) {
 template {
   display: none;
 }
-a {
-  background-color: transparent;
-}
 a:active,
 a:hover {
-  outline: 0;
+  outline: none;
+}
+a{
+    text-decoration: none;
+    background-color: transparent;
 }
 abbr[title] {
   border-bottom: 1px dotted;

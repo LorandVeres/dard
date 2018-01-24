@@ -18,7 +18,7 @@ class DardSession {
 
     function __construct() {
         $this -> init_session();
-        $this -> user_cookie('la');
+        $this -> user_cookie(time());
     }
 
     public function init_session() {

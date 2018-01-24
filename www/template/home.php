@@ -1,8 +1,19 @@
-<div>
-    <ul>
-        <li><a href="<?php mylink('login') ?>">login</a></li>
-        <li><a href="<?php mylink('register') ?>">register</a></li>
-        <li><a href="<?php mylink('login/name') ?>">name</a></li>
-        <li><a href="<?php mylink('logout') ?>">logout</a></li>
-    </ul>
-</div>
+        <?php include_once 'template/layout/main/menu.php';  ?>
+        <div id="main" class="section group">
+            <?php include_once 'template/layout/main/top-sticker.php';  ?>
+            <div id="content">
+                <header>
+                    <h1>Dard CMS project</h1>
+                </header>
+                <div>
+                    
+                </div>
+
+            </div>
+        </div>
+        
+        <footer>
+            <p>
+                &copy; Copyright  by Lorand
+            </p>
+        </footer>

@@ -1,15 +1,55 @@
+<?php //include_once 'template/layout/main/menu.php'; ?>
+
+<?php //include_once 'template/layout/main/top-sticker.php'; ?>
+
 <?php
+function params() {
+    echo '<br><br>';
+    foreach ($myPage->pageArguments as $key => $val) {
+        if (is_array($val)) {
+            foreach ($val as $k => $value) {
+                echo $k . ':' . $value . "\n";
+            }
+        } else {
+            echo $key . ':' . $val . "\n";
+        }
+    }
+}
+
+function myheaders() {
+    $headers = apache_request_headers();
+    echo '<br><br>';
+    foreach ($headers as $header => $value) {
+        echo "$header: $value <br>\n";
+    }
+    echo '<br><br>';
+}
+
+//myheaders();
+function sserver() {
+    foreach ($_SERVER as $key => $value) {
+        echo "$key : $value <br>\n";
+    }
+}
 
 
-printf("\nformat no need now \n");
-echo 'any text formal one <br>';
+if(isset($_POST)){
+    //var_dump($_POST);
+}else{
+    //echo 'POST not set';
+    //var_dump($_GET);
+}
 ?>
 
-<div>
-    <ul>
-        <li><a href="<?php mylink('home') ?>">home</a></li>
-        <li><a href="<?php mylink('login') ?>">login</a></li>
-        <li><a href="<?php mylink('register') ?>">register</a></li>
-        <li><a href="<?php mylink('logout') ?>">logout</a></li>
-    </ul>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+

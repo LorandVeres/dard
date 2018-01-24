@@ -14,6 +14,7 @@ class GetMyPage {
     protected $isPage = 1;
     protected $allPage;
     protected $userPriv;
+    public $ajax = FALSE;
     public $pageArguments;
     public $headers = array();
 
@@ -59,7 +60,7 @@ class GetMyPage {
             $this -> sqlTopPage($config, $DBconect);
         } else {
             $this -> isPage = 1;
-            $this -> top = error;
+            $this -> top = 'error';
         }
     }
 
@@ -149,7 +150,7 @@ class GetMyPage {
             $this -> isPage = 1;
             $this -> top = 'error';
         }
-        if($this->isPage === 1)
+        if ($this -> isPage === 1)
             array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
     }
 
@@ -215,7 +216,7 @@ class GetMyPage {
         }
     }
 
-    private function createDocOut($config) {
+    private function createDocTop($config) {
         $doc = "<!DOCTYPE html>\n";
         $doc .= "<html lang=" . $config -> language . ">\n";
         $doc .= $this -> createHtmlHead();
@@ -246,30 +247,59 @@ class GetMyPage {
             $type = $this -> linkTag[$key]['type'];
             $href = $this -> relativePath . $this -> linkTag[$key]['href'];
             $link .= "\t\t<link rel=\"" . $rel . "\" type=\"" . $type . "\" href=\"" . $href . "\" />\n";
+            //$link .= "\t\t<script type=\"text/javascript\" src=\"https://dard.dard/share/js/dard.js\"></script>\n";
         }
         return $link;
     }
 
-    private function sendDoc($config, $DBconect, $tag, $_DARDSESSI) {
-        $this -> sendHeaders();
-        if (printf("%s", $this -> createDocOut($config))) {
-            if ($this -> pageUri && file_exists($this -> pageUri)) {
+    private function checkAjax(){
+        $ajax = FALSE;
+        $headers = apache_request_headers();
+        if(array_key_exists('HTTP_X_REQUESTED_WITH', $headers))
+            if($headers['HTTP_X_REQUESTED_WITH'] === 'dard_ajax')
+                $ajax = TRUE;
+        $this->ajax = $ajax;
+        return $ajax;
+    }
+    
+    private function includeAjaxBody($config, $DBconect, $tag, $_DARDSESSI){
+        if (file_exists($this -> pageUri)) {
+            $myPage = $this;
+            
+            include_once $this -> pageUri;
+        }elseif(!file_exists($this -> pageUri)){
+            array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
+        }
+        
+    }
+    
+    private function printTopDoc($config, $DBconect, $tag, $_DARDSESSI){
+        if (printf("%s", $this -> createDocTop($config))){
+            if (file_exists($this -> pageUri)){
                 $myPage = $this;
                 
                 include_once $this -> pageUri;
-            } elseif (!$this -> pageUri) {
+            } elseif (!$this -> pageUri){
                 array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
-                if (file_exists($this -> pageUri)) {
-                    include_once $this -> pageUri;var_dump('$expression');
-                } else {
-                    //unknow internal error redirection should be here
-                }
-
             }
         }
-        $doc = "\t</body>\n";
+    }
+    
+    private function printBottomDoc(){
+        $doc = "\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dard.js\"></script>";
+        $doc .= "\t</body>\n";
         $doc .= "</html>\n";
         printf("%s", $doc);
+    }
+    
+    private function sendDoc($config, $DBconect, $tag, $_DARDSESSI) {
+        $this -> sendHeaders();
+        if ($this->checkAjax()) {
+            $this->includeAjaxBody($config, $DBconect, $tag, $_DARDSESSI);
+        } else {
+            $this->printTopDoc($config, $DBconect, $tag, $_DARDSESSI);
+            $this->printBottomDoc();
+        }
     }
 
     private function sendHeaders() {
@@ -289,5 +319,18 @@ class GetMyPage {
         }
     }
 
+    public function ifNoAjaxTop(){
+        if(!$this->ajax){
+            include_once 'template/layout/main/menu.php';
+            printf("\t\t<div id=\"main\" class=\"section group\">\n");
+            include_once 'template/layout/main/top-sticker.php';
+        }
+    }
+    
+    public function ifNoAjaxBottom(){
+        if (!$this->ajax) {
+            printf("\t\t</div>\n");
+        }
+    }
 }// end of class
 ?>

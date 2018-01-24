@@ -11,7 +11,7 @@ RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
 RewriteCond %{HTTP_HOST} ^127\.0\.0\.1
-RewriteRule (.*) http://dard.dard/ [R=301,L]
+RewriteRule (.*) http://%{HTTP_HOST}/ [R=301,L]
 
 
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -24,8 +24,11 @@ RewriteCond %{THE_REQUEST} ^GET.*index\.php [NC]
 RewriteCond %{REQUEST_URI} !/system/.* [NC]
 RewriteRule (.*?)index\.php/*(.*) /$1$2 [R=301,NE,L]
 
+RewriteRule ^(.+)/$ https://%{HTTP_HOST}/$1 [R=301,L]
+RewriteRule ^([\w\-\/]+)$ /index.php?page=$1 [NC,L]
 
-RewriteRule ^([a-zA-Z_\/\-0-9]+)$ /index.php?page=$1 [L]
+
+
 
 <FilesMatch "\.(html|htm|js|css|jpg|png)$">
   FileETag None

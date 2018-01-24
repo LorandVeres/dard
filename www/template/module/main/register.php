@@ -1,9 +1,10 @@
 <?php
 include_once '../module/user/Register.Class.php';
 $new_user = new RegisterUser($config, $DBconect, $tag);
-
+include_once 'template/layout/main/menu.php';  
 ?>
-
+        <div id="main" class="section group">
+        <?php include_once 'template/layout/main/top-sticker.php';  ?>
 
 
 <div id="login">
@@ -28,3 +29,4 @@ $new_user = new RegisterUser($config, $DBconect, $tag);
         </form>
     </div>
 </div>
+        </div>
