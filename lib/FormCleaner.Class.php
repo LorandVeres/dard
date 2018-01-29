@@ -4,18 +4,18 @@
 /**
  *
  */
-class FormCleaner{
+class FormCleaner {
 
     public $post = FALSE;
-        // $error store an array of error id's
+    // $error store an array of error id's
     protected $errors = array();
-        // $error_msg store an array of error message
+    // $error_msg store an array of error message
     protected $error_msg = array();
-    protected $is_error = false;
-    private $regex_paswd = "/^(\S){6,24}$/";
+    protected $is_error = FALSE;
+    private $regex_paswd = "/^[\S\p{L}\p{M}*0-9]{6,50}$/";
     private $regex_user = "/^(\w){3,24}$/";
     private $regex_email = "/^([\w\.\-\+]){1,70}@[a-zA-Z0-9\-\.]{3,}[\.]{1}[a-zA-Z]{2,}$/";
-    private $regex_name = "/\A(\p{L}[\s-'.]*){1,50}\z/";
+    private $regex_name = "/^[\S\p{L}\p{M}*\s\-\.']{1,35}$/";
 
     function __construct($config) {
         $this -> BoleanPost();
@@ -45,7 +45,7 @@ class FormCleaner{
 
     protected function match($patern, $string, $error_number) {
         $result = FALSE;
-        if (!empty($string) && isset($string)) {
+        if (isset($string)) {
             if (preg_match($patern, $string)) {
                 $result = TRUE;
             } else {
@@ -79,8 +79,8 @@ class FormCleaner{
             array_push($this -> errors, 3);
         return $result;
     }
-    
-    protected function generate_query($module) {
+
+    private function generate_query($module) {
         $query = "SELECT `message` FROM `error_message` WHERE";
         $where = '';
         if (count($this -> errors) > 0) {
@@ -97,11 +97,9 @@ class FormCleaner{
     }
 
     protected function retrive_error_msg($config, $DBconect, $module) {
-
-        $query = $this -> generate_query($module);
-        $this -> error_msg = $DBconect -> selectDB($this -> errors, $config, $query, FALSE, 'array');
+        $this -> error_msg = $DBconect -> selectDB($this -> errors, $config, $this -> generate_query($module), FALSE, 'array');
     }
-    
+
     public function html_wrap_errors($config, $DBconect, $tag) {
         $wrap = array();
         if ($this -> is_error) {
