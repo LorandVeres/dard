@@ -1,0 +1,109 @@
+.dard_d_db{
+    width: 300px;
+    height: 200px;
+    position: absolute;
+    top: 180px;
+    left: 180px;
+    background-color: #ffffff;
+    border: 1px solid #C2CFD1;
+    display: block;
+}
+
+.dard_d_hb h4{
+    margin: 0;
+    padding: 3px;
+    text-indent: 5px;
+    font-size: 17px;
+    height: 12.5%;
+    background-color: #C2CFD1;
+    cursor: pointer;
+}
+.dard_d_bt{
+    width: 25px;
+    height: 25px;
+    padding: 4px;
+    display: block;
+    color: #ff0000;
+    font-weight: 800;
+    background-color: #acacac;
+    float: right;
+    text-align: center;
+    cursor: pointer;
+}
+.dard_d_body{
+    display: block;
+    width: 100%;
+    height: 86.5%;
+    text-align: center;
+    overflow-y: auto;
+}
+.dard_d_f{
+    height: 1.5%;
+    display: block;
+    background-color: #C2CFD1;
+    cursor: pointer;
+}
+p{
+    color: #555555;
+    text-indent: 10px;
+    margin: 10px;
+    padding: 5px;
+}
+/* Dialog box */
+.second{
+    position: absolute;
+    top: 100px;
+    right:100px;
+    width: 300px;
+    height: 400px;
+    background-color: #ffffff;
+    border: 1px solid #C2CFD1;
+    display: block;
+}
+/* Dialog box header */
+.second_h{
+    margin: 0;
+    font-size: 17px;
+    height: 6.5%;
+    background-color: #C2CFD1;
+    cursor: move; 
+}
+/* Dialog box title */
+.second_h h4{
+    margin: 0;
+    padding: 3px;
+    text-indent: 5px;
+    font-size: 17px;
+    height: 6.5%;
+    background-color: #C2CFD1;
+    cursor: move;
+}
+/* Dialog box close button */
+.second_bt{
+    width: 25px;
+    height: 25px;
+    padding: 4px;
+    display: block;
+    color: #ff0000;
+    font-weight: 800;
+    background-color: #acacac;
+    float: right;
+    text-align: center;
+    text-indent: 0;
+    cursor: pointer;
+}
+/* Dialog box body */
+.second_bd{
+    display: block;
+    width: 100%;
+    height: 93.25%;
+    text-align: center;
+    overflow-y: auto;
+}
+/* Dialog box footer */
+.second_f{
+    height: 0.75%;
+    display: block;
+    background-color: #C2CFD1;
+    cursor: move;
+}
