@@ -32,8 +32,10 @@ class dbConect {
 						$j = false;
 					}
 				} while($j && mysqli_next_result($link));
-			}if(mysqli_error($link)){
-                echo mysqli_errno($link); echo mysqli_error($link);
+			}if(mysqli_error($link) && $config->debugMYSQL === TRUE){
+                $num = mysqli_errno($link);
+                $error = mysqli_error($link);
+                $this->debug($num, $error);
             }
 		}
 		$returnedid = mysqli_insert_id($link);
@@ -85,8 +87,10 @@ class dbConect {
 					
 					
 				} while($j && mysqli_next_result($link));
-			}elseif(mysqli_error($link)){
-			    echo mysqli_errno($link); echo mysqli_error($link);
+			}elseif(mysqli_error($link) && $config->debugMYSQL === TRUE){
+			    $num = mysqli_errno($link);
+                $error = mysqli_error($link);
+			    $this->debug($num, $error);
             }
 		
 		
@@ -161,7 +165,15 @@ class dbConect {
 		}
         return $result;
 	}
-
+   
+   private function debug($num, $error){
+       $debug = "\n".'<div class="debug">';
+       $debug .= '<div> Mysql Error Number : '. $num .'</div>';
+       $debug .= '<div> Mysql Error : '. $error .'</div>';
+       $debug .= '</div>';
+       $debug .= "\n";
+       printf("%s", $debug);
+   }
 }//end of class
 
 
