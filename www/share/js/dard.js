@@ -31,15 +31,18 @@
             return varyArgs(arguments).length;
         };
 
-        setCss = function(el, css) {
+        setCss = function(el, css, bool) {
             var k,
                 f = '';
-            if (isObj(css)) {
+            if (isObj(css) && !bool) {
                 for (k in css) {
                     if (css.hasOwnProperty(k))
                         f += k + ':' + css[k] + ';';
                 }
                 el.style.cssText = f;
+            }
+            if (isObj(css) && bool){
+                
             }
         };
 
@@ -49,8 +52,8 @@
         };
 
         myEvent = function(event, triger, doit) {
-            if ($(triger) !== null) {
-                return on($(triger).addEventListener(event, doit));
+            if ($(triger)) {
+                on($(triger).addEventListener(event, doit));
             } else {
                 console.log(triger + ' can not be find in this page');
             }
@@ -323,95 +326,12 @@ var ajax = function(obj) {
             return el;
         };
         
-    }());
-
- 
- ( function() {
-        var done = function() {
-            ajax({
-                type : 'GET',
-                response : function(s) {
-                    include_module({
-                        El : '#ajax',
-                        html : s,
-                        //js : 'share/js/load.js'
-                    });
-                },
-                url : 'pages/add-page',
-                error : 'something went wrong geting your page add-page'
-            });
-        };
-        myEvent('click', '#addpages', function(e){
-            e.preventDefault();
-        });
-        myEvent('click', '#addpages', done);
-    }());
-
-//myEvent('click', '#test', function(){alert('it works');});
-
-/*
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-var toggleMenu = ( function() {
-
-        showHideMenu = function() {
-            var e = $("#menu");
-            var c = $("#main");
-            toggle(e);
-            if (e.style.display === 'none') {
-                c.style.marginLeft = 0;
-            } else {
-                if (e.style.display === 'block')
-                    if (screen.width < 800) {
-                        c.style.marginLeft = 0;
-                    } else {
-                        c.style.marginLeft = 240 + 'px';
-                    }
+        
+        empty = function (el){
+            var e = $(el);
+            while(e.firstChild){
+                e.removeChild(e.firstChild);
             }
         };
-        myEvent('click', '#menuicon', function(e) {
-            e.preventDefault();
-        });
-        myEvent('click', '#menuicon', showHideMenu);
-        // mousedown one event what is detected on mobile devices
-        hideMenuList = function(el) {
-            var e = el.parentElement.childNodes;
-            toggle(e[3]);
-        };
-    }());
+        
+}());
