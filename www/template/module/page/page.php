@@ -1,12 +1,10 @@
-<?php include_once 'template/layout/main/menu.php';  ?>
-        <div id="main" class="section group">
-<?php include_once 'template/layout/main/top-sticker.php';  ?>
+<?php $myPage->ifNoAjaxTop();  ?>
+
             <div id="content">
                 <div class="section group">
                     <h1>Every Page Details, and Adminstration </h1>
                 </div>
                 <section id="ajax" class="section group">
-                    
                 </section>
                 <section class="row">
                     <div class="section group row_6 center_box">
@@ -24,8 +22,8 @@
                             <p class="spacer_1">
                                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the
                             </p>
-                            <div class="">
-                                <a href="#" id="edit_meta_tags" class="spacer_1">go go</a>
+                            <div>
+                                <p class="spacer_1" id="edit1">go go</p>
                             </div>
                         </div>
                     </div>
@@ -51,3 +49,5 @@
                     </div>
                 </section>
             </div>
+        </div>
+<?php $myPage->ifNoAjaxBottom(); ?>

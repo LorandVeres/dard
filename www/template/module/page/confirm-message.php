@@ -1,8 +1,12 @@
-                        <div class="row_6 center_box">
+                        <div class="row center_box">
                             <div class="center">
-                                <h2>This is a confirmation page of your pervious actions</h2>
+                                <h2><?php echo $this->page_confirm_h2; ?></h2>
                             </div>
-                            <div>
-                                <?php $this->html_wrap_errors($config, $DBconect, $tag); ?>
+                            <div class="row_6 center_box">
+                                <?php 
+                                    $this->html_wrap_errors($config, $DBconect, $tag); 
+                                    $this->wrapConfirm($config, $DBconect, $tag);
+                                ?>
+                                
                             </div>
                         </div>

@@ -7,7 +7,10 @@
                             not in the select list, please go, and <a href="../pages/add-module">add one module.</a>
                         </p>
                         <div>
-                            <?php $this->html_wrap_errors($config, $DBconect, $tag); ?>
+                            <?php 
+                                $this->html_wrap_errors($config, $DBconect, $tag);
+                                $this->wrapConfirm($config, $DBconect, $tag, $page_id); 
+                            ?>
                         </div>
                             <form name="addpage" method="post" action="/pages/add-page">
                                 <div class="section group">
@@ -40,7 +43,7 @@
                                             <div>
                                             </div>
                                             <div>
-                                                <input type="hidden" name="module_id" value="<?php $this->module_id ?>"/>
+                                                <input type="hidden" name="module_id" value="<?php echo $this->module_id; ?>"/>
                                             </div>
                                         </div>
                                     </div>
@@ -102,7 +105,7 @@
                                     </div>
                                         
                                 </div>
-                                <input type="hidden" name="add_page" value="add" />
+                                <input type="hidden" name="addpage" value="add" />
                                 <div class="center spacer_3">
                                     <input type="submit" value="Add page" />
                                 </div>
