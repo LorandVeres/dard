@@ -17,6 +17,7 @@ class GetMyPage {
     public $ajax = FALSE;
     public $pageArguments;
     public $headers = array();
+    public $page_crumbs;
 
     function __construct($config, $DBconect, $_DARDSESSI, $tag) {
         $_DARDSESSI -> init_user_session($config, $DBconect);
@@ -286,7 +287,8 @@ class GetMyPage {
     }
     
     private function printBottomDoc(){
-        $doc = "\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dard.js\"></script>";
+        $doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dard.js\"></script>\n";
+        $doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dialog.js\"></script>\n";
         $doc .= "\t</body>\n";
         $doc .= "</html>\n";
         printf("%s", $doc);
@@ -320,6 +322,7 @@ class GetMyPage {
     }
 
     public function ifNoAjaxTop(){
+        $crumbs = $this->crumbs();
         if(!$this->ajax){
             include_once 'template/layout/main/menu.php';
             printf("\t\t<div id=\"main\" class=\"section group\">\n");
@@ -332,5 +335,14 @@ class GetMyPage {
             printf("\t\t</div>\n");
         }
     }
+    
+    public function crumbs(){
+        $crumb = '';
+        foreach ($this->URI as $value) {
+            $crumb .= $value. ' >> ';
+        }
+        return trim($crumb, ">");
+    }
+
 }// end of class
 ?>
