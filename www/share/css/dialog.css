@@ -1,109 +1,124 @@
-.dard_d_db{
-    width: 300px;
-    height: 200px;
-    position: absolute;
-    top: 180px;
-    left: 180px;
-    background-color: #ffffff;
-    border: 1px solid #C2CFD1;
-    display: block;
+.dialog-toggle {
+	width: 60px;
+	height: 30px;
+	border: 1px solid #ACACAC;
+	position: absolute;
+	bottom: 50%;
+	right: 1%;
+	display: none;
+	padding: -8px 5px 8px 5px;
+	font-size: 25px;
+	text-align: center;
+	vertical-align: middle;
+	background: #ACACAC;
+	border: 1px solid #FF0000;
+	border-radius: 10px;
+	color: #ff0000;
+	cursor: pointer;
+	opacity: 0.4;
+}
+.dialog-toggle:hover {
+	color: #ffffff;
+	opacity: 0.8
+}
+.dard_d_ct {
+	float: right;
+	width: 112px;
+	height: 35px;
+}
+.dard_d_box {
+	width: 315px;
+	height: 200px;
+	position: absolute;
+	top: 180px;
+	left: 50%;
+	margin-left: -157px;
+	margin-right: -157px;
+	background-color: #ffffff;
+	border: 1px solid #C2CFD1;
+	display: block;
+}
+.dard_d_hd {
+	margin: 0;
+	height: 35px;
+	background-color: #C2CFD1;
+	cursor: move;
+}
+.dard_d_hd h4 {
+	margin: 0;
+	padding: 8px 0;
+	text-indent: 5px;
+	font-size: 17px;
+}
+.dard_d_bt {
+	width: 35px;
+	height: 35px;
+	padding: 4px;
+	display: block;
+	color: #ff0000;
+	font-weight: 800;
+	background-color: #acacac;
+	float: right;
+	font-size: 20px;
+	margin-left: 2px;
+	text-align: center;
+	cursor: pointer;
 }
 
-.dard_d_hb h4{
-    margin: 0;
-    padding: 3px;
-    text-indent: 5px;
-    font-size: 17px;
-    height: 12.5%;
-    background-color: #C2CFD1;
-    cursor: pointer;
+.dard_d_bt:hover {
+	color: #FFFFFF;
+	background-color: #9c9c9c;
 }
-.dard_d_bt{
-    width: 25px;
-    height: 25px;
-    padding: 4px;
-    display: block;
-    color: #ff0000;
-    font-weight: 800;
-    background-color: #acacac;
-    float: right;
-    text-align: center;
-    cursor: pointer;
+.dard_d_bd {
+	display: block;
+	width: 100%;
+	height: 160px;
+	text-align: center;
+	overflow-y: auto;
 }
-.dard_d_body{
-    display: block;
-    width: 100%;
-    height: 86.5%;
-    text-align: center;
-    overflow-y: auto;
+.dard_d_f {
+	height: 5px;
+	display: block;
+	background-color: #C2CFD1;
+	cursor: move;
 }
-.dard_d_f{
-    height: 1.5%;
-    display: block;
-    background-color: #C2CFD1;
-    cursor: pointer;
+/* Second Dialog box */
+.dard_d_box_two {
+	position: absolute;
+	top: 12%;
+	right: 50%;
+	margin-left: -150px;
+	margin-right: -150px;
+	width: 315px;
+	height: 400px;
+	background-color: #ffffff;
+	border: 1px solid #C2CFD1;
+	display: block;
 }
-p{
-    color: #555555;
-    text-indent: 10px;
-    margin: 10px;
-    padding: 5px;
+.dard_d_bd_two {
+	display: block;
+	width: 100%;
+	height: 360px;
+	text-align: center;
+	overflow-y: auto;
 }
-/* Dialog box */
-.second{
-    position: absolute;
-    top: 100px;
-    right:100px;
-    width: 300px;
-    height: 400px;
-    background-color: #ffffff;
-    border: 1px solid #C2CFD1;
-    display: block;
+/* Dialog tranzition classes */
+.dialog-transition {
+	position: absolute;
+	top: 90px;
+	right: 0;
+	height: 35px;
+	width: 162px;
+	overflow: hidden;
+	opacity: 0.5;
 }
-/* Dialog box header */
-.second_h{
-    margin: 0;
-    font-size: 17px;
-    height: 6.5%;
-    background-color: #C2CFD1;
-    cursor: move; 
+.second_hh {
+	width: 162px;
+	height: 35px;
+	cursor: move;
+	background-color: #C2CFD1;
 }
-/* Dialog box title */
-.second_h h4{
-    margin: 0;
-    padding: 3px;
-    text-indent: 5px;
-    font-size: 17px;
-    height: 6.5%;
-    background-color: #C2CFD1;
-    cursor: move;
-}
-/* Dialog box close button */
-.second_bt{
-    width: 25px;
-    height: 25px;
-    padding: 4px;
-    display: block;
-    color: #ff0000;
-    font-weight: 800;
-    background-color: #acacac;
-    float: right;
-    text-align: center;
-    text-indent: 0;
-    cursor: pointer;
-}
-/* Dialog box body */
-.second_bd{
-    display: block;
-    width: 100%;
-    height: 93.25%;
-    text-align: center;
-    overflow-y: auto;
-}
-/* Dialog box footer */
-.second_f{
-    height: 0.75%;
-    display: block;
-    background-color: #C2CFD1;
-    cursor: move;
+.bd, .f, .second_hh h4 {
+	height: 0;
+	display: none;
 }

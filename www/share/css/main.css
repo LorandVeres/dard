@@ -7,28 +7,27 @@
 #top-menu {
     margin-top: 9px;
     margin-right: 2%;
+    margin-left: 2%;
     text-align: center;
-    width: 480px;
+    min-width: 60px;
 }
 
 #top-menu li {
     height: 100%;
-    max-width: 12.5%;
     float: left;
     text-align: center;
     margin: 0 2% 0 2%;
     display: block;
-    
 }
 
 #top-menu span, #top-menu a{
     display: block;
     cursor: pointer;
     font-size: 1.2rem;
-    padding: 6px;
+    padding: 6px 18px;
     border: 1px solid #ffffff;
     border-radius: 3px;
-    color: #000000;
+    color: #ffffff;
 }
 
 #top-menu span:hover{
@@ -38,37 +37,16 @@
 #top-menu:last-child {
 }
 
-#menuicon, #usersicon, #livesiteicon, #homeicon{
-background-repeat:no-repeat;
-background-position: center center;
-}
-#menuicon{
-    /*background-image: url(../../images/icons/menu-icon.png);*/
-}
-#usersicon{
-    /*background-image: url(../../images/icons/115-users.png);*/
-}
-#live-site-icon{
-    /*background-image: url(../../images/icons/87-display.png);*/
-}
-#homeicon{
-    /*background-image: url(../../images/icons/001-home.png);*/
-}
-
-
 @media screen and (max-width: 480px) {
     #top-menu {
-        width: 95%;
         margin: 9px 2.5%;
     }
     #top-menu li{
-        min-width: 10%;
         margin: 0 2.25% 0 2.25%;
     }
 }
 @media screen and (max-width: 320px) {
     #top-menu li{
-        min-width: 12%;
     }
 }
 
@@ -370,6 +348,10 @@ background-position: center center;
     display: block;
     width: auto;
 }
+
+.template{
+	display: none;
+}
 header{
     margin-top: 20px;
 }
@@ -399,6 +381,17 @@ mark{
     padding-right: 5px;
     display: inline-block;
 }
+.debug{
+    margin: 20px auto;
+    width: 80%;
+    text-indent: 5px;
+    background-color: #FFFFFF;
+    color: #222222;
+    font-size: 1rem;
+}
+.debug div{
+    margin: 5px auto;
+}
 #content p{
     margin: 10px 2%;
     text-indent: 10px;
@@ -415,7 +408,7 @@ mark{
 #content h1 {
     text-align: center;
     font-weight: 600;
-    margin: 2.6% auto;
+    margin: 1.6% auto;
     font-size: 1.6rem;
     color: #383838;
     line-height: 1.9rem;
@@ -426,14 +419,14 @@ mark{
     color: #383838;
     font-size: 1.4rem;
     line-height: 1.6rem;
-    margin: 2.6% auto;
+    margin: 1.6% auto;
     font-weight: 600;
 }
 #content h3{
     color: #383838;
     font-size: 1.2rem;
     line-height: 1.4rem;
-    margin: 2.6% auto;
+    margin: 1.6% auto;
     font-weight: 600;
 }
 /*  MANAGEMENT  CONTENT */
@@ -499,7 +492,7 @@ box-shadow: -3px 3px 5px 2px rgba(0,0,0,0.2)
     padding-left: 10%;
     margin: 5px auto;
 }
-.form_row input[type=text], select{
+.form_row input[type=text], select, input[type=search]{
     width: 80%;
     margin: 5px auto;
     padding: 0 0 0 10px;
@@ -507,9 +500,9 @@ box-shadow: -3px 3px 5px 2px rgba(0,0,0,0.2)
     border: 1px solid #3e3ee0;
     display: block;
 }
-.form_row input[type=text]{
+.form_row input[type=text], input[type=search]{
     height: 1.8rem;
-    ertical-align: middle;
+    vertical-align: middle;
 }
 .form_row select{
      height: 2rem;
@@ -519,15 +512,67 @@ box-shadow: -3px 3px 5px 2px rgba(0,0,0,0.2)
     margin: 15px auto;
 }
 .single_form label{
-    padding-left: 10%;
+    text-indent: 10%;
 }
 .single_form select{
     height: 2rem;
     padding: 0 0 0 5px;
 }
-.single_form select:focus{
-    outline: none;
+.single_form input[type=search]{
+    width: 80%;
+    height: 1.8rem;
+    margin: 5px auto;
+    padding: 0 0 0 10px;
+    border-radius: 0;
+    border: 1px solid #3e3ee0;
+    display: block;
 }
+
+.confirm_wrapper{
+    display: table;
+    border-collapse: collapse;
+    width: 90%;
+    margin: 20px auto;
+}
+.confirm_row{
+    display: table-row;
+    width: 100%;
+    border: 1px solid #007591;
+}
+.confirm_row:hover{
+    background-color: #C2CFD1;
+}
+.confirm_row:after{
+    clear: both;
+}
+.confirm_cell{
+    display: table-cell;
+    float: left;
+    min-height: 1.2rem;
+    padding: 3px;
+    text-indent: 5px;
+}
+.confirm_cell:last-child{
+    border-left: 1px solid #007591;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
