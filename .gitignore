@@ -3,3 +3,4 @@ db.mwb.bak
 .project
 session/*
 logs/*
+www/template/test.php

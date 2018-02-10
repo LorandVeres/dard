@@ -1,8 +1,5 @@
-<?php //include_once 'template/layout/main/menu.php'; ?>
-
-<?php //include_once 'template/layout/main/top-sticker.php'; ?>
-
 <?php
+$myPage->ifNoAjaxTop();
 function params() {
     echo '<br><br>';
     foreach ($myPage->pageArguments as $key => $val) {
@@ -26,30 +23,23 @@ function myheaders() {
 }
 
 //myheaders();
-function sserver() {
+function server() {
     foreach ($_SERVER as $key => $value) {
         echo "$key : $value <br>\n";
     }
 }
 
-
-if(isset($_POST)){
-    //var_dump($_POST);
-}else{
-    //echo 'POST not set';
-    //var_dump($_GET);
+function increment(&$var)
+{
+    $var++;
 }
+
+
 ?>
+<input type="button" name="dialog" value="dialog" id="dialog"/>
 
 
 
 
 
-
-
-
-
-
-
-
-
+<?php $myPage->ifNoAjaxBottom(); ?>

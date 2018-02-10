@@ -289,6 +289,7 @@ class GetMyPage {
     private function printBottomDoc(){
         $doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dard.js\"></script>\n";
         $doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dialog.js\"></script>\n";
+        $doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/main.live.js\"></script>\n";
         $doc .= "\t</body>\n";
         $doc .= "</html>\n";
         printf("%s", $doc);
