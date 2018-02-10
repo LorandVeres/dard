@@ -140,7 +140,8 @@ function dialog (trigger, obj) {
 		if (obj.keyIn('acton')) {
 			for (var i = 0,
 			    j = obj.acton.myevent.length; i < j; i++) {
-			    $(obj.acton.trigger[i])[0].addEventListener(obj.acton.myevent[i], obj.acton.handler[i], false);
+			    	if($(obj.acton.trigger[i]))
+			    		$(obj.acton.trigger[i])[0].addEventListener(obj.acton.myevent[i], obj.acton.handler[i], false);
 			}
 		}
 	}
@@ -286,7 +287,7 @@ function dialog (trigger, obj) {
 				}
 			});
 		} else {
-			console.log(trigger + ' dialog button not on this page');
+			return false;
 		}
 	}
 	init(trigger, obj);

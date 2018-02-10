@@ -9,7 +9,6 @@
  * and other useful functions
  *
  */
-
 function isObj(o) {
 	return typeof obj === 'object' || toString.call(o).split(/\W/)[2].toLowerCase() === 'object';
 }
@@ -82,15 +81,9 @@ function toggle(el) {
 	s === 'none' ? el.style.display = 'block' : el.style.display = 'none';
 };
 
-function myEvent(event, trigger, callback) {
-	if ($(trigger)) {
-		on($(trigger).addEventListener(event, callback, false));
-	} else {
-		console.log(trigger + ' can not be find in this page');
-	}
-}
-
+//
 // recomended usage for testing pourpuse only
+//
 function simulateClick(onTarget) {
 	var evt = document.createEvent("MouseEvents");
 	evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
@@ -125,15 +118,16 @@ function counter() {
 	};
 };
 
-function on(your_functions_here) {
-	window.onload = your_functions_here;
-}
-
 /*
  *
  *  Here we go, we include js files on runtime
  *  A benefit for modular aproach.
  *
+ *  this function is used inside the include_module()
+ * 
+ * 	this is an ajax request for the new js file to be loaded
+ * 	Not the ES6 standard , ok for earlier versions
+ * 
  */
 
 function require_js_module(src) {
@@ -147,14 +141,25 @@ function require_js_module(src) {
 	});
 };
 
+/*
+ * @ param obj{
+ * 		el :  // the recipient element t be pushed the new html 
+ * 		html :  // html string or oane dom element from ajax request  
+ * 		js :   // otional
+ * }
+ * 
+ */
 function include_module(obj) {
-	var el = $(obj.el);
-	var node = str2el(obj.html);
-	if (el.hasChildNodes())
-		el.removeChild(el.firstChild);
-	el.appendChild(node);
-	if (obj.keyIn('js'))
-		require_js_module(obj.js);
+	var el, node;
+	if(obj.keyIn('el')){
+		el = obj.el;
+		node = str2el(obj.html);
+		if (el.hasChildNodes())
+			el.removeChild(el.firstChild);
+		el.appendChild(node);
+		if (obj.keyIn('js'))
+			require_js_module(obj.js);
+	}
 }
 
 // Useful Object relating functions
@@ -164,7 +169,7 @@ function myObj() {
 	self.keyIn = function(k) {
 		return this.hasOwnProperty(k) ? true : false;
 	};
-	self.type = function(i) {
+	self.isTypeOf = function(i) {
 		if (i && !isSet(i)) {
 			return 'undefined';
 		} else if (i && isFunc(i) && isSet(i.prototype)) {
@@ -210,7 +215,7 @@ function camelCase(str) {
 // the MAIN selector function
 //
 
-var $ = ( function() {
+var $ =  (function() {
 	var args = [],
 		document = window.document,
 
@@ -231,35 +236,42 @@ var $ = ( function() {
 				Object.assign(self, prop);
 		};
 		self.append = function(e) {
-			if ( typeof e === 'object')
-				this[0].appendChild(e);
-			if (isStr(e))
-				this[0].appendChild(str2el(e));
+			if(this[0]){
+				if ( typeof e === 'object')
+					this[0].appendChild(e);
+				if (isStr(e))
+					this[0].appendChild(str2el(e));
+			}
 		};
 		self.clone = function() {
 			if(this[0])
 				return this[0].cloneNode(true);
 		};
 		self.text = function(t) {
-			if (isStr(t)) {
-				this[0].innerHTML = t;
-			} else if (!t) {
-				var tx = this[0].innerHTML;
-				return tx;
+			if(this[0]){
+				if (isStr(t)) {
+					this[0].innerHTML = t;
+				} else if (!t) {
+					var tx = this[0].innerHTML;
+					return tx;
+				}
 			}
 		};
 		self.html = function(){
-			return this[0].outerHTML;
+			if (this[0])
+				return this[0].outerHTML;
 		};
 		self.toggle = function() {
-			var s = window.getComputedStyle(this.el, null).getPropertyValue("display");
-			s === 'none' ? this[0].style.display = 'block' : this[0].style.display = 'none';
+			if(this[0]){
+				var s = window.getComputedStyle(this.el, null).getPropertyValue("display");
+				s === 'none' ? this[0].style.display = 'block' : this[0].style.display = 'none';
+			}
 		};
 		self.css = function(val) {
 			var k,
 			    f = '',
 			    c;
-			if (isObj(val)) {
+			if (isObj(val) && this[0]) {
 				for (k in val) {
 					if (val.hasOwnProperty(k)) {
 						c = k.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -270,21 +282,27 @@ var $ = ( function() {
 			}
 		};
 		self.me = function() {
-			return this[0];
+			if(this[0]){
+				return this[0];
+			}
 		};
 		self.on = function (ev, fn){
-			window.onload = this[0].addEventListener(ev, fn, false);;
+			if(this[0]){
+				window.onload = this[0].addEventListener(ev, fn, false);
+			}
 		};
 		self.empty = function() {
-			while (this[0].firstChild) {
-				this[0].removeChild(this[0].firstChild);
+			if(this[0]){
+				while (this[0].firstChild) {
+					this[0].removeChild(this[0].firstChild);
+				}
 			}
 		};
 		return self;
 	};
 	
 	// Selecting the element from first parameter
-	function getEl(arg, item) {
+	function GetEl(arg, item) {
 		var itemNo, el =  this,
 			args = varyArgs(arguments);
 		el.constructor.prototype = new Dard();
@@ -298,8 +316,8 @@ var $ = ( function() {
 				el[0] = document.createElement(arg.replace(/^<+|>+$/gm, ''));
 			if (plainTagRE.test(arg))
 				el[0] = document.getElementsByTagName(arg)[itemNo];
-		}else if( isObj(args[0]) && args[0].type() === 'dard'){
-			el = args[0];
+		}else if( isObj(arg) && arg.type() === 'dard'){
+			el = arg;
 		}
 		if (el[0]) {
 			return  el;
@@ -307,14 +325,14 @@ var $ = ( function() {
 	}
 
 	type(Dard);
-	type(getEl);
-	
+	type(GetEl);
+
 	return function () {
 		var args = varyArgs(arguments),
 		    itemNo;
 		if (args.length > 0) {
 			isNum(args[1]) ? itemNo = args[1] : itemNo = 0;
-			return new getEl(args[0], itemNo);
+			return new GetEl(args[0], itemNo);
 		}
 	};
 }());
@@ -322,22 +340,26 @@ var $ = ( function() {
  *
  *
  * AJAX function with main funcionality on POST GET and JSON
- *
- *
+ * 
+ * 
+ * 
+ * The ajax object
+ * 
+ *	var ajaxObj = {
+ * 	
+ * @  	type : 'GET',  // type of request POST or GET
+ * @  	url : 'your/page/url', // the page url
+ * @  	response : 'function', //handle the response from server
+ * @  	send : null, // in GET request is optional
+ * @  	json : true, // optional required if you do not stringify before the object
+ * @  	error : 'custom error message' // optional to see for errors in consol log
+ * 
+ * };
  *
  */
 
 var ajax = function(obj) {
-	/*
-	 var ajaxObj = {
-	 type : 'GET',  // type of request POST or GET
-	 url : 'your/page/url', // the page url
-	 response : 'function', //handle the response from server
-	 send : null, // in GET request is optional
-	 json : true, // optional required if you do not stringify before the object
-	 error : 'custom error message' // optional to see for errors in consol log
-	 };
-	 */
+	
 	var getPostJson = function() {
 		var xhr = new XMLHttpRequest();
 		xhr.open(obj.type, obj.url);
@@ -384,10 +406,14 @@ var ajax = function(obj) {
 /*
  *
  *  Starting DOM manipulation functions
- *
- *
- *
+ * 
+ * 
+ * str2el()
+ * 
+ * Create a valid DOM element from a html string
+ * 
  */
+
 
 function str2el(html) {
 	var fakeEl = document.createElement('iframe');

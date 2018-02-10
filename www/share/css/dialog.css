@@ -6,7 +6,7 @@
 	bottom: 50%;
 	right: 1%;
 	display: none;
-	padding: -8px 5px 8px 5px;
+	padding: 0 5px 8px 5px;
 	font-size: 25px;
 	text-align: center;
 	vertical-align: middle;
@@ -59,9 +59,10 @@
 	font-weight: 800;
 	background-color: #acacac;
 	float: right;
-	font-size: 20px;
+	font-size: 24px;
 	margin-left: 2px;
 	text-align: center;
+	vertical-align: middle;
 	cursor: pointer;
 }
 
@@ -112,13 +113,56 @@
 	overflow: hidden;
 	opacity: 0.5;
 }
-.second_hh {
+.dialog_h_t {
 	width: 162px;
 	height: 35px;
 	cursor: move;
 	background-color: #C2CFD1;
 }
-.bd, .f, .second_hh h4 {
+.dialog_bd_t, .dialog_f_t, .dialog_h_t h4 {
 	height: 0;
 	display: none;
 }
+
+
+.search_box{
+	width: 100%;
+	height: auto;
+}
+.search_box p{
+	text-align: left;
+	margin: 0;
+	border-bottom: 1px solid #efefef;
+	color: #003B49;
+}
+.search_box a:hover{
+	background-color: #fafafa;
+	color: #003B49;
+}
+.search_box a{
+	color: #007591;
+	display: block;
+	padding: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
