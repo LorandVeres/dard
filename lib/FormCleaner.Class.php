@@ -1,6 +1,4 @@
 <?php
-//if (!defined('DARDSTATUS'))
-//    exit();
 /**
  *
  */
@@ -80,8 +78,17 @@ class FormCleaner {
         return $result;
     }
 
-    private function generate_query($module) {
+    protected function generate_query($module) {
+        $arr = array();
+		if(is_array($module)){
+			$arr = $module;
+		}else if(is_string($module)){
+			$arr[0] = $module;
+			$arr[1] = $module;
+		}
         $query = "SELECT `message` FROM `error_message` WHERE";
+		$help = "(SELECT `id` FROM `module` WHERE `name` = '$arr[0]')";
+		$help1 = "(SELECT `id` FROM `page` WHERE `pagename` = '$arr[1]')";
         $where = '';
         if (count($this -> errors) > 0) {
             for ($i = 0; $i < count($this -> errors); $i++) {
@@ -93,11 +100,11 @@ class FormCleaner {
                 }
             }
         }
-        return $query .= $where . " AND `module_name` = '$module';";
+        return $query .= $where . " AND (`module` = $help OR `page` = $help1);";
     }
 
     protected function retrive_error_msg($config, $DBconect, $module) {
-        $this -> error_msg = $DBconect -> selectDB($this -> errors, $config, $this -> generate_query($module), FALSE, 'array');
+    	$this -> error_msg = $DBconect -> selectDB($this -> errors, $config, $this -> generate_query($module), FALSE, 'array');
     }
 
     public function html_wrap_errors($config, $DBconect, $tag) {
