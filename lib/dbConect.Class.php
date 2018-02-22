@@ -35,7 +35,7 @@ class dbConect {
 			}if(mysqli_error($link) && $config->debugMYSQL === TRUE){
                 $num = mysqli_errno($link);
                 $error = mysqli_error($link);
-                $this->debug($num, $error);
+                $this->debug($num, $error, $query);
             }
 		}
 		$returnedid = mysqli_insert_id($link);
@@ -90,7 +90,7 @@ class dbConect {
 			}elseif(mysqli_error($link) && $config->debugMYSQL === TRUE){
 			    $num = mysqli_errno($link);
                 $error = mysqli_error($link);
-			    $this->debug($num, $error);
+			    $this->debug($num, $error, $query);
             }
 		
 		
@@ -166,10 +166,11 @@ class dbConect {
         return $result;
 	}
    
-   private function debug($num, $error){
+   private function debug($num, $error, $sql){
        $debug = "\n".'<div class="debug">';
-       $debug .= '<div> Mysql Error Number : '. $num .'</div>';
-       $debug .= '<div> Mysql Error : '. $error .'</div>';
+       $debug .= '<p> Mysql Error Number : '. $num .'</p>';
+       $debug .= '<p> Mysql Error : '. $error .'</p>';
+	   $debug .= '<p> Mysql Error : '. $sql .'</p>';
        $debug .= '</div>';
        $debug .= "\n";
        printf("%s", $debug);
