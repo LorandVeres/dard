@@ -84,7 +84,7 @@ class FormCleaner {
 			$help1 = "(SELECT `id` FROM `page` WHERE `pagename` = '$module[1]')";
 			$help_where = "(`module` = $help OR `page` = $help1)";
 		} else if (is_string($module)) {
-			$help_where = "`page = (SELECT `id` FROM `page` WHERE `pagename` = '$module')";
+			$help_where = "`page` = (SELECT `id` FROM `page` WHERE `pagename` = '$module')";
 		}
 		$query = "SELECT `message` FROM `error_message` WHERE";
 		$where = '';

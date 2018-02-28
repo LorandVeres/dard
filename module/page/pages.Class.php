@@ -213,13 +213,11 @@ class pages extends FormCleaner {
 	}
 
 	public function search($config, $DBconect, $myPage) {
-		if ($myPage -> pageArguments[0]['param'] === 'search') {
-			$param = $myPage -> pageArguments[0]['value'];
-			//var_dump($param);
+		if (isset($myPage -> arg['search'])) {
+			$param = $myPage -> arg['search'];
 			$this -> wrapSearchAddErrorMessage($config, $DBconect, $param);
-			//var_dump($myPage->ajax);
-			if ($myPage -> ajax) {
-				//exit ;
+			if (!$myPage -> ajax) {
+				return ;
 			}
 		}
 	}
@@ -232,7 +230,7 @@ class pages extends FormCleaner {
 
 	private function wrapSearchAddErrorMessage($config, $DBconect, $param) {
 		$result = $this -> searchPageSql($config, $DBconect, $param);
-		$link = 'error-messages?do=add&pageid=';
+		$link = 'error-messages?a=add&pageid=';
 		$print = '<div>';
 		if (isset($result[0])) {
 			foreach ($result as $key => $value) {
@@ -244,14 +242,14 @@ class pages extends FormCleaner {
 					if ($k === 'pagename' || $k === 'name')
 						$name[] = $val;
 				}
-				$link = 'error-messages?add=message&pageid=' . $i[0] . '&moduleid=' . $i[1];
-				$print .= '<p><a href="' . $link . '"><strong>' . $name[0] . '</strong> in module ' . $name[1] . '</a></p>' . "\n";
+				$data = 'data-pageid="'.$i[0].'" data-moduleid="'.$i[1]. '" data-pagename="'.$name[0]. '"';
+				$print .= '<p><a href="#" '. $data .'><strong>' . $name[0] . '</strong> in module ' . $name[1] . '</a></p>' . "\n";
 			}
 		} elseif (isset($result['id'])) {
-			$link = 'error-messages?add=message&pageid=' . $result['id'] . '&moduleid=' . $result['module_id'];
-			$print .= '<p><a href="' . $link . '"><strong>' . $result['pagename'] . '</strong> in module ' . $result['name'] . '</a></p>' . "\n";
+			$data = 'data-pageid="'.$result['id'].'" data-moduleid="'.$result['module_id'] . '" data-pagename="'.$result['pagename']. '"';
+			$print .= '<p><a href="#" '. $data .'><strong>' . $result['pagename'] . '</strong> in module ' . $result['name'] . '</a></p>' . "\n";
 		} elseif ($result === null) {
-			$print .= 'No results found';
+			$print .= '<p class="search-no-result">No results found</p>';
 		}
 		$print .= '</div>';
 

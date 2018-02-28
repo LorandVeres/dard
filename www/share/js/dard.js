@@ -143,20 +143,19 @@ function require_js_module(src) {
 
 /*
  * @ param obj{
- * 		el :  // the recipient element t be pushed the new html 
- * 		html :  // html string or oane dom element from ajax request  
- * 		js :   // otional
+ * 		el :  // the recipient element to be pushed in the new html 
+ * 		html :  // html string or one dom element from ajax request  
+ * 		js :   // optional
  * }
  * 
  */
 function include_module(obj) {
-	var el, node;
 	if(obj.keyIn('el')){
-		el = obj.el;
-		node = str2el(obj.html);
-		if (el.hasChildNodes())
+		var el = obj.el;
+		while(el.hasChildNodes()){
 			el.removeChild(el.firstChild);
-		el.appendChild(node);
+		}
+		isObj(obj.html) ? el.appendChild(obj.html) : el.appendChild(str2el(obj.html));
 		if (obj.keyIn('js'))
 			require_js_module(obj.js);
 	}
@@ -234,6 +233,7 @@ var $ =  (function() {
 		self.extendProto = function(prop) {
 			if (typeof prop === 'object')
 				Object.assign(self, prop);
+			return this;
 		};
 		self.append = function(e) {
 			if(this[0]){
@@ -242,30 +242,57 @@ var $ =  (function() {
 				if (isStr(e))
 					this[0].appendChild(str2el(e));
 			}
+			return this;
 		};
-		self.clone = function() {
-			if(this[0])
-				return this[0].cloneNode(true);
+		self.clone = function(fn) {
+			if(this[0] && isFunc(fn)){
+				fn(this[0].cloneNode(true));
+			}
+			return this;
 		};
-		self.text = function(t) {
+		self.ihtml = function(t) {
 			if(this[0]){
 				if (isStr(t)) {
 					this[0].innerHTML = t;
-				} else if (!t) {
-					var tx = this[0].innerHTML;
-					return tx;
+				} else if (isFunc(t)) {
+					t(this[0].innerHTML);
 				}
 			}
+			return this;
 		};
-		self.html = function(){
-			if (this[0])
-				return this[0].outerHTML;
+		self.ohtml = function( fn ){
+			if (this[0] && isFunc(fn)){
+				fn(his[0].outerHTML);
+			}
+			return this;
+		};
+		self.cnode = function(){
+			if(this[0]){
+				var arg = arguments;
+					el = this[0].childNodes,
+					k = 0;
+				for(var i = 0, j = el.length; i < j; i++){
+					if(el[i]){
+						if(el[i].nodeName.toLowerCase() === arg[0].toLowerCase()){
+							if(arg.length == 2 && isFunc(arg[1]))
+								arg[1](el[i]);
+							if(arg.length == 3 && el[i].nodeName.toLowerCase() === arg[0].toLowerCase()){
+								if(arg[1] == k++ && isFunc(arg[2])){
+									arg[2](el[i]);
+								}
+							}
+						}
+					}
+				}
+			}
+			return this;
 		};
 		self.toggle = function() {
 			if(this[0]){
-				var s = window.getComputedStyle(this.el, null).getPropertyValue("display");
+				var s = window.getComputedStyle(this[0], null).getPropertyValue("display");
 				s === 'none' ? this[0].style.display = 'block' : this[0].style.display = 'none';
 			}
+			return this;
 		};
 		self.css = function(val) {
 			var k,
@@ -280,6 +307,7 @@ var $ =  (function() {
 				}
 				this[0].style.cssText = f;
 			}
+			return this;
 		};
 		self.me = function() {
 			if(this[0]){
@@ -290,6 +318,17 @@ var $ =  (function() {
 			if(this[0]){
 				window.onload = this[0].addEventListener(ev, fn, false);
 			}
+			return this;
+		};
+		self.val = function (v){
+			if(this[0]){
+				if(isStr(v)){
+					this[0].value = v;
+				}else if(isFunc(v)){
+					v(this[0].value);
+				}
+			}
+			return this;
 		};
 		self.empty = function() {
 			if(this[0]){
@@ -297,6 +336,7 @@ var $ =  (function() {
 					this[0].removeChild(this[0].firstChild);
 				}
 			}
+			return this;
 		};
 		return self;
 	};
@@ -328,11 +368,11 @@ var $ =  (function() {
 	type(GetEl);
 
 	return function () {
-		var args = varyArgs(arguments),
+		var arg = varyArgs(arguments),
 		    itemNo;
-		if (args.length > 0) {
-			isNum(args[1]) ? itemNo = args[1] : itemNo = 0;
-			return new GetEl(args[0], itemNo);
+		if (arg.length > 0) {
+			isNum(arg[1]) ? itemNo = arg[1] : itemNo = null ;
+			return new GetEl(arg[0], itemNo);
 		}
 	};
 }());
@@ -359,7 +399,6 @@ var $ =  (function() {
  */
 
 var ajax = function(obj) {
-	
 	var getPostJson = function() {
 		var xhr = new XMLHttpRequest();
 		xhr.open(obj.type, obj.url);

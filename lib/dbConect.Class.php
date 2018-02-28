@@ -38,9 +38,11 @@ class dbConect {
                 $this->debug($num, $error, $query);
             }
 		}
-		$returnedid = mysqli_insert_id($link);
+		$result = array();
+		$result['id'] = mysqli_insert_id($link);
+		$result['info'] = mysqli_info($link);
 		mysqli_close($link);
-		return $returnedid;
+		return $result;
 		
 	}
 	
