@@ -92,7 +92,7 @@ class DardSession {
         if (!isset($_SESSION['user_loged']))
             $_SESSION['user_loged'] = FALSE;
         if (!isset($_SESSION['user_priv'])){
-            $query = "SELECT `priv` FROM `user_group` WHERE `id` = 32;";
+            $query = "SELECT `priv_flag` FROM `user_group` WHERE `id` = 2;";
             $result = $DBconect -> selectDB(32, $config, $query, TRUE, 'string');
             if($result) $_SESSION['user_priv'] = $result;
         }

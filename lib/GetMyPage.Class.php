@@ -42,22 +42,24 @@ class GetMyPage {
 
 	private function genURI() {
 		$uri = $_SERVER["REQUEST_URI"];
-		if (preg_match("/^(\/{1}[home]{1}).*$/", $uri))
+		if (preg_match("/^(\/home){1}$/", $uri))
 			header("Location: /", TRUE, 301);
-		$_SERVER["REQUEST_URI"] === "/" ? $this -> URI = NULL : $this -> URI = explode("/", trim($_SERVER["REQUEST_URI"], '/'));
+		$_SERVER["REQUEST_URI"] === "/" ? $this -> URI[0] = 'home' : $this -> URI = explode("/", trim($_SERVER["REQUEST_URI"], '/'));
 	}
 
 	private function generate_relative_path() {
 		$relative = '';
-		for ($i = 0; $i < count($this -> URI); $i++) {
-			$relative .= '../';
+		if(is_array($this ->URI)){
+			for ($i = 0; $i < count($this -> URI); $i++) {
+				$relative .= '../';
+			}
 		}
 		$this -> relativePath = $relative;
 	}
 
 	private function getTopPageName() {
-		$pos = strpos($this -> URI[0], '?');
-		if ($this -> URI !== NULL) {
+		if ($this -> URI !== NULL){
+			$pos = strpos($this -> URI[0], '?');
 			$pos ? $this -> top = substr($this -> URI[0], 0, $pos) : $this -> top = $this -> URI[0];
 		} else {
 			$this -> top = 'home';
@@ -78,7 +80,7 @@ class GetMyPage {
 		isset($_SESSION['user_priv']) ? $user = $_SESSION['user_priv'] : $user = FALSE;
 		$query = "SELECT `id`, `type`, `user_priv`, `parentpage` FROM `page` WHERE `pagename` = '$arg';";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
-		if (!$result['id']) {
+		if (!$result) {
 			$this -> isPage = 1;
 			$this -> top = 'error';
 		} elseif ($result['id']) {
@@ -135,24 +137,30 @@ class GetMyPage {
 			}
 		}
 	}
-
+	
+	//
+	//Need attention
+	//
 	private function setIsPage($config, $DBconect) {
 		$this -> genURI();
 		$this -> getTopPageName();
-		if (count($this -> URI) <= 1 || $this -> URI === null) {
+		if (is_array($this -> URI) ? count($this -> URI) <= 1 || $this -> URI === null : FALSE) {
 			$this -> setIfTopPage($config, $DBconect);
-		} elseif (count($this -> URI) == 2) {
+		} elseif (is_array($this -> URI) ? count($this -> URI) == 2 : FALSE) {
 			$this -> setIfSubPage($config, $DBconect);
 		} else {
 			$this -> isPage = 1;
 		}
 	}
-
+	
+	//
+	//Need attention
+	//
 	private function prepAllPage($config, $DBconect) {
 		$this -> setIsPage($config, $DBconect);
-		if (count($this -> URI) > 1 && $this -> subPage > 1) {
+		if (is_array($this -> URI) ? count($this -> URI) > 1 && $this -> subPage > 1 : FALSE) {
 			$this -> isPage = $this -> subPage;
-		} elseif (count($this -> URI) <= 1 && $this -> isPage > 1) {
+		} elseif (is_array($this -> URI) ? count($this -> URI) <= 1 && $this -> isPage > 1 : FALSE) {
 			$this -> isPage;
 		} else {
 			$this -> isPage = 1;
@@ -299,9 +307,9 @@ class GetMyPage {
 	}
 
 	private function printBottomDoc() {
-		$doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dard.js\"></script>\n";
-		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/dialog.js\"></script>\n";
-		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "share/js/main.live.js\"></script>\n";
+		$doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dard.js\"></script>\n";
+		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dialog.js\"></script>\n";
+		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/main.live.js\"></script>\n";
 		$doc .= "\t</body>\n";
 		$doc .= "</html>\n";
 		printf("%s", $doc);
