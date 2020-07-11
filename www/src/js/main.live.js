@@ -249,29 +249,48 @@ function searchPageId(val) {
 
 var toggleMenu = ( function() {
 		showHideMenu = function() {
-			var e = $("#menu")[0],
-			    c = $("#main")[0];
-			toggle(e);
-			if (e.style.display === 'none') {
-				c.style.marginLeft = 0;
-			} else {
-				if (e.style.display === 'block')
-					if (screen.width < 800) {
+			var e = $("#menu").me(),
+			    c = $("#main").me(),
+			    om = $("#menuicon").me(),
+			    mes = $("#menu-body").me();
+			if (e.style.width === 0 | e.clientWidth === 0) {
+				e.style.width = '260px';
+				c.style.marginLeft = '260px';
+				om.style.display = 'none';
+					if (screen.width <= 768) {
 						c.style.marginLeft = 0;
 					} else {
-						c.style.marginLeft = 240 + 'px';
+						c.style.marginLeft = '260px';
 					}
+				setTimeout(function(){mes.style.visibility = 'visible';}, 150);
+			} else {
+				e.style.width = 0;;
+				c.style.marginLeft = 0;
+				//om.style.display = 'block';
+				setTimeout(function(){om.style.display = 'block';}, 250);
+				setTimeout(function(){mes.style.visibility = 'hidden';}, 150);
 			}
 		};
 
-		var icon = $('#menuicon');
+		var icon = $('#menuicon'),
+			menu = $('.close-menu', 0);
+		menu.on('click', function(e) {
+			e.preventDefault();
+			showHideMenu();
+		});
 		icon.on('click', function(e) {
 			e.preventDefault();
-		}).on('click', showHideMenu);
+			showHideMenu();
+		});//.on('click', showHideMenu);
 		// mousedown one event what is detected on mobile devices
 		hideMenuList = function(el) {
 			var e = el.parentElement.childNodes;
-			toggle(e[3]);
+			if(e[3].style.maxHeight){
+				e[3].style.maxHeight = null;
+				//e[3].style.maxHeight = e[3].scrollHeight + "px";
+			}else{
+				e[3].style.maxHeight = e[3].scrollHeight + "px";
+			}
 		};
 	}());
 

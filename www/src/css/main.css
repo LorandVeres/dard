@@ -1,6 +1,6 @@
 #top-sticker {
     width: 100%;
-    height: 50px;
+    height: 60px;
     background: #cc5f00;   /*#01337c;*/
 }
 
@@ -21,13 +21,15 @@
 }
 
 #top-menu span, #top-menu a{
-    display: block;
+    display: none;
     cursor: pointer;
     font-size: 1.5rem;
-    padding: 4px 16px;
-    border: 1px solid #ffffff;
-    border-radius: 3px;
+    padding: 10px 14px;
+    border: 2px solid #ffffff;
+    border-radius: 24px;
     color: #FFFFFF;
+    height: 48px;
+	margin-top: -3px;
 }
 
 #top-menu span:hover{
@@ -55,12 +57,12 @@
 
 
 #menu {
-    display: none;
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
     height: 100%;
-    width: 240px;
+    width: 260px;
     -webkit-box-shadow: 3px 0px 10px 0px rgba(0,0,0,0.26);
     -moz-box-shadow: 3px 0px 10px 0px rgba(0,0,0,0.26);
     box-shadow: 3px 0px 10px 0px rgba(0,0,0,0.26);
@@ -103,6 +105,7 @@
     background-color: #dcdcdc;
     text-align: center;
     padding: 18px 12px 18px 28px;
+    height: 60px;
 }
 
 .menu-header-title {
@@ -139,11 +142,13 @@
 
 .menu-section-list {
     padding: 0;
-    margin: 10px 0;
+    margin: 0px 0;
     display: block;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
 }
 .menu-section-list:last-child{
-    margin-bottom: 10px;
 }
 
 .ham-button{
@@ -156,7 +161,7 @@
     height: 20px;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
     body{
         width: 100%;
     }
@@ -164,7 +169,7 @@
         width: 100%;
     }
     #menu{
-        z-index: 1000;
+        z-index: 10;
     }
 }
 
@@ -306,7 +311,7 @@
     .row_8 { width: 90%;}
     .row_9 { width: 95%;}
 }
-@media only screen and (max-width: 760px) {
+@media only screen and (max-width: 768px) {
     .row_6 
         .half {
             width: 80%;
@@ -364,6 +369,14 @@ body #content,
 }
 #main {
     display: block;
+    margin-left: 260px;
+	width: auto;
+}
+@media only screen and (max-width: 768px) {
+	#main{margin-left: 0;}
+}
+#main, #menu{
+	transition: all 0.3s linear;
 }
 #content p{
     margin: 10px 2%;
