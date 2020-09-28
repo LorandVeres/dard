@@ -15,6 +15,6 @@ class DardConfig {
 	public $user ="darduser";
 	public $password_cost = 12;
 	public $language = "en";
-	public $debugMYSQL = FALSE;
+	public $debugMYSQL = TRUE;
 }
 ?>
