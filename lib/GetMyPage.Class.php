@@ -14,8 +14,9 @@ class GetMyPage {
 	protected $isPage = 1;
 	protected $allPage;
 	protected $userPriv;
+	protected $current_module_id;
 	public $ajax = FALSE;
-	public $arg = NULL;
+	public $arg = array();
 	public $headers = array();
 	public $page_crumbs;
 
@@ -49,7 +50,7 @@ class GetMyPage {
 
 	private function generate_relative_path() {
 		$relative = '';
-		if(is_array($this ->URI)){
+		if (is_array($this -> URI)) {
 			for ($i = 0; $i < count($this -> URI); $i++) {
 				$relative .= '../';
 			}
@@ -58,7 +59,7 @@ class GetMyPage {
 	}
 
 	private function getTopPageName() {
-		if ($this -> URI !== NULL){
+		if ($this -> URI !== NULL) {
 			$pos = strpos($this -> URI[0], '?');
 			$pos ? $this -> top = substr($this -> URI[0], 0, $pos) : $this -> top = $this -> URI[0];
 		} else {
@@ -78,7 +79,7 @@ class GetMyPage {
 	private function sqlTopPage($config, $DBconect) {
 		$arg = $this -> top;
 		isset($_SESSION['user_priv']) ? $user = $_SESSION['user_priv'] : $user = FALSE;
-		$query = "SELECT `id`, `type`, `user_priv`, `parentpage` FROM `page` WHERE `pagename` = '$arg';";
+		$query = "SELECT `id`, `type`, `user_priv`, `parentpage`, `module_id` FROM `page` WHERE `pagename` = '$arg';";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
 		if (!$result) {
 			$this -> isPage = 1;
@@ -89,6 +90,7 @@ class GetMyPage {
 			} else {
 				$this -> isPage = $result['id'];
 				$this -> userPriv = $result['user_priv'];
+				$this -> current_module_id = $result['module_id'];
 			}
 		}
 	}
@@ -117,6 +119,7 @@ class GetMyPage {
                     S.`id`,
                     S.`pagename`,
                     S.`user_priv`,
+                    S.`module_id`,
                     P.`pagename` AS top_page
                 FROM
                     `page` AS S,
@@ -134,10 +137,11 @@ class GetMyPage {
 			} else {
 				$this -> subPage = $result['id'];
 				$this -> userPriv = $result['user_priv'];
+				$this -> current_module_id = $result['module_id'];
 			}
 		}
 	}
-	
+
 	//
 	//Need attention
 	//
@@ -152,7 +156,7 @@ class GetMyPage {
 			$this -> isPage = 1;
 		}
 	}
-	
+
 	//
 	//Need attention
 	//
@@ -255,7 +259,8 @@ class GetMyPage {
 	}
 
 	private function createHtmlMetaTags() {
-		$meta = "\t\t<title>" . $this -> allPage['title'] . "</title>\n";
+		$meta = "\t\t<meta charset=\"UTF-8\">\n";
+		$meta .= "\t\t<title>" . $this -> allPage['title'] . "</title>\n";
 		foreach ($this->Meta as $key => $value) {
 			$meta .= "\t\t<meta name=\"" . $this -> Meta[$key]['name'] . "\" content=\"" . $this -> Meta[$key]['content'] . "\">\n";
 		}
@@ -306,10 +311,25 @@ class GetMyPage {
 		}
 	}
 
-	private function printBottomDoc() {
+	private function get_js_files($DBconect, $config) {
+		$doc = '';
+		if ($this -> current_module_id !== null) {
+			$query = "SELECT `file` FROM `js_files` WHERE `module` = " . $this -> current_module_id . " AND `active` = 1;";
+			$result = $DBconect -> selectDB('', $config, $query, false, 'array');
+			if (!empty($result)) {
+				foreach ($result as $key => $value) {
+					$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . $value . "\"></script>\n";
+				}
+			}
+		}
+		return $doc;
+	}
+
+	private function printBottomDoc($DBconect, $config) {
 		$doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dard.js\"></script>\n";
 		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dialog.js\"></script>\n";
 		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/main.live.js\"></script>\n";
+		$doc .= $this -> get_js_files($DBconect, $config);
 		$doc .= "\t</body>\n";
 		$doc .= "</html>\n";
 		printf("%s", $doc);
@@ -321,7 +341,7 @@ class GetMyPage {
 			$this -> includeAjaxBody($config, $DBconect, $tag, $_DARDSESSI);
 		} else {
 			$this -> printTopDoc($config, $DBconect, $tag, $_DARDSESSI);
-			$this -> printBottomDoc();
+			$this -> printBottomDoc($DBconect, $config);
 		}
 	}
 
@@ -342,7 +362,7 @@ class GetMyPage {
 		}
 	}
 
-	public function ifNoAjaxTop() {
+	public function ifNoAjaxTop($tag) {
 		$crumbs = $this -> crumbs();
 		if (!$this -> ajax) {
 			include_once 'template/layout/main/menu.php';
