@@ -1,4 +1,4 @@
-<?php $myPage->ifNoAjaxTop();  ?>
+<?php $myPage->ifNoAjaxTop($tag);  ?>
 
             <div id="content">
                 <div class="section group">

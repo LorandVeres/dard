@@ -2,7 +2,7 @@
 include_once '../module/page/runtime-msg.Class.php';
 $runMsg = new runMessages($config, $DBconect, $myPage, $tag);
 
-$myPage->ifNoAjaxTop();
+$myPage->ifNoAjaxTop($tag);
 
 ?>
                 <div class="template">

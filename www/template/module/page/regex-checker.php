@@ -1,5 +1,5 @@
 <?php
-$myPage->ifNoAjaxTop();
+$myPage->ifNoAjaxTop($tag);
 
 
 

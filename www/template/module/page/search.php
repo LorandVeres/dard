@@ -1,7 +1,7 @@
 <?php
 include_once '../module/page/pages.Class.php';
 
-$myPage->ifNoAjaxTop();
+$myPage->ifNoAjaxTop($tag);
 
 $setPage = new pages($config, $DBconect, $myPage, $tag);
 $setPage->search($config, $DBconect, $myPage);

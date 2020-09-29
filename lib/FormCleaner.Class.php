@@ -113,7 +113,7 @@ class FormCleaner {
 			foreach ($this->error_msg as $value) {
 				$tag -> append_tag($wrap, $tag -> tag('p', 'class="error_msg_id"', $value));
 			}
-			$tag -> docOutput($wrap);
+			$tag -> print_doc($wrap);
 		}
 	}
 

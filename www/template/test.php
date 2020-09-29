@@ -1,5 +1,5 @@
 <?php
-$myPage->ifNoAjaxTop();
+$myPage->ifNoAjaxTop($tag);
 function params() {
     echo '<br><br>';
     foreach ($myPage->pageArguments as $key => $val) {
