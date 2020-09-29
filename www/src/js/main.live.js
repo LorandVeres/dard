@@ -272,8 +272,8 @@ var toggleMenu = ( function() {
 			}
 		};
 
-		var icon = $('#menuicon'),
-			menu = $('.close-menu', 0);
+		var icon = $("#menuicon"),
+			menu = $(".close-menu", 0);
 		menu.on('click', function(e) {
 			e.preventDefault();
 			showHideMenu();
@@ -294,3 +294,19 @@ var toggleMenu = ( function() {
 		};
 	}());
 
+//
+//
+function toggle_login_menu(){
+	var panel = $('.user-account-logins-panel', 0).me(),
+		logins = $('.user-account-logins', 0).me();
+	if(panel.style.display === 'none' | panel.style.display === ""){
+		logins.style.backgroundColor ='#b55400';
+		logins.style.borderBottom = '1px solid #914501';
+		panel.style.display = 'block';
+	}else{
+		logins.style.backgroundColor ='#bd5800';
+		logins.style.borderBottom = 'none';
+		panel.style.display = 'none';
+	}
+	return false;
+}
