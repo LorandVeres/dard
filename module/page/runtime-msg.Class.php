@@ -143,7 +143,7 @@ class runMessages extends FormCleaner {
 			if (!array_key_exists(0, $msg) && $msg !== null)
 				$msg = array($msg);
 		}
-		$j = count($msg);
+		is_array($msg) ? $j = count($msg) : $j = 0;
 		$table = "<table>\n";
 		$table .= $this -> tb_h_row(array('Id', 'Message', 'Msg no', 'Module id', 'Page id', 'Type', 'edit'));
 		for ($i = 0; $i < $j; $i++) {

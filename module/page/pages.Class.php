@@ -69,8 +69,10 @@ class pages extends FormCleaner {
 			$module_id = 1;
 		$query = "SELECT `id`, `pagename` FROM `page` WHERE `module_id` = $module_id AND `type` <> 'sub';";
 		$pages = $DBconect -> selectDB($module_id, $config, $query, TRUE, 'array');
-		if (array_key_exists('id', $pages))
+		if (is_array($pages)){
+			if ( array_key_exists('id', $pages))
 			$pages = array($pages);
+		}
 		$this -> mainPages = $pages;
 	}
 
@@ -254,24 +256,13 @@ class pages extends FormCleaner {
 		$print .= '</div>';
 
 		printf("%s", $print);
-		var_dump($result);
+		//var_dump($result);
 	}
 
 	public function slect_box($arg, $attr, $tag, $default, $param) {
-		$wrap = array();
-		$wrap = $tag -> tag('select', $attr, '');
-		if (is_array($default)) {
-			$tag -> append_tag($wrap, $tag -> tag('option', 'value="' . $default['id'] . '"', $default[$param]));
-		} else {
-			$tag -> append_tag($wrap, $tag -> tag('option', 'value=""', ''));
-		}
-		if (is_array($arg)) {
-			foreach ($arg as $value) {
-				$tag -> append_tag($wrap, $tag -> tag('option', 'value="' . $value['id'] . '"', $value[$param]));
-			}
-			$tag -> docOutput($wrap);
-		}
+		if(!is_array($arg))
+			$arg = array();
+		$tag -> print_select_option($attr, array_merge(array($default), $arg), 10);
 	}
-
 }
 ?>
