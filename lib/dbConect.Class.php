@@ -115,8 +115,12 @@ class dbConect {
 			elseif(is_array($arg)){
 				foreach ($arg as $key => $value) {
 				    //$escaped = addcslashes($arg, '%_');
-					$escaped = mysqli_real_escape_string($link, $arg[$key]);
-					$query = str_replace($arg[$key], $escaped, $query);
+				    if(is_string($value)){
+						$escaped = mysqli_real_escape_string($link, $arg[$key]);
+						$query = str_replace($arg[$key], $escaped, $query);
+					}elseif(is_array($value)){
+						$this -> prepareQuery($link, $query, $value);
+					}
 				}
 			}
 		}
