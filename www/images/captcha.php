@@ -26,8 +26,6 @@ function captcha($string){
     imagettftext ($img, 13, 0, 7, 30, $color, $fontfile, $string);
     imagejpeg($img);
     imagedestroy($img);
-    var_dump(session_id());
-
 }
 
 captcha(GenerateCaptcha());
