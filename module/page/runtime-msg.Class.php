@@ -16,7 +16,7 @@ class runMessages extends FormCleaner {
 	function __construct($config, $DBconect, $myPage, $tag) {
 		$config -> debugMYSQL = TRUE;
 		parent::__construct($config, $DBconect, $myPage, $tag);
-		$this -> params($config, $DBconect, $myPage);
+		$this -> params($config, $DBconect, $myPage);var_dump($this);
 	}
 
 	private function params($config, $DBconect, $myPage) {
@@ -128,13 +128,16 @@ class runMessages extends FormCleaner {
 		$page = $this -> param_pageid;
 		if (!empty($this -> param_id) || isset($_POST['id'])) {
 			!empty($this -> param_id) ? $id = $this -> param_id : $id = $_POST['id'];
-			$query = "SELECT * FROM `error_message` WHERE `id` = '$id'";
+			$where = "`id` = '$id'";
 		} else if (!empty($this -> param_moduleid) && !empty($this -> param_pageid)) {
-			$query = "SELECT * FROM `error_message` WHERE module = $mod AND page = $page ";
+			$where = "module = $mod AND page = $page ";
 		} else if (!empty($this -> param_moduleid) && $this -> param_a === 'view' && empty($this -> param_pageid)) {
-			$query = "SELECT * FROM `error_message` WHERE module = $mod";
+			$where = "module = $mod";
 		}
-		return $DBconect -> selectDB('', $config, $query, TRUE, 'array');
+		$query = "SELECT `id`, `message`, `number`, `module`, (SELECT `pagename` FROM `page` WHERE `id`= `page`) AS page, `type_hint` FROM `error_message` WHERE $where";
+		$a = $DBconect -> selectDB('', $config, $query, TRUE, 'array');
+		//var_dump($a);
+		return $a;
 	}
 
 	private function view($config, $DBconect) {
@@ -145,7 +148,7 @@ class runMessages extends FormCleaner {
 		}
 		is_array($msg) ? $j = count($msg) : $j = 0;
 		$table = "<table>\n";
-		$table .= $this -> tb_h_row(array('Id', 'Message', 'Msg no', 'Module id', 'Page id', 'Type', 'edit'));
+		$table .= $this -> tb_h_row(array('Id', 'Message', 'Msg no', 'Module id', 'Page name', 'Type', 'Edit'));
 		for ($i = 0; $i < $j; $i++) {
 			$table .= $this -> tablerow($msg[$i]);
 		}
