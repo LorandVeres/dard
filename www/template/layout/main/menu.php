@@ -18,7 +18,7 @@
                     	        <li><a href="<?php mylink('pages/user-privilege') ?>">user privilege</a></li>
                         	    <li><a href="<?php mylink('pages/error-messages') ?>">error messages</a></li>
                             	<li><a href="<?php mylink('pages/meta-tags') ?>">meta tags</a></li>
-                            	<li><a href="<?php mylink('pages/modules') ?>">modules</a></li>
+                            	<li><a href="<?php mylink('modules') ?>">modules</a></li>
                             	<li><a href="<?php mylink('pages/regex-checker') ?>">regex-checker</a></li>
                         	</ul>
                     	</section>

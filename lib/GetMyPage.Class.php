@@ -254,6 +254,7 @@ class GetMyPage {
 		$head = "\t<head>\n";
 		$head .= $this -> createHtmlMetaTags();
 		$head .= $this -> createHtmlLinkTags();
+		$head .= $this -> insertFavicon();
 		$head .= "\t</head>\n";
 		return $head;
 	}
@@ -276,6 +277,14 @@ class GetMyPage {
 			$link .= "\t\t<link rel=\"" . $rel . "\" type=\"" . $type . "\" href=\"" . $href . "\" />\n";
 		}
 		return $link;
+	}
+	
+	private function insertFavicon(){
+		$favicon = "\t\t".'<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">'."\n";
+		$favicon .= "\t\t".'<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">'."\n";
+		$favicon .= "\t\t".'<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">'."\n";
+		$favicon .= "\t\t".'<link rel="manifest" href="/site.webmanifest">'."\n";
+		return $favicon;
 	}
 
 	private function checkAjax() {
