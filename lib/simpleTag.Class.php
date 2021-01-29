@@ -54,8 +54,8 @@
 class simpleTag {
 
 	private $Doc = '';
-	private $inline_tag = array('a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br',  'button', 'i', 'cite', 'code', 'dfn', 'dd', 'dt', 'em', 'hr', 'img', 'input', 'kbd', 'label', 'li', 'link', 'map', 'meta', 'object', 'option', 'q', 'script', 'samp',  'small', 'span', 'strong', 'sub', 'sup', 'textarea', 'time', 'tt', 'var');
-	private $block_tag = array('address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'main', 'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'select', 'table', 'tfoot', 'ul', 'video');
+	private $inline_tag = array('a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br',  'button', 'i', 'cite', 'code', 'dfn', 'dd', 'dt', 'em', 'hr', 'img', 'input', 'kbd', 'label', 'li', 'link', 'map', 'meta', 'object', 'option', 'q', 'script', 'samp',  'small', 'span', 'strong', 'sub', 'sup', 'textarea', 'td', 'th', 'time', 'tt', 'var');
+	private $block_tag = array('address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'main', 'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'select', 'table', 'tr', 'tfoot', 'ul', 'video');
 	private $single_tag = array('!DOCTYPE html', 'meta', 'link', 'br', 'img', 'hr', 'input', 'embed', 'bgsound', 'base', 'col', 'source');
 	private $indentNum = 0;
 	private $set_count = TRUE;
@@ -322,11 +322,14 @@ class simpleTag {
 	 * @author  Lorand Veres
 	 */
 	private function table_attr($my_data) {
+		$in_attr =array();
 		if (isset($my_data['attr'])) {
 			$in_attr = $my_data['attr'];
 		} else {
-			for ($i = 0; $i < count($my_data['data'][0]); $i++) {
-				$in_attr[$i] = '';
+			if(!empty($my_data['data']) | $my_data['data'] !== NULL){
+				for ($i = 0; $i < count($my_data['data'][0]); $i++) {
+					$in_attr[$i] = '';
+				}
 			}
 		}
 		return $in_attr;
@@ -340,10 +343,11 @@ class simpleTag {
 	 * @author  Lorand Veres
 	 */
 	private function table_head($my_data, $in_attr, $table) {
-		if (isset($my_data['th'])) {
+		if (!empty($my_data['th']) | $my_data['th'] !==NULL) {
 			$tr = $this -> tag('tr', '', '');
 			for ($i = 0; $i < count($my_data['th']); $i++) {
-				$this -> append_tag($tr, $this -> tag('th', $in_attr[$i], $my_data['th'][$i]));
+				!empty($in_attr) ? $attr = $in_attr[$i] : $attr ='';
+				$this -> append_tag($tr, $this -> tag('th', $attr, $my_data['th'][$i]));
 			}
 			$this -> append_tag($table, $tr);
 		}
@@ -358,10 +362,10 @@ class simpleTag {
 	 */
 	private function cell_numeric_right($attr, $data){
 		if(is_numeric($data)){
-			if(strpos($attr, 'text-align:')){
-				str_replace('text-align:left', 'text-align: right', $attr) | str_replace('text-align: left', 'text-align: right', $$attr);
+			if(strpos($attr, 'text-align:left') | strpos($attr, 'text-align: left')){
+				str_replace('text-align:left', 'text-align: right', $attr) | str_replace('text-align: left', 'text-align: right', $attr);
 			}else{
-				$attr .= 'text-align: right';
+				$attr .= 'style="text-align: right"';
 			}
 		}
 		return $attr;
@@ -384,9 +388,6 @@ class simpleTag {
 				}
 				$this -> append_tag($table, $tr[$i]);
 			}
-		} else {
-			echo "simpleTag Fatal Error at line 360, no data suplied for simpleTag -> table";
-			die();
 		}
 		return $table;
 	}
