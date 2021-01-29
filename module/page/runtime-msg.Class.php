@@ -2,7 +2,10 @@
 include_once '../lib/FormCleaner.Class.php';
 
 /**
- *
+ * Atention! 
+ * Url parameters are unfiltered yet. Are used crude for aplication logic build
+ * 
+ * 
  */
 class runMessages extends FormCleaner {
 
@@ -16,7 +19,7 @@ class runMessages extends FormCleaner {
 	function __construct($config, $DBconect, $myPage, $tag) {
 		$config -> debugMYSQL = TRUE;
 		parent::__construct($config, $DBconect, $myPage, $tag);
-		$this -> params($config, $DBconect, $myPage);var_dump($this);
+		$this -> params($config, $DBconect, $myPage);
 	}
 
 	private function params($config, $DBconect, $myPage) {
@@ -122,8 +125,11 @@ class runMessages extends FormCleaner {
 			return $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
 		}
 	}
-
-	private function viewsql($config, $DBconect) {
+	/*
+	 * 
+	 *  
+	 */
+	private function view_Sql($config, $DBconect) {
 		$mod = $this -> param_moduleid;
 		$page = $this -> param_pageid;
 		if (!empty($this -> param_id) || isset($_POST['id'])) {
@@ -135,58 +141,38 @@ class runMessages extends FormCleaner {
 			$where = "module = $mod";
 		}
 		$query = "SELECT `id`, `message`, `number`, `module`, (SELECT `pagename` FROM `page` WHERE `id`= `page`) AS page, `type_hint` FROM `error_message` WHERE $where";
-		$a = $DBconect -> selectDB('', $config, $query, TRUE, 'array');
-		//var_dump($a);
-		return $a;
+		return $DBconect -> selectDB('', $config, $query, TRUE, 'array');
 	}
-
-	private function view($config, $DBconect) {
-		$msg = $this -> viewsql($config, $DBconect);
-		if (is_array($msg)) {
-			if (!array_key_exists(0, $msg) && $msg !== null)
-				$msg = array($msg);
-		}
-		is_array($msg) ? $j = count($msg) : $j = 0;
-		$table = "<table>\n";
-		$table .= $this -> tb_h_row(array('Id', 'Message', 'Msg no', 'Module id', 'Page name', 'Type', 'Edit'));
-		for ($i = 0; $i < $j; $i++) {
-			$table .= $this -> tablerow($msg[$i]);
-		}
-		$table .= "</table>\n";
-		printf("%s", $table);
-	}
-
-	private function tb_h_row($val) {
-		$tr = '<tr>';
-		foreach ($val as $key => $value) {
-			$tr .= '<th>' . $value . '</th>';
-		}
-		$tr .= '</tr>';
-		return $tr;
-	}
-
-	private function cell($val) {
-		is_numeric($val) ? $style = ' style="text-align: right"' : $style = '';
-		return '<td' . $style . '>' . $val . '</td>';
-	}
-
-	private function tablerow($val) {
-		$cells = '';
-		$id;
-		foreach ($val as $key => $value) {
-			$key === "type" ? $value == 1 ? $value = 'confirm' : $value = 'error' : '';
-			if ($key === 'id')
-				$id = $value;
-			$cells .= $this -> cell($value);
-		}
+	/*
+	 * 
+	 * 
+	 */
+	private function build_view_edit_link($id){
 		!empty($this -> param_pageid) ? $page = '&pageid=' . $this -> param_pageid : $page = '';
 		!empty($this -> param_moduleid) ? $mod = '&moduleid=' . $this -> param_moduleid : $mod = '';
 		$link = $page . $mod . '&id=' . $id;
-		$cells .= $this -> cell('<a href="error-messages?a=edit' . $link . '">edit</a>');
-		return '<tr>' . $cells . '</tr>' . "\n";
+		return '<a href="error-messages?a=edit' . $link . '">edit</a>';
+		
+	}
+	/*
+	 * 
+	 * 
+	 */
+	private function show_module_mesages($config, $DBconect, $tag){
+		$th = array('Id', 'Message', 'Msg no', 'Module id', 'Page name', 'Type', 'Edit');
+		$data = $this -> view_Sql($config, $DBconect);
+		if(is_array($data) && !empty($data)){
+			for($i = 0; $i < count($data); $i++) {
+				$link = $this -> build_view_edit_link($data[$i]['id']);
+				$new = array_values($data[$i]);
+				$data[$i] = $new;
+				array_push($data[$i], $link);
+			}
+		}
+		$tag -> print_table(array( 'th' => $th, 'data'=>$data));
 	}
 
-	public function doit($config, $DBconect, $myPage) {
+	public function job_control($config, $DBconect, $myPage, $tag) {
 		if ($myPage -> ajax) {
 			// do ajax stuff
 		} else {
@@ -214,7 +200,7 @@ class runMessages extends FormCleaner {
 						include_once '../www/template/module/page/forms/form-add-run-msg.php';
 						break;
 					case 'view' :
-						$this -> view($config, $DBconect);
+						$this ->show_module_mesages($config, $DBconect, $tag);
 						break;
 
 					case 'edit' :

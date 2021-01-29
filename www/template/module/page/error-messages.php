@@ -52,7 +52,7 @@ $myPage->ifNoAjaxTop($tag);
 								if(!empty($runMsg->param_pagename)) echo '<p>Page name: <span class="pagename">'.$runMsg->param_pagename . '</span></p>'."\n";
 								if(!empty($runMsg->param_modulename)) echo '<p>Module : <span class="modulename">'.$runMsg->param_modulename .'</span></p>'."\n";
 								$runMsg->html_wrap_errors($config, $DBconect, $tag); 
-								$runMsg->doit($config, $DBconect, $myPage);
+								$runMsg->job_control($config, $DBconect, $myPage, $tag);
 							?>
 						</div>
 						
