@@ -1,6 +1,6 @@
-        <?php include_once 'template/layout/main/menu.php';  ?>
+        <?php include_once 'template/module/live/layout/menu.php';  ?>
         <div id="main" class="section group">
-            <?php include_once 'template/layout/main/top-sticker.php';  ?>
+            <?php include_once 'template/module/live/layout/top-sticker.php';  ?>
             <div id="content">
                 <header>
                     <h1>Dard CMS project</h1>

@@ -1,10 +1,10 @@
 <?php
 include_once '../module/user/Register.Class.php';
 $new_user = new RegisterUser($config, $DBconect, $tag);
-include_once 'template/layout/main/menu.php';  
+include_once 'template/module/live/layout/menu.php';
 ?>
         <div id="main" class="section group">
-        <?php include_once 'template/layout/main/top-sticker.php';  ?>
+        <?php include_once 'template/module/live/layout/top-sticker.php';  ?>
 
 
 <div id="login">

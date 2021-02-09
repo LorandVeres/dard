@@ -1,10 +1,10 @@
 <?php
 include '../module/user/login.Class.php';
 $new_login = new login($config, $DBconect, $tag);
-include_once 'template/layout/main/menu.php';  
+include_once 'template/module/live/layout/menu.php';
 ?>
         <div id="main" class="section group">
-            <?php include_once 'template/layout/main/top-sticker.php';  ?>
+        <?php include_once 'template/module/live/layout/top-sticker.php';  ?>
 
 <div id="login">
     <div class="inner">

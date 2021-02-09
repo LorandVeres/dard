@@ -374,9 +374,9 @@ class GetMyPage {
 	public function ifNoAjaxTop($tag) {
 		$crumbs = $this -> crumbs();
 		if (!$this -> ajax) {
-			include_once 'template/layout/main/menu.php';
+			include_once 'template/module/main/layout/menu.php';
 			printf("\t\t<div id=\"main\" class=\"section group\">\n");
-			include_once 'template/layout/main/top-sticker.php';
+			include_once 'template/module/main/layout/top-sticker.php';
 		}
 	}
 
