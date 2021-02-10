@@ -78,6 +78,8 @@ function print_user_sign_in($tag) {
 		$tag -> append_tag($user_panel, $tag -> tag('a', 'href="/register"', 'Register'));
 	} else {
 		$tag -> append_tag($user_panel, $tag -> tag('a', 'href="/account"', 'Account'));
+		$tag -> append_tag($user_panel, $tag -> tag('a', 'href="/admin-dashboard"', 'Dashboard'));
+		$tag -> append_tag($user_panel, $tag -> tag('hr', 'class="user-account-logins-panel-hr"', ''));
 		$tag -> append_tag($user_panel, $tag -> tag('a', 'href="/logout"', 'Logout'));
 	}
 	//$tag -> append_tag($user_panel, $tag -> tag('a', 'href="recover-password"', 'Forgotten password'));

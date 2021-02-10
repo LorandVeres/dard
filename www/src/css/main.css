@@ -882,6 +882,12 @@ header .top{
 	display: block;
 	color: #FFE6D1;
 }
+.user-account-logins-panel-hr{
+	height: 0;
+	border-bottom: 2px solid #FFE6D1;
+	width: 100%;
+	margin: 10px auto;
+}
 .user-account-logins:hover{
 	border-bottom: 1px solid #914501;
 	background-color: #b55400;
