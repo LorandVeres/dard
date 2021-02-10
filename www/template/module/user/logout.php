@@ -12,15 +12,11 @@ class Logout extends User {
 
     private function logout($config, $DBconect, $_DARDSESSI, $myPage) {
         $_DARDSESSI -> logout($config, $DBconect);
-        if (isset($_SERVER['HTTP_REFERER'])) {
-            redirect($myPage->headers, $_SERVER['HTTP_REFERER'], 307);
-        } else {
-            $url = "http";
-            if ($_SERVER["HTTPS"] == "on")
-                $url .= "s";
-            $url .= "://" . $_SERVER["SERVER_NAME"] . "/";
-            redirect($url, 301);
-        }
+        $url = "http";
+        if ($_SERVER["HTTPS"] == "on")
+        	$url .= "s";
+        $url .= "://" . $_SERVER["SERVER_NAME"] . "/";
+        redirect($url);
     }
 
 }
