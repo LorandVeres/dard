@@ -212,7 +212,7 @@ class GetMyPage {
             FROM 
                 `pagemeta`
             WHERE 
-                `active` = 1 AND `general` = 1 OR `pageid` = '$this->isPage'
+                `active` = 1 AND (`general` = 1 OR `pageid` = '$this->isPage')
             ;";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'default');
 		$this -> allPage = $result[0];
