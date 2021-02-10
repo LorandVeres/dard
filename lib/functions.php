@@ -16,8 +16,16 @@ function check_and_do($to_be_checked, $do) {
 // $http_status_code 307 Temporary Redirect
 // $http_status_code 403 Forbiden
 
-function redirect($myPage, $where, $http_status_code) {
-	array_push($myPage, header("Location:" . $where, TRUE, $http_status_code));
+function redirect() {
+	$arg = func_get_args();
+	if(func_num_args() === 1){
+		header("Location:" . $arg[0]);
+	}else{
+		// $arg[1] = $myPage -> headers
+		// $arg[1] = location address
+		// $arg[2] = http status code
+		array_push($arg[0], header("Location:" . $arg[1], TRUE, $arg[2]));
+	}
 }
 
 function mylink($link) {

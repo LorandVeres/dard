@@ -64,6 +64,9 @@ class login extends User {
 					$this -> failed_login($config, $DBconect);
 				} else {
 					$this -> set_session($is_user);
+					$_SERVER["HTTPS"] == "on" ? $http = "https://" : $http = "http://";
+					empty($config -> login_redirect) ? $config -> login_redirect = $_SERVER["SERVER_NAME"] : '';
+					redirect($http . $config -> login_redirect);
 				}
 			}
 		}

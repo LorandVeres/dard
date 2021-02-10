@@ -16,5 +16,6 @@ class DardConfig {
 	public $password_cost = 12;
 	public $language = "en";
 	public $debugMYSQL = TRUE;
+	public $login_redirect;
 }
 ?>
