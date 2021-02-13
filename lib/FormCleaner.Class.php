@@ -86,15 +86,20 @@ class FormCleaner {
 		} else if (is_string($module)) {
 			$help_where = "`page` = (SELECT `id` FROM `page` WHERE `pagename` = '$module')";
 		}
-		$query = "SELECT `message` FROM `error_message` WHERE";
+		$query = "SELECT `message` FROM `error_message` WHERE ";
 		$where = '';
-		if (count($this -> errors) > 0) {
+		$error_num =count($this -> errors);
+		if ($error_num > 0) {
 			for ($i = 0; $i < count($this -> errors); $i++) {
 				$j = $this -> errors[$i];
 				if ($i == 0) {
-					$where = "`number` = '$j'";
+					$where = "(`number` = '$j'";
+					if($error_num === 1)
+						$where .= ")";
 				} else {
 					$where .= " OR `number` = '$j'";
+					if($i === $error_num - 1)
+						$where .= ")";
 				}
 			}
 		}
