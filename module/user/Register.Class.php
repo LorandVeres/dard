@@ -28,7 +28,7 @@ class RegisterUser extends User {
             foreach ($this->error_msg as $value) {
                 $tag -> append_tag($wrap, $tag -> tag('p', 'class="error_msg_id"', $value));
             }
-            $tag -> docOutput($wrap);
+            $tag -> print_doc($wrap);
         }
     }
 
@@ -50,7 +50,7 @@ class RegisterUser extends User {
         if ($this -> post) {
             $this -> check_inputs($_POST['email'], $_POST['password'],$_POST['password1'], $_POST['captcha']);
             if ($this -> check_error_msg()) {
-                $this -> retrive_error_msg($config, $DBconect, 'user');
+                $this -> retrive_error_msg($config, $DBconect, array('main', 'register'));
             } else {
                 $this -> insert_user($config, $DBconect);
             }

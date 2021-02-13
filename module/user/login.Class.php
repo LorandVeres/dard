@@ -57,7 +57,7 @@ class login extends User {
 			//here some more filtering functions would have to come
 
 			if ($this -> check_error_msg()) {
-				$this -> retrive_error_msg($config, $DBconect, array('main', 'user'));
+				$this -> retrive_error_msg($config, $DBconect, array('main', 'login'));
 			} else {
 				$is_user = $this -> check_user_login_credentials($config, $DBconect);
 				if (!$is_user) {
