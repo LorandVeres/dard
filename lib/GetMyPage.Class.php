@@ -11,9 +11,9 @@ class GetMyPage {
 	protected $meta_tags = array();
 	protected $link_tags = array();
 	protected $URI = array(); // $_SERVER["REQUEST_URI"] directories splitted in an array
-	protected $isPage = 1;
+	protected $current_page_id = 1;
 	protected $allPage;
-	protected $userPriv;
+	protected $current_page_groups_priv;
 	protected $current_module_id;
 	public $ajax = FALSE;
 	public $arg = array();
@@ -71,7 +71,7 @@ class GetMyPage {
 		if (preg_match("/^[\w-]*$/", $this -> top_page_name)) {
 			$this -> sqlTopPage($config, $DBconect);
 		} else {
-			$this -> isPage = 1;
+			$this -> current_page_id = 1;
 			$this -> top_page_name = 'error';
 		}
 	}
@@ -82,14 +82,14 @@ class GetMyPage {
 		$query = "SELECT `id`, `type`, `user_priv`, `parentpage`, `module_id` FROM `page` WHERE `pagename` = '$arg';";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
 		if (!$result) {
-			$this -> isPage = 1;
+			$this -> current_page_id = 1;
 			$this -> top_page_name = 'error';
 		} elseif ($result['id']) {
 			if ($result['parentpage'] && ($result['type'] !== 'top' || $result['type'] !== 'main')) {
-				$this -> isPage = 1;
+				$this -> current_page_id = 1;
 			} else {
-				$this -> isPage = $result['id'];
-				$this -> userPriv = $result['user_priv'];
+				$this -> current_page_id = $result['id'];
+				$this -> current_page_groups_priv = $result['user_priv'];
 				$this -> current_module_id = $result['module_id'];
 			}
 		}
@@ -136,7 +136,7 @@ class GetMyPage {
 				$this -> top_page_name = 'error';
 			} else {
 				$this -> sub_page_id = $result['id'];
-				$this -> userPriv = $result['user_priv'];
+				$this -> current_page_groups_priv = $result['user_priv'];
 				$this -> current_module_id = $result['module_id'];
 			}
 		}
@@ -153,7 +153,7 @@ class GetMyPage {
 		} elseif (is_array($this -> URI) ? count($this -> URI) == 2 : FALSE) {
 			$this -> setIfSubPage($config, $DBconect);
 		} else {
-			$this -> isPage = 1;
+			$this -> current_page_id = 1;
 		}
 	}
 
@@ -163,14 +163,14 @@ class GetMyPage {
 	private function prepAllPage($config, $DBconect) {
 		$this -> setIsPage($config, $DBconect);
 		if (is_array($this -> URI) ? count($this -> URI) > 1 && $this -> sub_page_id > 1 : FALSE) {
-			$this -> isPage = $this -> sub_page_id;
-		} elseif (is_array($this -> URI) ? count($this -> URI) <= 1 && $this -> isPage > 1 : FALSE) {
-			$this -> isPage;
+			$this -> current_page_id = $this -> sub_page_id;
+		} elseif (is_array($this -> URI) ? count($this -> URI) <= 1 && $this -> current_page_id > 1 : FALSE) {
+			$this -> current_page_id;
 		} else {
-			$this -> isPage = 1;
+			$this -> current_page_id = 1;
 			$this -> top_page_name = 'error';
 		}
-		if ($this -> isPage === 1)
+		if ($this -> current_page_id === 1)
 			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
 	}
 
@@ -178,7 +178,7 @@ class GetMyPage {
 		$this -> setLinkArguments();
 		$this -> prepAllPage($config, $DBconect);
 		$this -> checkUserPriv();
-		$arg = $this -> isPage;
+		$arg = $this -> current_page_id;
 		$query = " 
             SELECT
                 `pagename`,
@@ -212,7 +212,7 @@ class GetMyPage {
             FROM 
                 `pagemeta`
             WHERE 
-                `active` = 1 AND (`general` = 1 OR `pageid` = '$this->isPage')
+                `active` = 1 AND (`general` = 1 OR `pageid` = '$this -> current_page_id')
             ;";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'default');
 		$this -> allPage = $result[0];
@@ -361,11 +361,11 @@ class GetMyPage {
 	}
 
 	private function checkUserPriv() {
-		if ($this -> userPriv) {
-			$priv = gmp_and(gmp_import($_SESSION['user_priv']), gmp_import($this -> userPriv));
+		if ($this -> current_page_groups_priv) {
+			$priv = gmp_and(gmp_import($_SESSION['user_priv']), gmp_import($this -> current_page_groups_priv));
 			if (!gmp_strval($priv)) {
 				array_push($this -> headers, header('HTTP/1.0 403 Forbidden'));
-				$this -> isPage = 6;
+				$this -> current_page_id = 6;
 				$this -> top_page_name = 'forbidden';
 			}
 		}
