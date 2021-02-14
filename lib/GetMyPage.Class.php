@@ -6,7 +6,7 @@ class GetMyPage {
 	protected $top_page_name;
 	protected $page_file_path;
 	protected $relativePath;
-	protected $subPage;
+	protected $sub_page_id;
 	protected $class;
 	protected $Meta;
 	protected $linkTag;
@@ -99,9 +99,9 @@ class GetMyPage {
 		$pos = strpos($this -> URI[1], '?');
 		if ($pos !== false) {
 			$sub_page = substr($this -> URI[1], 0, $pos);
-			preg_match("/^[\w-]*$/", $sub_page) ? $this -> sqlSubPage($config, $DBconect, $sub_page) : $this -> subPage = 1;
+			preg_match("/^[\w-]*$/", $sub_page) ? $this -> sqlSubPage($config, $DBconect, $sub_page) : $this -> sub_page_id = 1;
 		} else {
-			preg_match("/^[\w-]*$/", $this -> URI[1]) ? $this -> sqlSubPage($config, $DBconect, $this -> URI[1]) : $this -> subPage = 1;
+			preg_match("/^[\w-]*$/", $this -> URI[1]) ? $this -> sqlSubPage($config, $DBconect, $this -> URI[1]) : $this -> sub_page_id = 1;
 		}
 	}
 
@@ -128,14 +128,14 @@ class GetMyPage {
                     P.`id` = ($parent_id) AND S.`pagename` = '$arg';";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
 		if (!$result || $result['top_page_name'] !== $this -> top_page_name) {
-			$this -> subPage = 1;
+			$this -> sub_page_id = 1;
 			$this -> top_page_name = 'error';
 		} elseif ($result) {
 			if ($result['top_page_name'] !== $this -> top_page_name) {
-				$this -> subPage = 1;
+				$this -> sub_page_id = 1;
 				$this -> top_page_name = 'error';
 			} else {
-				$this -> subPage = $result['id'];
+				$this -> sub_page_id = $result['id'];
 				$this -> userPriv = $result['user_priv'];
 				$this -> current_module_id = $result['module_id'];
 			}
@@ -162,8 +162,8 @@ class GetMyPage {
 	//
 	private function prepAllPage($config, $DBconect) {
 		$this -> setIsPage($config, $DBconect);
-		if (is_array($this -> URI) ? count($this -> URI) > 1 && $this -> subPage > 1 : FALSE) {
-			$this -> isPage = $this -> subPage;
+		if (is_array($this -> URI) ? count($this -> URI) > 1 && $this -> sub_page_id > 1 : FALSE) {
+			$this -> isPage = $this -> sub_page_id;
 		} elseif (is_array($this -> URI) ? count($this -> URI) <= 1 && $this -> isPage > 1 : FALSE) {
 			$this -> isPage;
 		} else {
