@@ -8,9 +8,9 @@ class GetMyPage {
 	protected $relativePath;
 	protected $sub_page_id;
 	protected $class;
-	protected $Meta;
-	protected $linkTag;
-	protected $URI;
+	protected $meta_tags = array();
+	protected $link_tags = array();
+	protected $URI = array(); // $_SERVER["REQUEST_URI"] directories splitted in an array
 	protected $isPage = 1;
 	protected $allPage;
 	protected $userPriv;
@@ -216,8 +216,8 @@ class GetMyPage {
             ;";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'default');
 		$this -> allPage = $result[0];
-		$this -> Meta = $result[2];
-		$this -> linkTag = $result[1];
+		$this -> meta_tags = $result[2];
+		$this -> link_tags = $result[1];
 		$this -> setPageUri();
 		$result = array();
 		unset($result);
@@ -252,28 +252,28 @@ class GetMyPage {
 
 	private function createHtmlHead() {
 		$head = "\t<head>\n";
-		$head .= $this -> createHtmlMetaTags();
-		$head .= $this -> createHtmlLinkTags();
+		$head .= $this -> create_html_meta_tags();
+		$head .= $this -> create_html_link_tags();
 		$head .= $this -> insertFavicon();
 		$head .= "\t</head>\n";
 		return $head;
 	}
 
-	private function createHtmlMetaTags() {
+	private function create_html_meta_tags() {
 		$meta = "\t\t<meta charset=\"UTF-8\">\n";
 		$meta .= "\t\t<title>" . $this -> allPage['title'] . "</title>\n";
-		foreach ($this->Meta as $key => $value) {
-			$meta .= "\t\t<meta name=\"" . $this -> Meta[$key]['name'] . "\" content=\"" . $this -> Meta[$key]['content'] . "\">\n";
+		foreach ($this -> meta_tags as $key => $value) {
+			$meta .= "\t\t<meta name=\"" . $this -> meta_tags[$key]['name'] . "\" content=\"" . $this -> meta_tags[$key]['content'] . "\">\n";
 		}
 		return $meta;
 	}
 
-	private function createHtmlLinkTags() {
+	private function create_html_link_tags() {
 		$link = "";
-		foreach ($this->linkTag as $key => $value) {
-			$rel = $this -> linkTag[$key]['rel'];
-			$type = $this -> linkTag[$key]['type'];
-			$href = $this -> relativePath . $this -> linkTag[$key]['href'];
+		foreach ($this -> link_tags as $key => $value) {
+			$rel = $this -> link_tags[$key]['rel'];
+			$type = $this -> link_tags[$key]['type'];
+			$href = $this -> relativePath . $this -> link_tags[$key]['href'];
 			$link .= "\t\t<link rel=\"" . $rel . "\" type=\"" . $type . "\" href=\"" . $href . "\" />\n";
 		}
 		return $link;
