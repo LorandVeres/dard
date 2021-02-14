@@ -4,7 +4,7 @@ class GetMyPage {
 
 	protected $links;
 	protected $top_page_name;
-	protected $pageUri;
+	protected $page_file_path;
 	protected $relativePath;
 	protected $subPage;
 	protected $class;
@@ -224,7 +224,7 @@ class GetMyPage {
 	}
 
 	private function setPageUri() {
-		$this -> pageUri = $this -> allPage['pageURI'];
+		$this -> page_file_path = $this -> allPage['pageURI'];
 	}
 
 	private function setLinkArguments() {
@@ -298,11 +298,11 @@ class GetMyPage {
 	}
 
 	private function includeAjaxBody($config, $DBconect, $tag, $_DARDSESSI) {
-		if (file_exists($this -> pageUri)) {
+		if (file_exists($this -> page_file_path)) {
 			$myPage = $this;
 
-			include_once $this -> pageUri;
-		} elseif (!file_exists($this -> pageUri)) {
+			include_once $this -> page_file_path;
+		} elseif (!file_exists($this -> page_file_path)) {
 			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
 		}
 
@@ -310,11 +310,11 @@ class GetMyPage {
 
 	private function printTopDoc($config, $DBconect, $tag, $_DARDSESSI) {
 		if (printf("%s", $this -> createDocTop($config))) {
-			if (file_exists($this -> pageUri)) {
+			if (file_exists($this -> page_file_path)) {
 				$myPage = $this;
 
-				include_once $this -> pageUri;
-			} elseif (!$this -> pageUri) {
+				include_once $this -> page_file_path;
+			} elseif (!$this -> page_file_path) {
 				array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
 			}
 		}
