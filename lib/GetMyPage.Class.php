@@ -3,7 +3,7 @@
 class GetMyPage {
 
 	protected $links;
-	protected $top;
+	protected $top_page_name;
 	protected $pageUri;
 	protected $relativePath;
 	protected $subPage;
@@ -61,29 +61,29 @@ class GetMyPage {
 	private function getTopPageName() {
 		if ($this -> URI !== NULL) {
 			$pos = strpos($this -> URI[0], '?');
-			$pos ? $this -> top = substr($this -> URI[0], 0, $pos) : $this -> top = $this -> URI[0];
+			$pos ? $this -> top_page_name = substr($this -> URI[0], 0, $pos) : $this -> top_page_name = $this -> URI[0];
 		} else {
-			$this -> top = 'home';
+			$this -> top_page_name = 'home';
 		}
 	}
 
 	private function setIfTopPage($config, $DBconect) {
-		if (preg_match("/^[\w-]*$/", $this -> top)) {
+		if (preg_match("/^[\w-]*$/", $this -> top_page_name)) {
 			$this -> sqlTopPage($config, $DBconect);
 		} else {
 			$this -> isPage = 1;
-			$this -> top = 'error';
+			$this -> top_page_name = 'error';
 		}
 	}
 
 	private function sqlTopPage($config, $DBconect) {
-		$arg = $this -> top;
+		$arg = $this -> top_page_name;
 		isset($_SESSION['user_priv']) ? $user = $_SESSION['user_priv'] : $user = FALSE;
 		$query = "SELECT `id`, `type`, `user_priv`, `parentpage`, `module_id` FROM `page` WHERE `pagename` = '$arg';";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
 		if (!$result) {
 			$this -> isPage = 1;
-			$this -> top = 'error';
+			$this -> top_page_name = 'error';
 		} elseif ($result['id']) {
 			if ($result['parentpage'] && ($result['type'] !== 'top' || $result['type'] !== 'main')) {
 				$this -> isPage = 1;
@@ -120,20 +120,20 @@ class GetMyPage {
                     S.`pagename`,
                     S.`user_priv`,
                     S.`module_id`,
-                    P.`pagename` AS top_page
+                    P.`pagename` AS top_page_name
                 FROM
                     `page` AS S,
                     `page` AS P
                 WHERE
                     P.`id` = ($parent_id) AND S.`pagename` = '$arg';";
 		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
-		if (!$result || $result['top_page'] !== $this -> top) {
+		if (!$result || $result['top_page_name'] !== $this -> top_page_name) {
 			$this -> subPage = 1;
-			$this -> top = 'error';
+			$this -> top_page_name = 'error';
 		} elseif ($result) {
-			if ($result['top_page'] !== $this -> top) {
+			if ($result['top_page_name'] !== $this -> top_page_name) {
 				$this -> subPage = 1;
-				$this -> top = 'error';
+				$this -> top_page_name = 'error';
 			} else {
 				$this -> subPage = $result['id'];
 				$this -> userPriv = $result['user_priv'];
@@ -168,7 +168,7 @@ class GetMyPage {
 			$this -> isPage;
 		} else {
 			$this -> isPage = 1;
-			$this -> top = 'error';
+			$this -> top_page_name = 'error';
 		}
 		if ($this -> isPage === 1)
 			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
@@ -366,7 +366,7 @@ class GetMyPage {
 			if (!gmp_strval($priv)) {
 				array_push($this -> headers, header('HTTP/1.0 403 Forbidden'));
 				$this -> isPage = 6;
-				$this -> top = 'forbidden';
+				$this -> top_page_name = 'forbidden';
 			}
 		}
 	}
