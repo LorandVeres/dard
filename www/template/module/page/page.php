@@ -1,4 +1,4 @@
-<?php $myPage->ifNoAjaxTop($tag);  ?>
+<?php $dard->ifNoAjaxTop($tag);  ?>
 
             <div id="content">
                 <div class="section group">
@@ -50,4 +50,4 @@
                 </section>
             </div>
         </div>
-<?php $myPage->ifNoAjaxBottom(); ?>
+<?php $dard->ifNoAjaxBottom(); ?>

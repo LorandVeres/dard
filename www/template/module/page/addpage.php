@@ -2,9 +2,9 @@
 include_once '../module/page/pages.Class.php';
 
 
-$setPage = new pages($myPage, $tag);
+$setPage = new pages($dard, $tag);
 
-$myPage->ifNoAjaxTop($tag);
+$dard->ifNoAjaxTop($tag);
 ?>
                 <div id="content">
                     <header>
@@ -19,4 +19,4 @@ $myPage->ifNoAjaxTop($tag);
                         ?>
                     </div>
                 </div>
-<?php $myPage->ifNoAjaxBottom(); ?>
+<?php $dard->ifNoAjaxBottom(); ?>

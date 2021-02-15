@@ -21,7 +21,7 @@ function redirect() {
 	if(func_num_args() === 1){
 		header("Location:" . $arg[0]);
 	}else{
-		// $arg[1] = $myPage -> headers
+		// $arg[1] = $dard -> headers
 		// $arg[1] = location address
 		// $arg[2] = http status code
 		array_push($arg[0], header("Location:" . $arg[1], TRUE, $arg[2]));

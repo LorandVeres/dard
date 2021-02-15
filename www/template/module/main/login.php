@@ -1,6 +1,6 @@
 <?php
 include '../module/user/login.Class.php';
-$new_login = new login($myPage, $tag);
+$new_login = new login($dard, $tag);
 include_once 'template/module/live/layout/menu.php';
 ?>
         <div id="main" class="section group">

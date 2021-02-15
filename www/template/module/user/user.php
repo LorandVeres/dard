@@ -1,7 +1,7 @@
 <?php
-$myPage->ifNoAjaxTop($tag);
+$dard->ifNoAjaxTop($tag);
 ?>
             <div id="content">
                 
             </div>
-<?php $myPage->ifNoAjaxBottom(); ?>
+<?php $dard->ifNoAjaxBottom(); ?>

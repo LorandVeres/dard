@@ -16,37 +16,37 @@ class runMessages extends FormCleaner {
 	public $param_id = '';
 	public $param_a = '';
 
-	function __construct($myPage, $tag) {
-		parent::__construct($myPage, $tag);
-		$this -> params($myPage);
+	function __construct($dard, $tag) {
+		parent::__construct($dard, $tag);
+		$this -> params($dard);
 	}
 
-	private function params($myPage) {
-		if ($myPage -> arg) {
-			isset($myPage -> arg['pageid']) ? $this -> param_pageid = $myPage -> arg['pageid'] : '';
+	private function params($dard) {
+		if ($dard -> arg) {
+			isset($dard -> arg['pageid']) ? $this -> param_pageid = $dard -> arg['pageid'] : '';
 			if (isset($_POST['page']) && empty($this -> param_pageid))
 				$this -> param_pageid = $_POST['page'];
-			isset($myPage -> arg['moduleid']) ? $this -> param_moduleid = $myPage -> arg['moduleid'] : '';
+			isset($dard -> arg['moduleid']) ? $this -> param_moduleid = $dard -> arg['moduleid'] : '';
 			if (isset($_POST['module']) && empty($this -> param_moduleid))
 				$this -> param_moduleid = $_POST['module'];
-			isset($myPage -> arg['id']) ? $this -> param_id = $myPage -> arg['id'] : '';
-			isset($myPage -> arg['a']) ? $this -> param_a = $myPage -> arg['a'] : '';
+			isset($dard -> arg['id']) ? $this -> param_id = $dard -> arg['id'] : '';
+			isset($dard -> arg['a']) ? $this -> param_a = $dard -> arg['a'] : '';
 			$query = "SELECT `pagename` FROM `page` WHERE id = '$this->param_pageid';";
 			if (!empty($this -> param_pageid)) {
 				$query = "SELECT `pagename` FROM `page` WHERE id = '$this->param_pageid';";
-				$page = $myPage -> selectDB($this -> param_pageid, $query, TRUE, 'string');
+				$page = $dard -> selectDB($this -> param_pageid, $query, TRUE, 'string');
 				$this -> param_pagename = $page;
 			}
 			if (!empty($this -> param_moduleid)) {
 				$query = "SELECT `name` FROM `module`  WHERE id = '$this->param_moduleid';";
-				$mod = $myPage -> selectDB($this -> param_moduleid, $query, TRUE, 'string');
+				$mod = $dard -> selectDB($this -> param_moduleid, $query, TRUE, 'string');
 				$this -> param_modulename = $mod;
 			}
 		}
 	}
 
-	private function getedit($myPage) {
-		$msg = $this -> geteditsql($myPage);
+	private function getedit($dard) {
+		$msg = $this -> geteditsql($dard);
 		$page = $this -> param_pageid;
 		$module = $this -> param_moduleid;
 		$id = $this -> param_id;
@@ -69,7 +69,7 @@ class runMessages extends FormCleaner {
 		}
 	}
 
-	private function edit($myPage) {
+	private function edit($dard) {
 		$this -> match("/^[\S\p{L}\p{M}*0-9\s]{1,255}$/u", $_POST['message'], 21) ? $message = $_POST['message'] : '';
 		$this -> match("/^[0-9]+$/", $_POST['number'], 22) ? $number = $_POST['number'] : '';
 		$this -> match("/^[0-9]+$/", $_POST['module'], 23) ? $module = $_POST['module'] : '';
@@ -87,13 +87,13 @@ class runMessages extends FormCleaner {
 						`page` = '$page',
 						`type` = '$type'
 					WHERE `error_message`.`id` = '$id';";
-			$result = $myPage -> insertDB($_POST, $query);
+			$result = $dard -> insertDB($_POST, $query);
 			echo '<p>' . $result['info'] . '</p>';
-			$this -> view($myPage);
+			$this -> view($dard);
 		}
 	}
 
-	private function add($myPage) {
+	private function add($dard) {
 		$this -> match("/^[\S\p{L}\p{M}*0-9\s]{1,255}$/u", $_POST['message'], 21) ? $message = $_POST['message'] : '';
 		$this -> match("/^[0-9]+$/", $_POST['module'], 23) ? $module = $_POST['module'] : '';
 		$this -> match("/^[0-9]+$/", $_POST['page'], 24) ? $page = $_POST['page'] : '';
@@ -105,28 +105,28 @@ class runMessages extends FormCleaner {
 					INSERT INTO `error_message` 
 					(`id`, `message`, `number`, `module`, `page`, `type`)
 					VALUES ( NULL, '$message', @a, '$module', '$page', '$type');";
-			$result = $myPage -> insertDB($_POST, $query);
+			$result = $dard -> insertDB($_POST, $query);
 			if (isset($result['id'])) {
 				$this -> param_id = $result['id'];
 				echo '<p>One row inserted with id: ' . $result['id'] . '</p>';
-				$this -> view($myPage);
+				$this -> view($dard);
 			}
 		}
 	}
 
-	private function geteditsql($myPage) {
+	private function geteditsql($dard) {
 		$arg = '';
-		if (isset($myPage -> arg['id']) && is_numeric($myPage -> arg['id'])) {
-			$arg = $myPage -> arg['id'];
+		if (isset($dard -> arg['id']) && is_numeric($dard -> arg['id'])) {
+			$arg = $dard -> arg['id'];
 			$query = "SELECT * FROM `error_message` WHERE `id` = '$arg';";
-			return $myPage -> selectDB($arg, $query, TRUE, 'array');
+			return $dard -> selectDB($arg, $query, TRUE, 'array');
 		}
 	}
 	/*
 	 * 
 	 *  
 	 */
-	private function view_Sql($myPage) {
+	private function view_Sql($dard) {
 		$mod = $this -> param_moduleid;
 		$page = $this -> param_pageid;
 		if (!empty($this -> param_id) || isset($_POST['id'])) {
@@ -138,7 +138,7 @@ class runMessages extends FormCleaner {
 			$where = "module = $mod";
 		}
 		$query = "SELECT `id`, `message`, `number`, `module`, (SELECT `pagename` FROM `page` WHERE `id`= `page`) AS page, `type_hint` FROM `error_message` WHERE $where";
-		return $myPage -> selectDB('', $query, TRUE, 'array');
+		return $dard -> selectDB('', $query, TRUE, 'array');
 	}
 	/*
 	 * 
@@ -155,9 +155,9 @@ class runMessages extends FormCleaner {
 	 * 
 	 * 
 	 */
-	private function show_module_mesages($myPage, $tag){
+	private function show_module_mesages($dard, $tag){
 		$th = array('Id', 'Message', 'Msg no', 'Module id', 'Page name', 'Type', 'Edit');
-		$data = $this -> view_Sql($myPage);
+		$data = $this -> view_Sql($dard);
 		if(is_array($data) && !empty($data)){
 			for($i = 0; $i < count($data); $i++) {
 				$link = $this -> build_view_edit_link($data[$i]['id']);
@@ -169,8 +169,8 @@ class runMessages extends FormCleaner {
 		$tag -> print_table(array( 'th' => $th, 'data'=>$data));
 	}
 
-	public function job_control($myPage, $tag) {
-		if ($myPage -> ajax) {
+	public function job_control($dard, $tag) {
+		if ($dard -> ajax) {
 			// do ajax stuff
 		} else {
 			if ($this -> post) {
@@ -178,13 +178,13 @@ class runMessages extends FormCleaner {
 					return;
 				switch ($this->param_a) {
 					case 'add' :
-						$this -> add($myPage);
+						$this -> add($dard);
 						break;
 					case 'delete' :
 						break;
 
 					case 'edit' :
-						$this -> edit($myPage);
+						$this -> edit($dard);
 						break;
 					default :
 						'' ;
@@ -197,11 +197,11 @@ class runMessages extends FormCleaner {
 						include_once '../www/template/module/page/forms/form-add-run-msg.php';
 						break;
 					case 'view' :
-						$this ->show_module_mesages($myPage, $tag);
+						$this ->show_module_mesages($dard, $tag);
 						break;
 
 					case 'edit' :
-						$this -> getedit($myPage);
+						$this -> getedit($dard);
 						break;
 
 					default :

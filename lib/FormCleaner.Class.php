@@ -15,13 +15,13 @@ class FormCleaner {
 	private $regex_email = "/^([\w\.\-\+]){1,70}@[a-zA-Z0-9\-\.]{3,}[\.]{1}[a-zA-Z]{2,}$/";
 	private $regex_name = "/^[\S\p{L}\p{M}*\s\-\.']{1,35}$/";
 
-	function __construct($myPage) {
+	function __construct($dard) {
 		$this -> BoleanPost();
-		$this -> utf8_matches($myPage);
+		$this -> utf8_matches($dard);
 	}
 
-	private function utf8_matches($myPage) {
-		if ($myPage -> cf_language !== "en") {
+	private function utf8_matches($dard) {
+		if ($dard -> cf_language !== "en") {
 			$this -> regex_paswd .= $this -> regex_paswd . "u";
 			$this -> regex_user .= $this -> regex_user . "u";
 		}
@@ -106,9 +106,9 @@ class FormCleaner {
 		return $query .= $where . " AND " . $help_where . ";";
 	}
 
-	protected function retrive_error_msg($myPage, $module) {
+	protected function retrive_error_msg($dard, $module) {
 		$query = $this -> generate_query($module);
-		$this -> error_msg = $myPage -> selectDB($this -> errors, $query, FALSE, 'array');
+		$this -> error_msg = $dard -> selectDB($this -> errors, $query, FALSE, 'array');
 	}
 
 	public function html_wrap_errors($tag) {

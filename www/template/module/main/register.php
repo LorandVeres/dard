@@ -1,6 +1,6 @@
 <?php
 include_once '../module/user/Register.Class.php';
-$new_user = new RegisterUser($myPage, $tag);
+$new_user = new RegisterUser($dard, $tag);
 include_once 'template/module/live/layout/menu.php';
 ?>
         <div id="main" class="section group">

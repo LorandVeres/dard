@@ -8,9 +8,9 @@ class login extends User {
 
 	private $mesage = array();
 
-	function __construct($myPage, $tag) {
-		parent::__construct($myPage);
-		$this -> login_user($myPage);
+	function __construct($dard, $tag) {
+		parent::__construct($dard);
+		$this -> login_user($dard);
 	}
 
 	private function check_error_msg() {
@@ -33,16 +33,16 @@ class login extends User {
 
 	}
 
-	private function failed_login($myPage) {
+	private function failed_login($dard) {
 		array_push($this -> errors, 4);
-		$this -> retrive_error_msg($myPage, array('main', 'login'));
+		$this -> retrive_error_msg($dard, array('main', 'login'));
 		$this -> is_error = TRUE;
 	}
 
-	private function check_user_login_credentials($myPage) {
+	private function check_user_login_credentials($dard) {
 		isset($_POST['email']) ? $email = $_POST['email'] : $email = '';
 		$query = "SELECT `id`, `email`, `password`, `u_group`, `firstname` FROM `user` WHERE `email` = '$email';";
-		$cred = $myPage -> selectDB($email, $query, TRUE, 'array');
+		$cred = $dard -> selectDB($email, $query, TRUE, 'array');
 		if ($cred === NULL || !password_verify($_POST['password'], $cred['password'])) {
 			return FALSE;
 		} else {
@@ -50,23 +50,23 @@ class login extends User {
 		}
 	}
 
-	private function login_user($myPage) {
+	private function login_user($dard) {
 		if ($this -> post) {
 			$this -> check_inputs($_POST['email'], $_POST['password'], $_POST['captcha']);
 
 			//here some more filtering functions would have to come
 
 			if ($this -> check_error_msg()) {
-				$this -> retrive_error_msg($myPage, array('main', 'login'));
+				$this -> retrive_error_msg($dard, array('main', 'login'));
 			} else {
-				$is_user = $this -> check_user_login_credentials($myPage);
+				$is_user = $this -> check_user_login_credentials($dard);
 				if (!$is_user) {
-					$this -> failed_login($myPage);
+					$this -> failed_login($dard);
 				} else {
 					$this -> set_session($is_user);
 					$_SERVER["HTTPS"] == "on" ? $http = "https://" : $http = "http://";
-					empty($myPage -> cf_login_redirect) ? $myPage -> cf_login_redirect = $_SERVER["SERVER_NAME"] : '';
-					redirect($http . $myPage -> cf_login_redirect);
+					empty($dard -> cf_login_redirect) ? $dard -> cf_login_redirect = $_SERVER["SERVER_NAME"] : '';
+					redirect($http . $dard -> cf_login_redirect);
 				}
 			}
 		}

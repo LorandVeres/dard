@@ -1,8 +1,8 @@
 <?php
 include_once '../module/page/runtime-msg.Class.php';
-$runMsg = new runMessages($myPage, $tag);
+$runMsg = new runMessages($dard, $tag);
 
-$myPage->ifNoAjaxTop($tag);
+$dard->ifNoAjaxTop($tag);
 
 ?>
                 <div class="template">
@@ -52,10 +52,10 @@ $myPage->ifNoAjaxTop($tag);
 								if(!empty($runMsg->param_pagename)) echo '<p>Page name: <span class="pagename">'.$runMsg->param_pagename . '</span></p>'."\n";
 								if(!empty($runMsg->param_modulename)) echo '<p>Module : <span class="modulename">'.$runMsg->param_modulename .'</span></p>'."\n";
 								$runMsg->html_wrap_errors($tag); 
-								$runMsg->job_control($myPage, $tag);
+								$runMsg->job_control($dard, $tag);
 							?>
 						</div>
 						
 					</div>
                 </div>
-<?php $myPage->ifNoAjaxBottom(); ?>
+<?php $dard->ifNoAjaxBottom(); ?>

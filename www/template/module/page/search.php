@@ -1,13 +1,13 @@
 <?php
 include_once '../module/page/pages.Class.php';
 
-$myPage->ifNoAjaxTop($tag);
+$dard->ifNoAjaxTop($tag);
 
-$setPage = new pages($myPage, $tag);
-$setPage->search($myPage);
-
-
+$setPage = new pages($dard, $tag);
+$setPage->search($dard);
 
 
-$myPage->ifNoAjaxBottom();
+
+
+$dard->ifNoAjaxBottom();
 ?>

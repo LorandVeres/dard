@@ -1,11 +1,11 @@
 <?php
-$myPage->ifNoAjaxTop($tag);
+$dard->ifNoAjaxTop($tag);
 
 
 
 function params() {
     echo '<br><br>';
-    foreach ($myPage->pageArguments as $key => $val) {
+    foreach ($dard->pageArguments as $key => $val) {
         if (is_array($val)) {
             foreach ($val as $k => $value) {
                 echo $k . ':' . $value . "\n";
@@ -78,4 +78,4 @@ function pregMatchChecker(){
 
 
 
-<?php $myPage->ifNoAjaxBottom(); ?>
+<?php $dard->ifNoAjaxBottom(); ?>

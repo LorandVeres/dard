@@ -1,4 +1,4 @@
-<?php $myPage->ifNoAjaxTop($tag); ?>
+<?php $dard->ifNoAjaxTop($tag); ?>
 
 			<div id="content">
 				<div class="template">
@@ -15,4 +15,4 @@
 				</header>
 
 			</div>
-<?php $myPage->ifNoAjaxBottom(); ?>
+<?php $dard->ifNoAjaxBottom(); ?>

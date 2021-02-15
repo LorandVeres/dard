@@ -1,7 +1,7 @@
 <?php
 include_once '../module/main/modules.Class.php';
-$dard_modules = new modules($myPage, $tag);
-$myPage->ifNoAjaxTop($tag);
+$dard_modules = new modules($dard, $tag);
+$dard->ifNoAjaxTop($tag);
 
 ?>
 
@@ -18,6 +18,6 @@ $myPage->ifNoAjaxTop($tag);
 						</div>
 					</div>
 				</header>
-<?php $dard_modules -> print_modules_combo_boxes($myPage, $tag); ?>
+<?php $dard_modules -> print_modules_combo_boxes($dard, $tag); ?>
 			</div>
-<?php $myPage -> ifNoAjaxBottom(); ?>
+<?php $dard -> ifNoAjaxBottom(); ?>

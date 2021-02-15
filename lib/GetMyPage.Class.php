@@ -299,7 +299,7 @@ class GetMyPage extends DardSession {
 
 	private function includeAjaxBody($tag) {
 		if (file_exists($this -> page_file_path)) {
-			$myPage = $this;
+			$dard = $this;
 
 			include_once $this -> page_file_path;
 		} elseif (!file_exists($this -> page_file_path)) {
@@ -311,7 +311,7 @@ class GetMyPage extends DardSession {
 	private function printTopDoc($tag) {
 		if (printf("%s", $this -> createDocTop())) {
 			if (file_exists($this -> page_file_path)) {
-				$myPage = $this;
+				$dard = $this;
 
 				include_once $this -> page_file_path;
 			} elseif (!$this -> page_file_path) {

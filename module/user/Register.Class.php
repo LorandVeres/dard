@@ -9,9 +9,9 @@ class RegisterUser extends User {
     private $mesage = array();
     protected $is_error = FALSE;
 
-    function __construct($myPage, $tag) {
-        parent::__construct($myPage);
-        $this->register_user($myPage);
+    function __construct($dard, $tag) {
+        parent::__construct($dard);
+        $this->register_user($dard);
     }
 
     private function check_error_msg() {
@@ -38,21 +38,21 @@ class RegisterUser extends User {
         $this -> clean_captcha($captcha);
     }
 
-    private function insert_user($myPage) {
+    private function insert_user($dard) {
         $email = $_POST['email'];
         $password = $this -> passw_hassh($_POST['password']);
         $arg = array($email, $password);
         $query = "INSERT INTO `user`(`email`, `password`) VALUES ('$email', '$password');";
-        $myPage -> insertDB($arg, $query);
+        $dard -> insertDB($arg, $query);
     }
 
-    private function register_user($myPage) {
+    private function register_user($dard) {
         if ($this -> post) {
             $this -> check_inputs($_POST['email'], $_POST['password'], $_POST['password1'], $_POST['captcha']);
             if ($this -> check_error_msg()) {
-                $this -> retrive_error_msg($myPage, array('main', 'register'));
+                $this -> retrive_error_msg($dard, array('main', 'register'));
             } else {
-                $this -> insert_user($myPage);
+                $this -> insert_user($dard);
             }
         }
     }

@@ -22,13 +22,13 @@ include_once '../lib/fileManager.Class.php';
 
 include_once '../lib/functions.php';
 
-$myPage = new GetMyPage($tag);
+$dard = new GetMyPage($tag);
 
 
 // Below this point all processing what is not
 // important for data output
 
-$myPage -> gc_session();
+$dard -> gc_session();
 
 $end = microtime(1);
 $load_time = $end - $start;

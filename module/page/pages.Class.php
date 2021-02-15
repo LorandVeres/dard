@@ -6,12 +6,12 @@
 
 include_once '../lib/FormCleaner.Class.php';
 class pages extends FormCleaner {
-	function __construct($myPage, $tag) {
-		parent::__construct($myPage);
-		$this -> modules = $this -> getModules($myPage);
+	function __construct($dard, $tag) {
+		parent::__construct($dard);
+		$this -> modules = $this -> getModules($dard);
 		$this -> setModuleIdName();
 		$this -> getMainPages($this -> module_id);
-		$this -> css = $this -> getCssId($myPage);
+		$this -> css = $this -> getCssId($dard);
 	}
 
 	public $modules;
@@ -31,19 +31,19 @@ class pages extends FormCleaner {
 		}
 	}
 
-	private function getAll($myPage, $query) {
-		return $myPage -> selectDB('', $query, TRUE, 'array');
+	private function getAll($dard, $query) {
+		return $dard -> selectDB('', $query, TRUE, 'array');
 	}
 
-	private function failedTransaction($myPage) {
+	private function failedTransaction($dard) {
 		$this -> is_error = TRUE;
 		$this -> generate_query('page');
 		$this -> retrive_error_msg('page');
 	}
 
-	private function getModules($myPage) {
+	private function getModules($dard) {
 		$query = "SELECT * FROM `module` ;";
-		$modules = $this -> getAll($myPage, $query);
+		$modules = $this -> getAll($dard, $query);
 		$this -> modules = $modules;
 		return $modules;
 	}
@@ -67,7 +67,7 @@ class pages extends FormCleaner {
 		if ($module_id === null)
 			$module_id = 1;
 		$query = "SELECT `id`, `pagename` FROM `page` WHERE `module_id` = $module_id AND `type` <> 'sub';";
-		$pages = $myPage -> selectDB($module_id, $query, TRUE, 'array');
+		$pages = $dard -> selectDB($module_id, $query, TRUE, 'array');
 		if (is_array($pages)){
 			if ( array_key_exists('id', $pages))
 			$pages = array($pages);
@@ -75,20 +75,20 @@ class pages extends FormCleaner {
 		$this -> mainPages = $pages;
 	}
 
-	private function getCssId($myPage) {
+	private function getCssId($dard) {
 		$query = "SELECT `id`, `href` FROM `css` WHERE `active` = 1 AND `general` = '0';";
-		$result = $myPage -> selectDB('', $query, TRUE, 'array');
+		$result = $dard -> selectDB('', $query, TRUE, 'array');
 		return $result;
 	}
 
 	private function addModule($module) {
 		$query = "INSERT INTO `module`(`id`, `name`) VALUES (null, $module);";
-		$myPage -> insertDB($module, $query);
+		$dard -> insertDB($module, $query);
 	}
 
 	private function getPage($page) {
 		$query = "SELECT * FROM `page` WHERE `pagename` = $page;";
-		$this -> page = $myPage -> selectDB($page, $query, TRUE, 'array');
+		$this -> page = $dard -> selectDB($page, $query, TRUE, 'array');
 	}
 
 	private function addPageValues() {
@@ -112,20 +112,20 @@ class pages extends FormCleaner {
 		return $values;
 	}
 
-	private function addPage($myPage) {
+	private function addPage($dard) {
 		$values = $this -> addPageValues();
 		$query = "
             INSERT INTO `page`
             (`pagename`, `type`, `parentpage`, `title`, `pageURI`, `module_id`, `arg`, `css`)
             VALUES 
             $values;";
-		return $myPage -> insertDB($_POST, $query);
+		return $dard -> insertDB($_POST, $query);
 	}
 
 	private function getConfirmMessage($page_id) {
 		$query = "SELECT `message` FROM  `error_message` WHERE `module` = 2 AND `type` = 1 ;";
 		$query .= " SELECT * FROM `page` WHERE `id` = $page_id;";
-		$result = $myPage -> selectDB($page_id, $query, FALSE, 'default');
+		$result = $dard -> selectDB($page_id, $query, FALSE, 'default');
 		$result[0] = $this -> defaultToLiniarArray($result[0]);
 		return $result;
 	}
@@ -190,10 +190,10 @@ class pages extends FormCleaner {
 				if ($_POST['module_id'] > 1)
 					$modid = $_POST['module_id'] - 1;
 				$this -> module_name = $this -> modules[$modid]['name'];
-				$page_id = $this -> addPage($myPage);
+				$page_id = $this -> addPage($dard);
 				$this -> page_id = $page_id;
 				if (!is_numeric($page_id)) {
-					$this -> failedTransaction($myPage);
+					$this -> failedTransaction($dard);
 					include_once 'template/module/page/forms/form-addpage.php';
 				} else {
 					if (is_numeric($page_id)) {
@@ -213,11 +213,11 @@ class pages extends FormCleaner {
 		}
 	}
 
-	public function search($myPage) {
-		if (isset($myPage -> arg['search'])) {
-			$param = $myPage -> arg['search'];
+	public function search($dard) {
+		if (isset($dard -> arg['search'])) {
+			$param = $dard -> arg['search'];
 			$this -> wrapSearchAddErrorMessage($param);
-			if (!$myPage -> ajax) {
+			if (!$dard -> ajax) {
 				return ;
 			}
 		}
@@ -225,7 +225,7 @@ class pages extends FormCleaner {
 
 	private function searchPageSql($param) {
 		$query = "SELECT P.`id`, P.`pagename`, P.`module_id`, M.`name` FROM `page` AS P , `module` AS M WHERE P.`pagename` LIKE '%" . $param . "%' AND P.`module_id` = M.`id` ;";
-		$result = $myPage -> selectDB($param, $query, TRUE, 'array');
+		$result = $dard -> selectDB($param, $query, TRUE, 'array');
 		return $result;
 	}
 
