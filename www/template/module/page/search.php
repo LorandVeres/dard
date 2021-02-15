@@ -3,8 +3,8 @@ include_once '../module/page/pages.Class.php';
 
 $myPage->ifNoAjaxTop($tag);
 
-$setPage = new pages($config, $DBconect, $myPage, $tag);
-$setPage->search($config, $DBconect, $myPage);
+$setPage = new pages($myPage, $tag);
+$setPage->search($myPage);
 
 
 

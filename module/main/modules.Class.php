@@ -6,8 +6,8 @@ include_once '../lib/FormCleaner.Class.php';
  */
 class modules extends FormCleaner {
 
-	function __construct($config, $DBconect, $myPage, $tag) {
-		//$this -> select_all_modules($config, $DBconect);
+	function __construct($myPage, $tag) {
+		//$this -> select_all_modules();
 	}
 
 	public $modules ;
@@ -17,9 +17,9 @@ class modules extends FormCleaner {
 	 * @return array
 	 * @author  Lorand Veres
 	 */
-	private function select_all_modules($config, $DBconect) {
+	private function select_all_modules($myPage) {
 		$query = "SELECT * FROM `module`;";
-		return $DBconect -> selectDB('', $config, $query, true, 'array');
+		return $myPage -> selectDB('',  $query, true, 'array');
 	}
 
 	/**
@@ -28,8 +28,8 @@ class modules extends FormCleaner {
 	 * @return void
 	 * @author  Lorand Veres
 	 */
-	public function print_modules_combo_boxes($config, $DBconect, $tag) {
-		$modules_all = $this -> select_all_modules($config, $DBconect);
+	public function print_modules_combo_boxes($myPage, $tag) {
+		$modules_all = $this -> select_all_modules($myPage);
 		$box = $tag -> tag('div', 'class="section group row_8 center_box"', '');
 		for ($i = 0; $i < count($modules_all); $i++) {
 			$module_id = $modules_all[$i]["id"];

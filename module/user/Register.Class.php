@@ -9,9 +9,9 @@ class RegisterUser extends User {
     private $mesage = array();
     protected $is_error = FALSE;
 
-    function __construct($config, $DBconect,$tag) {
-        parent::__construct($config, $DBconect);
-        $this->register_user($config, $DBconect);
+    function __construct($myPage, $tag) {
+        parent::__construct($myPage);
+        $this->register_user($myPage);
     }
 
     private function check_error_msg() {
@@ -21,7 +21,7 @@ class RegisterUser extends User {
         }
     }
 
-    public function html_wrap_errors($config, $DBconect,$tag) {
+    public function html_wrap_errors($tag) {
         $wrap = array();
         if ($this -> is_error) {
             $wrap = $tag -> tag('div', 'id="error_msg"', '');
@@ -38,21 +38,21 @@ class RegisterUser extends User {
         $this -> clean_captcha($captcha);
     }
 
-    private function insert_user($config, $DBconect) {
+    private function insert_user($myPage) {
         $email = $_POST['email'];
-        $password = $this -> passw_hassh($_POST['password'], $config);
+        $password = $this -> passw_hassh($_POST['password']);
         $arg = array($email, $password);
         $query = "INSERT INTO `user`(`email`, `password`) VALUES ('$email', '$password');";
-        $DBconect -> insertDB($arg, $config, $query);
+        $myPage -> insertDB($arg, $query);
     }
 
-    private function register_user($config, $DBconect) {
+    private function register_user($myPage) {
         if ($this -> post) {
-            $this -> check_inputs($_POST['email'], $_POST['password'],$_POST['password1'], $_POST['captcha']);
+            $this -> check_inputs($_POST['email'], $_POST['password'], $_POST['password1'], $_POST['captcha']);
             if ($this -> check_error_msg()) {
-                $this -> retrive_error_msg($config, $DBconect, array('main', 'register'));
+                $this -> retrive_error_msg($myPage, array('main', 'register'));
             } else {
-                $this -> insert_user($config, $DBconect);
+                $this -> insert_user($myPage);
             }
         }
     }

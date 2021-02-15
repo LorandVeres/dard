@@ -1,10 +1,11 @@
 <?php
 
-function startSession() {
-    if(session_status() === 1){
-        include '../../lib/DardSession.Class.php';
-        $_DARDSESSI = new DardSession();
-    }
+
+if(session_status() === 1){
+	include_once '../../config.php';
+	include_once '../../lib/dbConect.Class.php';
+	include '../../lib/DardSession.Class.php';
+	$_DARDSESSI = new DardSession();
 }
 
 function GenerateCaptcha(){
@@ -13,7 +14,6 @@ function GenerateCaptcha(){
             $captcha .= chr(rand(ord('0'), ord('9')));
             $i++;
         }
-        startSession();
         return $_SESSION['captcha'] = $captcha;
     }
 

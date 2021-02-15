@@ -8,9 +8,9 @@ class login extends User {
 
 	private $mesage = array();
 
-	function __construct($config, $DBconect, $tag) {
-		parent::__construct($config, $DBconect);
-		$this -> login_user($config, $DBconect);
+	function __construct($myPage, $tag) {
+		parent::__construct($myPage);
+		$this -> login_user($myPage);
 	}
 
 	private function check_error_msg() {
@@ -33,16 +33,16 @@ class login extends User {
 
 	}
 
-	private function failed_login($config, $DBconect) {
+	private function failed_login($myPage) {
 		array_push($this -> errors, 4);
-		$this -> retrive_error_msg($config, $DBconect, array('main', 'login'));
+		$this -> retrive_error_msg($myPage, array('main', 'login'));
 		$this -> is_error = TRUE;
 	}
 
-	private function check_user_login_credentials($config, $DBconect) {
+	private function check_user_login_credentials($myPage) {
 		isset($_POST['email']) ? $email = $_POST['email'] : $email = '';
 		$query = "SELECT `id`, `email`, `password`, `u_group`, `firstname` FROM `user` WHERE `email` = '$email';";
-		$cred = $DBconect -> selectDB($email, $config, $query, TRUE, 'array');
+		$cred = $myPage -> selectDB($email, $query, TRUE, 'array');
 		if ($cred === NULL || !password_verify($_POST['password'], $cred['password'])) {
 			return FALSE;
 		} else {
@@ -50,23 +50,23 @@ class login extends User {
 		}
 	}
 
-	private function login_user($config, $DBconect) {
+	private function login_user($myPage) {
 		if ($this -> post) {
 			$this -> check_inputs($_POST['email'], $_POST['password'], $_POST['captcha']);
 
 			//here some more filtering functions would have to come
 
 			if ($this -> check_error_msg()) {
-				$this -> retrive_error_msg($config, $DBconect, array('main', 'login'));
+				$this -> retrive_error_msg($myPage, array('main', 'login'));
 			} else {
-				$is_user = $this -> check_user_login_credentials($config, $DBconect);
+				$is_user = $this -> check_user_login_credentials($myPage);
 				if (!$is_user) {
-					$this -> failed_login($config, $DBconect);
+					$this -> failed_login($myPage);
 				} else {
 					$this -> set_session($is_user);
 					$_SERVER["HTTPS"] == "on" ? $http = "https://" : $http = "http://";
-					empty($config -> login_redirect) ? $config -> login_redirect = $_SERVER["SERVER_NAME"] : '';
-					redirect($http . $config -> login_redirect);
+					empty($myPage -> cf_login_redirect) ? $myPage -> cf_login_redirect = $_SERVER["SERVER_NAME"] : '';
+					redirect($http . $myPage -> cf_login_redirect);
 				}
 			}
 		}

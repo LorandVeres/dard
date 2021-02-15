@@ -4,8 +4,8 @@
                             </div>
                             <div class="row_6 center_box">
                                 <?php 
-                                    $this->html_wrap_errors($config, $DBconect, $tag); 
-                                    $this->wrapConfirm($config, $DBconect, $tag);
+                                    $this->html_wrap_errors($tag); 
+                                    $this->wrapConfirm($tag);
                                 ?>
                                 
                             </div>

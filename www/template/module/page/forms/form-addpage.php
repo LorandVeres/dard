@@ -8,8 +8,8 @@
                         </p>
                         <div>
                             <?php 
-                                $this->html_wrap_errors($config, $DBconect, $tag);
-                                $this->wrapConfirm($config, $DBconect, $tag, $page_id); 
+                                $this->html_wrap_errors($tag);
+                                $this->wrapConfirm($tag, $page_id); 
                             ?>
                         </div>
                             <form name="addpage" method="post" action="/pages/add-page">

@@ -1,9 +1,10 @@
 <?php
-
+//include_once '../config.php';
+//include_once 'dbConect.Class.php';
 /**
  *
  */
-class DardSession {
+class DardSession extends dbConect{
 
     // 24 minutes max session life time
     private $time = 1440;
@@ -69,7 +70,7 @@ class DardSession {
         }
     }
 
-    public function utd_str($la) {
+    private function utd_str($la) {
         $str = time();
         $str .= $_SERVER['HTTP_USER_AGENT'];
         $r = rand(5, 15);
@@ -80,20 +81,20 @@ class DardSession {
         return substr($name, 0, -16) . '|' . $la;
     }
 
-    public function logout($config, $DBconect) {
+    public function logout() {
         $this -> end_session();
         $this -> init_session();
-        $this -> init_user_session($config, $DBconect);
+        $this -> init_user_session();
     }
 
-    public function init_user_session($config, $DBconect) {
+    protected function init_user_session() {
         if (!isset($_SESSION['user_name']))
             $_SESSION['user_name'] = 'anonymous';
         if (!isset($_SESSION['user_loged']))
             $_SESSION['user_loged'] = FALSE;
         if (!isset($_SESSION['user_priv'])){
             $query = "SELECT `priv_flag` FROM `user_group` WHERE `id` = 2;";
-            $result = $DBconect -> selectDB(32, $config, $query, TRUE, 'string');
+            $result = $this -> selectDB(32, $query, TRUE, 'string');
             if($result) $_SESSION['user_priv'] = $result;
         }
     }

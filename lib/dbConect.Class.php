@@ -1,18 +1,19 @@
 <?php 
-if(!defined('DARDSTATUS') ) exit();
+//if(!defined('DARDSTATUS') ) exit();
+
 /**
  * 
  */
-class dbConect {
+class dbConect extends DardConfig{
 	
     const S = 'string';
     const A = 'array';
     const D = 'default';
         
 	
-	public function insertDB($arg, $config, $query)
+	public function insertDB($arg, $query)
 	{
-		$link = mysqli_connect($config->host, $config->user, $config->password, $config->db);
+		$link = mysqli_connect($this->cf_host, $this->cf_user, $this->cf_password, $this->cf_db);
 		
 		$query = $this->prepareQuery($link, $query, $arg);
 		
@@ -32,7 +33,7 @@ class dbConect {
 						$j = false;
 					}
 				} while($j && mysqli_next_result($link));
-			}if(mysqli_error($link) && $config->debugMYSQL === TRUE){
+			}if(mysqli_error($link) && $this->cf_debug_MYSQL === TRUE){
                 $num = mysqli_errno($link);
                 $error = mysqli_error($link);
                 $this->debug($num, $error, $query);
@@ -47,9 +48,9 @@ class dbConect {
 	}
 	
 	
-	public function selectDB($arg, $config, $query, $assoc, $return_format){
+	public function selectDB($arg, $query, $assoc, $return_format){
 			
-		$link = mysqli_connect($config->host, $config->user, $config->password, $config->db);
+		$link = mysqli_connect($this->cf_host, $this->cf_user, $this->cf_password, $this->cf_db);
 		
 		$query = $this->prepareQuery($link, $query, $arg);
             $i=0;
@@ -89,7 +90,7 @@ class dbConect {
 					
 					
 				} while($j && mysqli_next_result($link));
-			}elseif(mysqli_error($link) && $config->debugMYSQL === TRUE){
+			}elseif(mysqli_error($link) && $this->cf_debug_MYSQL === TRUE){
 			    $num = mysqli_errno($link);
                 $error = mysqli_error($link);
 			    $this->debug($num, $error, $query);

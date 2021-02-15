@@ -1,6 +1,6 @@
 <?php
 
-class GetMyPage {
+class GetMyPage extends DardSession {
 
 	protected $links;
 	protected $top_page_name;
@@ -20,11 +20,11 @@ class GetMyPage {
 	public $headers = array();
 	public $page_crumbs;
 
-	function __construct($config, $DBconect, $_DARDSESSI, $tag) {
-		$_DARDSESSI -> init_user_session($config, $DBconect);
-		$this -> getAllPage($config, $DBconect);
+	function __construct($tag) {
+		$this -> init_user_session();
+		$this -> getAllPage();
 		$this -> generate_relative_path();
-		$this -> sendDoc($config, $DBconect, $tag, $_DARDSESSI);
+		$this -> sendDoc($tag);
 	}
 
 	public function fullURL() {
@@ -67,20 +67,20 @@ class GetMyPage {
 		}
 	}
 
-	private function setIfTopPage($config, $DBconect) {
+	private function setIfTopPage() {
 		if (preg_match("/^[\w-]*$/", $this -> top_page_name)) {
-			$this -> sqlTopPage($config, $DBconect);
+			$this -> sqlTopPage();
 		} else {
 			$this -> current_page_id = 1;
 			$this -> top_page_name = 'error';
 		}
 	}
 
-	private function sqlTopPage($config, $DBconect) {
+	private function sqlTopPage() {
 		$arg = $this -> top_page_name;
 		isset($_SESSION['user_priv']) ? $user = $_SESSION['user_priv'] : $user = FALSE;
 		$query = "SELECT `id`, `type`, `user_priv`, `parentpage`, `module_id` FROM `page` WHERE `pagename` = '$arg';";
-		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
+		$result = $this -> selectDB($arg, $query, TRUE, 'array');
 		if (!$result) {
 			$this -> current_page_id = 1;
 			$this -> top_page_name = 'error';
@@ -95,17 +95,17 @@ class GetMyPage {
 		}
 	}
 
-	private function setIfSubPage($config, $DBconect) {
+	private function setIfSubPage() {
 		$pos = strpos($this -> URI[1], '?');
 		if ($pos !== false) {
 			$sub_page = substr($this -> URI[1], 0, $pos);
-			preg_match("/^[\w-]*$/", $sub_page) ? $this -> sqlSubPage($config, $DBconect, $sub_page) : $this -> sub_page_id = 1;
+			preg_match("/^[\w-]*$/", $sub_page) ? $this -> sqlSubPage($sub_page) : $this -> sub_page_id = 1;
 		} else {
-			preg_match("/^[\w-]*$/", $this -> URI[1]) ? $this -> sqlSubPage($config, $DBconect, $this -> URI[1]) : $this -> sub_page_id = 1;
+			preg_match("/^[\w-]*$/", $this -> URI[1]) ? $this -> sqlSubPage($this -> URI[1]) : $this -> sub_page_id = 1;
 		}
 	}
 
-	private function sqlSubPage($config, $DBconect, $sub_page) {
+	private function sqlSubPage($sub_page) {
 		$arg = $sub_page;
 		$parent_id = "
                     SELECT
@@ -126,7 +126,7 @@ class GetMyPage {
                     `page` AS P
                 WHERE
                     P.`id` = ($parent_id) AND S.`pagename` = '$arg';";
-		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'array');
+		$result = $this -> selectDB($arg, $query, TRUE, 'array');
 		if (!$result || $result['top_page_name'] !== $this -> top_page_name) {
 			$this -> sub_page_id = 1;
 			$this -> top_page_name = 'error';
@@ -145,13 +145,13 @@ class GetMyPage {
 	//
 	//Need attention
 	//
-	private function setIsPage($config, $DBconect) {
+	private function setIsPage() {
 		$this -> genURI();
 		$this -> getTopPageName();
 		if (is_array($this -> URI) ? count($this -> URI) <= 1 || $this -> URI === null : FALSE) {
-			$this -> setIfTopPage($config, $DBconect);
+			$this -> setIfTopPage();
 		} elseif (is_array($this -> URI) ? count($this -> URI) == 2 : FALSE) {
-			$this -> setIfSubPage($config, $DBconect);
+			$this -> setIfSubPage();
 		} else {
 			$this -> current_page_id = 1;
 		}
@@ -160,8 +160,8 @@ class GetMyPage {
 	//
 	//Need attention
 	//
-	private function prepAllPage($config, $DBconect) {
-		$this -> setIsPage($config, $DBconect);
+	private function prepAllPage() {
+		$this -> setIsPage();
 		if (is_array($this -> URI) ? count($this -> URI) > 1 && $this -> sub_page_id > 1 : FALSE) {
 			$this -> current_page_id = $this -> sub_page_id;
 		} elseif (is_array($this -> URI) ? count($this -> URI) <= 1 && $this -> current_page_id > 1 : FALSE) {
@@ -174,9 +174,9 @@ class GetMyPage {
 			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
 	}
 
-	private function getAllPage($config, $DBconect) {
+	private function getAllPage() {
 		$this -> setLinkArguments();
-		$this -> prepAllPage($config, $DBconect);
+		$this -> prepAllPage();
 		$this -> checkUserPriv();
 		$arg = $this -> current_page_id;
 		$query = " 
@@ -212,9 +212,9 @@ class GetMyPage {
             FROM 
                 `pagemeta`
             WHERE 
-                `active` = 1 AND (`general` = 1 OR `pageid` = '$this -> current_page_id')
+                `active` = 1 AND (`general` = 1 OR `pageid` = '$this->current_page_id')
             ;";
-		$result = $DBconect -> selectDB($arg, $config, $query, TRUE, 'default');
+		$result = $this -> selectDB($arg, $query, TRUE, 'default');
 		$this -> allPage = $result[0];
 		$this -> meta_tags = $result[2];
 		$this -> link_tags = $result[1];
@@ -242,9 +242,9 @@ class GetMyPage {
 		}
 	}
 
-	private function createDocTop($config) {
+	private function createDocTop() {
 		$doc = "<!DOCTYPE html>\n";
-		$doc .= "<html lang=" . $config -> language . ">\n";
+		$doc .= "<html lang=" . $this -> cf_language . ">\n";
 		$doc .= $this -> createHtmlHead();
 		$doc .= "\t<body>\n";
 		return $doc;
@@ -297,7 +297,7 @@ class GetMyPage {
 		return $ajax;
 	}
 
-	private function includeAjaxBody($config, $DBconect, $tag, $_DARDSESSI) {
+	private function includeAjaxBody($tag) {
 		if (file_exists($this -> page_file_path)) {
 			$myPage = $this;
 
@@ -308,8 +308,8 @@ class GetMyPage {
 
 	}
 
-	private function printTopDoc($config, $DBconect, $tag, $_DARDSESSI) {
-		if (printf("%s", $this -> createDocTop($config))) {
+	private function printTopDoc($tag) {
+		if (printf("%s", $this -> createDocTop())) {
 			if (file_exists($this -> page_file_path)) {
 				$myPage = $this;
 
@@ -320,11 +320,11 @@ class GetMyPage {
 		}
 	}
 
-	private function get_js_files($DBconect, $config) {
+	private function get_js_files() {
 		$doc = '';
 		if ($this -> current_module_id !== null) {
 			$query = "SELECT `file` FROM `js_files` WHERE `module` = " . $this -> current_module_id . " AND `active` = 1;";
-			$result = $DBconect -> selectDB('', $config, $query, false, 'array');
+			$result = $this -> selectDB('', $query, false, 'array');
 			if (!empty($result)) {
 				foreach ($result as $key => $value) {
 					$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . $value . "\"></script>\n";
@@ -334,23 +334,23 @@ class GetMyPage {
 		return $doc;
 	}
 
-	private function printBottomDoc($DBconect, $config) {
+	private function printBottomDoc() {
 		$doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dard.js\"></script>\n";
 		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dialog.js\"></script>\n";
 		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/main.live.js\"></script>\n";
-		$doc .= $this -> get_js_files($DBconect, $config);
+		$doc .= $this -> get_js_files();
 		$doc .= "\t</body>\n";
 		$doc .= "</html>\n";
 		printf("%s", $doc);
 	}
 
-	private function sendDoc($config, $DBconect, $tag, $_DARDSESSI) {
+	private function sendDoc($tag) {
 		$this -> sendHeaders();
 		if ($this -> checkAjax()) {
-			$this -> includeAjaxBody($config, $DBconect, $tag, $_DARDSESSI);
+			$this -> includeAjaxBody($tag);
 		} else {
-			$this -> printTopDoc($config, $DBconect, $tag, $_DARDSESSI);
-			$this -> printBottomDoc($DBconect, $config);
+			$this -> printTopDoc($tag);
+			$this -> printBottomDoc();
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php
 include_once '../module/user/Register.Class.php';
-$new_user = new RegisterUser($config, $DBconect, $tag);
+$new_user = new RegisterUser($myPage, $tag);
 include_once 'template/module/live/layout/menu.php';
 ?>
         <div id="main" class="section group">
@@ -9,7 +9,7 @@ include_once 'template/module/live/layout/menu.php';
 
 <div id="login">
     <div class="inner">
-        <?php $new_user->html_wrap_errors($config, $DBconect, $tag)?>
+        <?php $new_user->html_wrap_errors($tag)?>
         <h1> Register Account </h1>
         <form name='form-register' method="post" action="/register">
             <span class="user"></span>

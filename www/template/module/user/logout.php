@@ -6,12 +6,12 @@ include_once '../module/user/User.Class.php';
  */
 class Logout extends User {
 
-    function __construct($config, $DBconect, $_DARDSESSI, $myPage) {
-        $this->logout($config, $DBconect, $_DARDSESSI, $myPage);
+    function __construct($myPage) {
+        $this->logout($myPage);
     }
 
-    private function logout($config, $DBconect, $_DARDSESSI, $myPage) {
-        $_DARDSESSI -> logout($config, $DBconect);
+    private function logout($myPage) {
+        $myPage -> logout();
         $url = "http";
         if ($_SERVER["HTTPS"] == "on")
         	$url .= "s";
@@ -21,5 +21,5 @@ class Logout extends User {
 
 }
 
-$logout = new Logout($config, $DBconect, $_DARDSESSI, $myPage);
+$logout = new Logout($myPage);
 ?>

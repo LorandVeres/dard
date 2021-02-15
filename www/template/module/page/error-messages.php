@@ -1,6 +1,6 @@
 <?php
 include_once '../module/page/runtime-msg.Class.php';
-$runMsg = new runMessages($config, $DBconect, $myPage, $tag);
+$runMsg = new runMessages($myPage, $tag);
 
 $myPage->ifNoAjaxTop($tag);
 
@@ -51,8 +51,8 @@ $myPage->ifNoAjaxTop($tag);
 							<?php 
 								if(!empty($runMsg->param_pagename)) echo '<p>Page name: <span class="pagename">'.$runMsg->param_pagename . '</span></p>'."\n";
 								if(!empty($runMsg->param_modulename)) echo '<p>Module : <span class="modulename">'.$runMsg->param_modulename .'</span></p>'."\n";
-								$runMsg->html_wrap_errors($config, $DBconect, $tag); 
-								$runMsg->job_control($config, $DBconect, $myPage, $tag);
+								$runMsg->html_wrap_errors($tag); 
+								$runMsg->job_control($myPage, $tag);
 							?>
 						</div>
 						

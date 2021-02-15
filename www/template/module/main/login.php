@@ -1,6 +1,6 @@
 <?php
 include '../module/user/login.Class.php';
-$new_login = new login($config, $DBconect, $tag);
+$new_login = new login($myPage, $tag);
 include_once 'template/module/live/layout/menu.php';
 ?>
         <div id="main" class="section group">
@@ -9,7 +9,7 @@ include_once 'template/module/live/layout/menu.php';
 <div id="login">
     <div class="inner">
         <h1>Log in to Dard</h1>
-        <?php $new_login->html_wrap_errors($config, $DBconect, $tag);
+        <?php $new_login->html_wrap_errors($tag);
         ?>
         <form name='form-login' method="post" action="/login">
             <span class="user"></span>

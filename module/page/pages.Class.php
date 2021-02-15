@@ -6,13 +6,12 @@
 
 include_once '../lib/FormCleaner.Class.php';
 class pages extends FormCleaner {
-	function __construct($config, $DBconect, $myPage, $tag) {
-		$config -> debugMYSQL = TRUE;
-		parent::__construct($config);
-		$this -> modules = $this -> getModules($config, $DBconect);
+	function __construct($myPage, $tag) {
+		parent::__construct($myPage);
+		$this -> modules = $this -> getModules($myPage);
 		$this -> setModuleIdName();
-		$this -> getMainPages($config, $DBconect, $this -> module_id);
-		$this -> css = $this -> getCssId($config, $DBconect);
+		$this -> getMainPages($this -> module_id);
+		$this -> css = $this -> getCssId($myPage);
 	}
 
 	public $modules;
@@ -32,19 +31,19 @@ class pages extends FormCleaner {
 		}
 	}
 
-	private function getAll($query, $config, $DBconect) {
-		return $DBconect -> selectDB('', $config, $query, TRUE, 'array');
+	private function getAll($myPage, $query) {
+		return $myPage -> selectDB('', $query, TRUE, 'array');
 	}
 
-	private function failedTransaction($config, $DBconect) {
+	private function failedTransaction($myPage) {
 		$this -> is_error = TRUE;
 		$this -> generate_query('page');
-		$this -> retrive_error_msg($config, $DBconect, 'page');
+		$this -> retrive_error_msg('page');
 	}
 
-	private function getModules($config, $DBconect) {
+	private function getModules($myPage) {
 		$query = "SELECT * FROM `module` ;";
-		$modules = $this -> getAll($query, $config, $DBconect);
+		$modules = $this -> getAll($myPage, $query);
 		$this -> modules = $modules;
 		return $modules;
 	}
@@ -64,11 +63,11 @@ class pages extends FormCleaner {
 		}
 	}
 
-	private function getMainPages($config, $DBconect, $module_id) {
+	private function getMainPages($module_id) {
 		if ($module_id === null)
 			$module_id = 1;
 		$query = "SELECT `id`, `pagename` FROM `page` WHERE `module_id` = $module_id AND `type` <> 'sub';";
-		$pages = $DBconect -> selectDB($module_id, $config, $query, TRUE, 'array');
+		$pages = $myPage -> selectDB($module_id, $query, TRUE, 'array');
 		if (is_array($pages)){
 			if ( array_key_exists('id', $pages))
 			$pages = array($pages);
@@ -76,20 +75,20 @@ class pages extends FormCleaner {
 		$this -> mainPages = $pages;
 	}
 
-	private function getCssId($config, $DBconect) {
+	private function getCssId($myPage) {
 		$query = "SELECT `id`, `href` FROM `css` WHERE `active` = 1 AND `general` = '0';";
-		$result = $DBconect -> selectDB('', $config, $query, TRUE, 'array');
+		$result = $myPage -> selectDB('', $query, TRUE, 'array');
 		return $result;
 	}
 
-	private function addModule($config, $DBconect, $module) {
+	private function addModule($module) {
 		$query = "INSERT INTO `module`(`id`, `name`) VALUES (null, $module);";
-		$DBconect -> insertDB($module, $config, $query);
+		$myPage -> insertDB($module, $query);
 	}
 
-	private function getPage($config, $DBconect, $page) {
+	private function getPage($page) {
 		$query = "SELECT * FROM `page` WHERE `pagename` = $page;";
-		$this -> page = $DBconect -> selectDB($page, $config, $query, TRUE, 'array');
+		$this -> page = $myPage -> selectDB($page, $query, TRUE, 'array');
 	}
 
 	private function addPageValues() {
@@ -113,20 +112,20 @@ class pages extends FormCleaner {
 		return $values;
 	}
 
-	private function addPage($config, $DBconect) {
+	private function addPage($myPage) {
 		$values = $this -> addPageValues();
 		$query = "
             INSERT INTO `page`
             (`pagename`, `type`, `parentpage`, `title`, `pageURI`, `module_id`, `arg`, `css`)
             VALUES 
             $values;";
-		return $DBconect -> insertDB($_POST, $config, $query);
+		return $myPage -> insertDB($_POST, $query);
 	}
 
-	private function getConfirmMessage($config, $DBconect, $page_id) {
+	private function getConfirmMessage($page_id) {
 		$query = "SELECT `message` FROM  `error_message` WHERE `module` = 2 AND `type` = 1 ;";
 		$query .= " SELECT * FROM `page` WHERE `id` = $page_id;";
-		$result = $DBconect -> selectDB($page_id, $config, $query, FALSE, 'default');
+		$result = $myPage -> selectDB($page_id, $query, FALSE, 'default');
 		$result[0] = $this -> defaultToLiniarArray($result[0]);
 		return $result;
 	}
@@ -139,8 +138,8 @@ class pages extends FormCleaner {
 		return $a;
 	}
 
-	private function filterAddPageConfirm($config, $DBconect, $page_id) {
-		$result = $this -> getConfirmMessage($config, $DBconect, $page_id);
+	private function filterAddPageConfirm($page_id) {
+		$result = $this -> getConfirmMessage($page_id);
 		$new = array();
 		foreach ($result as $key => $value) {
 			if ($key === 1 && $value !== null) {
@@ -165,9 +164,9 @@ class pages extends FormCleaner {
 		return $result;
 	}
 
-	public function wrapConfirm($config, $DBconect, $tag) {
+	public function wrapConfirm($tag) {
 		if (is_numeric($this -> page_id)) {
-			//$result = $this -> filterAddPageConfirm($config, $DBconect, $page_id);
+			//$result = $this -> filterAddPageConfirm($page_id);
 			$result = $this -> confirm_message;
 			$wrap = array();
 			$row = array();
@@ -182,7 +181,7 @@ class pages extends FormCleaner {
 		}
 	}
 
-	public function includeAddForm($config, $DBconect, $tag) {
+	public function includeAddForm($tag) {
 		//the las inserted page id
 		$page_id = '';
 		$modid = 0;
@@ -191,14 +190,14 @@ class pages extends FormCleaner {
 				if ($_POST['module_id'] > 1)
 					$modid = $_POST['module_id'] - 1;
 				$this -> module_name = $this -> modules[$modid]['name'];
-				$page_id = $this -> addPage($config, $DBconect);
+				$page_id = $this -> addPage($myPage);
 				$this -> page_id = $page_id;
 				if (!is_numeric($page_id)) {
-					$this -> failedTransaction($config, $DBconect);
+					$this -> failedTransaction($myPage);
 					include_once 'template/module/page/forms/form-addpage.php';
 				} else {
 					if (is_numeric($page_id)) {
-						$this -> confirm_message = $this -> filterAddPageConfirm($config, $DBconect, $page_id);
+						$this -> confirm_message = $this -> filterAddPageConfirm($page_id);
 						include_once 'template/module/page/confirm-message.php';
 					}
 				}
@@ -214,24 +213,24 @@ class pages extends FormCleaner {
 		}
 	}
 
-	public function search($config, $DBconect, $myPage) {
+	public function search($myPage) {
 		if (isset($myPage -> arg['search'])) {
 			$param = $myPage -> arg['search'];
-			$this -> wrapSearchAddErrorMessage($config, $DBconect, $param);
+			$this -> wrapSearchAddErrorMessage($param);
 			if (!$myPage -> ajax) {
 				return ;
 			}
 		}
 	}
 
-	private function searchPageSql($config, $DBconect, $param) {
+	private function searchPageSql($param) {
 		$query = "SELECT P.`id`, P.`pagename`, P.`module_id`, M.`name` FROM `page` AS P , `module` AS M WHERE P.`pagename` LIKE '%" . $param . "%' AND P.`module_id` = M.`id` ;";
-		$result = $DBconect -> selectDB($param, $config, $query, TRUE, 'array');
+		$result = $myPage -> selectDB($param, $query, TRUE, 'array');
 		return $result;
 	}
 
-	private function wrapSearchAddErrorMessage($config, $DBconect, $param) {
-		$result = $this -> searchPageSql($config, $DBconect, $param);
+	private function wrapSearchAddErrorMessage($param) {
+		$result = $this -> searchPageSql($param);
 		$link = 'error-messages?a=add&pageid=';
 		$print = '<div>';
 		if (isset($result[0])) {
@@ -256,7 +255,6 @@ class pages extends FormCleaner {
 		$print .= '</div>';
 
 		printf("%s", $print);
-		//var_dump($result);
 	}
 
 	public function slect_box($arg, $attr, $tag, $default, $param) {

@@ -15,13 +15,13 @@ class FormCleaner {
 	private $regex_email = "/^([\w\.\-\+]){1,70}@[a-zA-Z0-9\-\.]{3,}[\.]{1}[a-zA-Z]{2,}$/";
 	private $regex_name = "/^[\S\p{L}\p{M}*\s\-\.']{1,35}$/";
 
-	function __construct($config) {
+	function __construct($myPage) {
 		$this -> BoleanPost();
-		$this -> utf8_matches($config);
+		$this -> utf8_matches($myPage);
 	}
 
-	private function utf8_matches($config) {
-		if ($config -> language !== "en") {
+	private function utf8_matches($myPage) {
+		if ($myPage -> cf_language !== "en") {
 			$this -> regex_paswd .= $this -> regex_paswd . "u";
 			$this -> regex_user .= $this -> regex_user . "u";
 		}
@@ -106,12 +106,12 @@ class FormCleaner {
 		return $query .= $where . " AND " . $help_where . ";";
 	}
 
-	protected function retrive_error_msg($config, $DBconect, $module) {
+	protected function retrive_error_msg($myPage, $module) {
 		$query = $this -> generate_query($module);
-		$this -> error_msg = $DBconect -> selectDB($this -> errors, $config, $query, FALSE, 'array');
+		$this -> error_msg = $myPage -> selectDB($this -> errors, $query, FALSE, 'array');
 	}
 
-	public function html_wrap_errors($config, $DBconect, $tag) {
+	public function html_wrap_errors($tag) {
 		$wrap = array();
 		if ($this -> is_error) {
 			$wrap = $tag -> tag('div', 'id="error_msg"', '');

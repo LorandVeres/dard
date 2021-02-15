@@ -2,7 +2,7 @@
 include_once '../module/page/pages.Class.php';
 
 
-$setPage = new pages($config, $DBconect, $myPage, $tag);
+$setPage = new pages($myPage, $tag);
 
 $myPage->ifNoAjaxTop($tag);
 ?>
@@ -14,8 +14,8 @@ $myPage->ifNoAjaxTop($tag);
                     </header>
                     <div>
                         <?php 
-                            $setPage->html_wrap_errors($config, $DBconect, $tag);
-                            $setPage->includeAddForm($config, $DBconect, $tag);
+                            $setPage->html_wrap_errors($tag);
+                            $setPage->includeAddForm($tag);
                         ?>
                     </div>
                 </div>
