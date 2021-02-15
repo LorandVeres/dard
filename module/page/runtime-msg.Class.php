@@ -22,15 +22,15 @@ class runMessages extends FormCleaner {
 	}
 
 	private function params($dard) {
-		if ($dard -> arg) {
-			isset($dard -> arg['pageid']) ? $this -> param_pageid = $dard -> arg['pageid'] : '';
+		if ($dard -> url_arguments) {
+			isset($dard -> url_arguments['pageid']) ? $this -> param_pageid = $dard -> url_arguments['pageid'] : '';
 			if (isset($_POST['page']) && empty($this -> param_pageid))
 				$this -> param_pageid = $_POST['page'];
-			isset($dard -> arg['moduleid']) ? $this -> param_moduleid = $dard -> arg['moduleid'] : '';
+			isset($dard -> url_arguments['moduleid']) ? $this -> param_moduleid = $dard -> url_arguments['moduleid'] : '';
 			if (isset($_POST['module']) && empty($this -> param_moduleid))
 				$this -> param_moduleid = $_POST['module'];
-			isset($dard -> arg['id']) ? $this -> param_id = $dard -> arg['id'] : '';
-			isset($dard -> arg['a']) ? $this -> param_a = $dard -> arg['a'] : '';
+			isset($dard -> url_arguments['id']) ? $this -> param_id = $dard -> url_arguments['id'] : '';
+			isset($dard -> url_arguments['a']) ? $this -> param_a = $dard -> url_arguments['a'] : '';
 			$query = "SELECT `pagename` FROM `page` WHERE id = '$this->param_pageid';";
 			if (!empty($this -> param_pageid)) {
 				$query = "SELECT `pagename` FROM `page` WHERE id = '$this->param_pageid';";
@@ -116,8 +116,8 @@ class runMessages extends FormCleaner {
 
 	private function geteditsql($dard) {
 		$arg = '';
-		if (isset($dard -> arg['id']) && is_numeric($dard -> arg['id'])) {
-			$arg = $dard -> arg['id'];
+		if (isset($dard -> url_arguments['id']) && is_numeric($dard -> url_arguments['id'])) {
+			$arg = $dard -> url_arguments['id'];
 			$query = "SELECT * FROM `error_message` WHERE `id` = '$arg';";
 			return $dard -> selectDB($arg, $query, TRUE, 'array');
 		}

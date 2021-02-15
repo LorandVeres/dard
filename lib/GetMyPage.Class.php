@@ -16,7 +16,7 @@ class GetMyPage extends DardSession {
 	protected $current_page_groups_priv;
 	protected $current_module_id;
 	public $ajax = FALSE;
-	public $arg = array();
+	public $url_arguments = array();
 	public $headers = array();
 	public $page_crumbs;
 
@@ -175,7 +175,7 @@ class GetMyPage extends DardSession {
 	}
 
 	private function getAllPage() {
-		$this -> setLinkArguments();
+		$this -> set_url_arguments();
 		$this -> prepAllPage();
 		$this -> checkUserPriv();
 		$arg = $this -> current_page_id;
@@ -207,7 +207,7 @@ class GetMyPage extends DardSession {
                 ) OR `general` = 1;";
 		$query .= "
             SELECT
-                `name`, 
+                `name`,
                 `content`
             FROM 
                 `pagemeta`
@@ -227,7 +227,7 @@ class GetMyPage extends DardSession {
 		$this -> page_file_path = $this -> allPage['pageURI'];
 	}
 
-	private function setLinkArguments() {
+	private function set_url_arguments() {
 		$pos = strpos($_SERVER["REQUEST_URI"], "?");
 		$pos ? $argstr = substr($_SERVER["REQUEST_URI"], $pos + 1) : $argstr = '';
 		$arg = array();
@@ -238,7 +238,7 @@ class GetMyPage extends DardSession {
 				$val = substr($value, strpos($value, '=') + 1);
 				$arg[$param] = $val;
 			}
-			$this -> arg = $arg;
+			$this -> url_arguments = $arg;
 		}
 	}
 

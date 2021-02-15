@@ -214,8 +214,8 @@ class pages extends FormCleaner {
 	}
 
 	public function search($dard) {
-		if (isset($dard -> arg['search'])) {
-			$param = $dard -> arg['search'];
+		if (isset($dard -> url_arguments['search'])) {
+			$param = $dard -> url_arguments['search'];
 			$this -> wrapSearchAddErrorMessage($param);
 			if (!$dard -> ajax) {
 				return ;
