@@ -78,7 +78,6 @@ class GetMyPage extends DardSession {
 
 	private function sqlTopPage() {
 		$arg = $this -> top_page_name;
-		isset($_SESSION['user_priv']) ? $user = $_SESSION['user_priv'] : $user = FALSE;
 		$query = "SELECT `id`, `type`, `user_priv`, `parentpage`, `module_id` FROM `page` WHERE `pagename` = '$arg';";
 		$result = $this -> selectDB($arg, $query, TRUE, 'array');
 		if (!$result) {
@@ -361,13 +360,20 @@ class GetMyPage extends DardSession {
 	}
 
 	private function checkUserPriv() {
-		if ($this -> current_page_groups_priv) {
-			$priv = gmp_and(gmp_import($_SESSION['user_priv']), gmp_import($this -> current_page_groups_priv));
-			if (!gmp_strval($priv)) {
+		$query = "SET @nobody = (SELECT HEX ( `priv_flag` ) FROM `user_group` WHERE `id`=1);";
+		if(!$_SESSION['user_loged']){
+			$query .= "SET @comp = (SELECT HEX ( `priv_flag` ) FROM `user_group` WHERE `id` = 2);";
+			$user_id = '';
+		}else{
+			isset($_SESSION['user_id']) ? $user_id = $_SESSION['user_id'] : '';
+			$query .= "SET @comp = (SELECT HEX ( P.`user_priv` & U.`u_group` ) FROM `page` AS P, `user` AS U WHERE P.`id` = $this->current_page_id AND U.`id` = $user_id );";
+		}
+		$query .= "SELECT @nobody <> @comp AS access;";
+		$result = $this -> selectDB($user_id, $query, TRUE, 'array');
+		if ($result['access'] !== '1') {
 				array_push($this -> headers, header('HTTP/1.0 403 Forbidden'));
 				$this -> current_page_id = 6;
 				$this -> top_page_name = 'forbidden';
-			}
 		}
 	}
 

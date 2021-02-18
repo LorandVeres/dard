@@ -92,12 +92,7 @@ class DardSession extends dbConect{
             $_SESSION['user_name'] = 'anonymous';
         if (!isset($_SESSION['user_loged']))
             $_SESSION['user_loged'] = FALSE;
-        if (!isset($_SESSION['user_priv'])){
-            $query = "SELECT `priv_flag` FROM `user_group` WHERE `id` = 2;";
-            $result = $this -> selectDB(32, $query, TRUE, 'string');
-            if($result) $_SESSION['user_priv'] = $result;
-        }
-    }
+	}
     
     public function ela (){
         echo "helooooo";

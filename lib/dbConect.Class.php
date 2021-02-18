@@ -80,7 +80,7 @@ class dbConect extends DardConfig{
                             if(count($inner) === 1 )$response[$i] = $inner[0];
                         }
 					}
-                    mysqli_free_result($result);
+                    $result ? mysqli_free_result($result) : '';
 				    if ( mysqli_more_results($link)) {
 						$i++;
 						$j =true;
@@ -149,7 +149,8 @@ class dbConect extends DardConfig{
 	
 	private function selectOneRowExpected($response){
 		if(count($response) == 1){
-			$row = $response[0];
+			$key = array_keys($response);
+			$row = $response[$key[0]];
 			return $row;
 		}
 	}
