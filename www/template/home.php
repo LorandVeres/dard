@@ -14,6 +14,6 @@
         
         <footer>
             <p>
-                &copy; Copyright  by Lorand
+                &copy; 2021 Copyright  by dard.ovh
             </p>
         </footer>
