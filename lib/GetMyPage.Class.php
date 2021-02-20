@@ -19,6 +19,7 @@ class GetMyPage extends DardSession {
 	public $url_arguments = array();
 	public $headers = array();
 	public $page_crumbs;
+	public $dard_stats = array(); // statistics properties
 
 	function __construct($tag) {
 		$this -> init_user_session();
@@ -174,6 +175,7 @@ class GetMyPage extends DardSession {
 	}
 
 	private function getAllPage() {
+		$start = microtime(1);
 		$this -> set_url_arguments();
 		$this -> prepAllPage();
 		$this -> checkUserPriv();
@@ -194,7 +196,7 @@ class GetMyPage extends DardSession {
                 `type`,
                 `href`
             FROM
-                `css`
+                `link_tag`
             WHERE
                 `id` =(
                 SELECT
@@ -209,10 +211,34 @@ class GetMyPage extends DardSession {
                 `name`,
                 `content`
             FROM 
-                `pagemeta`
+                `meta_tag`
             WHERE 
                 `active` = 1 AND (`general` = 1 OR `pageid` = '$this->current_page_id')
             ;";
+		// Query for meta tags
+		$query .= "SELECT `name`, `http-equiv`, `property`, `itemprop`, `content`, `charset`
+					FROM `meta_tag`
+					WHERE (`general` = 1 OR `per_module` = 1 OR `all_public` = 'Y') AND `active` = 1
+					UNION
+					SELECT M.`name`, M.`http-equiv`, M.`property`, M.`itemprop`, M.`content`, M.`charset`
+					FROM `meta_tag` AS M, `page_resources` AS R
+					WHERE R.`type`='meta' AND R.`page_id` = 2 AND M.`id` = R.`res_id`;";
+		// Query for link tags
+		$query .= "SELECT `rel`, `type`, `sizes`, `title`, `href`, `media`
+					FROM `link_tag`
+					WHERE (`general` = 1 OR `per_module` = 1 OR `all_public` = 'Y') AND `active` = 1
+					UNION
+					SELECT L.`rel`, L.`type`, L.`sizes`, L.`title`, L.`href`, L.`media`
+					FROM `link_tag` AS L, `page_resources` AS R
+					WHERE R.`type`='link' AND R.`page_id` = 3 AND L.`id` = R.`res_id`;";
+		// Query for js scripts and files
+		$query .= "SELECT `file`, `script`, `type`, `placement`
+					FROM `js_files_script`
+					WHERE (`general` = 1 OR `per_module` = 4 OR `all_public` = 'Y') AND `active` = 1
+					UNION
+					SELECT J.`file`, J.`script`, J.`type`, J.`placement`
+					FROM `js_files_script` AS J, `page_resources` AS R
+					WHERE R.`type`='JS' AND R.`page_id` = 17 AND J.`id` = R.`res_id`";
 		$result = $this -> selectDB($arg, $query, TRUE, 'default');
 		$this -> allPage = $result[0];
 		$this -> meta_tags = $result[2];
@@ -220,6 +246,8 @@ class GetMyPage extends DardSession {
 		$this -> setPageUri();
 		$result = array();
 		unset($result);
+		$end = microtime(1);
+		$this -> dard_stats['get_from_db_all_page']= $end - $start;
 	}
 
 	private function setPageUri() {
@@ -322,7 +350,7 @@ class GetMyPage extends DardSession {
 	private function get_js_files() {
 		$doc = '';
 		if ($this -> current_module_id !== null) {
-			$query = "SELECT `file` FROM `js_files` WHERE `module` = " . $this -> current_module_id . " AND `active` = 1;";
+			$query = "SELECT `file` FROM `js_files_script` WHERE `per_module` = " . $this -> current_module_id . " AND `active` = 1;";
 			$result = $this -> selectDB('', $query, false, 'array');
 			if (!empty($result)) {
 				foreach ($result as $key => $value) {
@@ -333,11 +361,24 @@ class GetMyPage extends DardSession {
 		return $doc;
 	}
 
+	private function wrap_dard_Statistics(){
+		$doc = '';
+		if($this -> cf_dard_statisctics){
+			$doc = "\t\t<div>\n";
+			foreach ($this -> dard_stats as $key => $value) {
+				$doc.= "\t\t\t<p>". $key ." = ". $value ."</p>\n";
+			}
+			$doc .= "\t\t</div>\n";
+		}
+		return $doc;
+	}
+
 	private function printBottomDoc() {
 		$doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dard.js\"></script>\n";
 		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dialog.js\"></script>\n";
 		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/main.live.js\"></script>\n";
 		$doc .= $this -> get_js_files();
+		$doc .= $this -> wrap_dard_Statistics();
 		$doc .= "\t</body>\n";
 		$doc .= "</html>\n";
 		printf("%s", $doc);

@@ -17,5 +17,6 @@ class DardConfig {
 	public $cf_language = "en";
 	protected $cf_debug_MYSQL = TRUE;
 	public $cf_login_redirect;
+	protected $cf_dard_statisctics = TRUE;
 }
 ?>
