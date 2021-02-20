@@ -12,7 +12,7 @@ class GetMyPage extends DardSession {
 	protected $link_tags = array();
 	protected $URI = array(); // $_SERVER["REQUEST_URI"] directories splitted in an array
 	protected $current_page_id = 1;
-	protected $allPage;
+	protected $all_page_properties;
 	protected $current_page_groups_priv;
 	protected $current_module_id;
 	public $ajax = FALSE;
@@ -184,7 +184,7 @@ class GetMyPage extends DardSession {
             SELECT
                 `pagename`,
                 `title`,
-                `pageURI`
+                `file_path` AS page_file_path
             FROM
                 `page`
             WHERE
@@ -240,18 +240,18 @@ class GetMyPage extends DardSession {
 					FROM `js_files_script` AS J, `page_resources` AS R
 					WHERE R.`type`='JS' AND R.`page_id` = 17 AND J.`id` = R.`res_id`";
 		$result = $this -> selectDB($arg, $query, TRUE, 'default');
-		$this -> allPage = $result[0];
-		$this -> meta_tags = $result[2];
-		$this -> link_tags = $result[1];
-		$this -> setPageUri();
+		$this -> set_all_page_properties($result);
 		$result = array();
 		unset($result);
 		$end = microtime(1);
 		$this -> dard_stats['get_from_db_all_page']= $end - $start;
 	}
 
-	private function setPageUri() {
-		$this -> page_file_path = $this -> allPage['pageURI'];
+	private function set_all_page_properties($result) {
+		$this -> allPage = $result[0];
+		$this -> meta_tags = $result[2];
+		$this -> link_tags = $result[1];
+		$this -> page_file_path = $this -> all_page_properties['page_file_path'];
 	}
 
 	private function set_url_arguments() {
