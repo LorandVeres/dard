@@ -10,6 +10,8 @@ class GetMyPage extends DardSession {
 	protected $class;
 	protected $meta_tags = array();
 	protected $link_tags = array();
+	protected $all_js_scripts = array();
+	protected $body_js_scripts = array();
 	protected $URI = array(); // $_SERVER["REQUEST_URI"] directories splitted in an array
 	protected $current_page_id = 1;
 	protected $all_page_properties;
@@ -190,55 +192,30 @@ class GetMyPage extends DardSession {
             WHERE
                 `id` = '$arg'
             ;";
-		$query .= "
-            SELECT
-                `rel`,
-                `type`,
-                `href`
-            FROM
-                `link_tag`
-            WHERE
-                `id` =(
-                SELECT
-                    `css`
-                FROM
-                    `page`
-                WHERE
-                    `id` = '$arg'
-                ) OR `general` = 1;";
-		$query .= "
-            SELECT
-                `name`,
-                `content`
-            FROM 
-                `meta_tag`
-            WHERE 
-                `active` = 1 AND (`general` = 1 OR `pageid` = '$this->current_page_id')
-            ;";
 		// Query for meta tags
 		$query .= "SELECT `name`, `http-equiv`, `property`, `itemprop`, `content`, `charset`
 					FROM `meta_tag`
-					WHERE (`general` = 1 OR `per_module` = 1 OR `all_public` = 'Y') AND `active` = 1
+					WHERE (`general` = 1 OR `per_module` = $this->current_module_id OR `all_public` = 'Y') AND `active` = 1
 					UNION
 					SELECT M.`name`, M.`http-equiv`, M.`property`, M.`itemprop`, M.`content`, M.`charset`
 					FROM `meta_tag` AS M, `page_resources` AS R
-					WHERE R.`type`='meta' AND R.`page_id` = 2 AND M.`id` = R.`res_id`;";
+					WHERE R.`type`='meta' AND R.`page_id` = $this->current_page_id AND M.`id` = R.`res_id`;";
 		// Query for link tags
 		$query .= "SELECT `rel`, `type`, `sizes`, `title`, `href`, `media`
 					FROM `link_tag`
-					WHERE (`general` = 1 OR `per_module` = 1 OR `all_public` = 'Y') AND `active` = 1
+					WHERE (`general` = 1 OR `per_module` = $this->current_module_id OR `all_public` = 'Y') AND `active` = 1
 					UNION
 					SELECT L.`rel`, L.`type`, L.`sizes`, L.`title`, L.`href`, L.`media`
 					FROM `link_tag` AS L, `page_resources` AS R
-					WHERE R.`type`='link' AND R.`page_id` = 3 AND L.`id` = R.`res_id`;";
+					WHERE R.`type`='link' AND R.`page_id` = $this->current_page_id AND L.`id` = R.`res_id`;";
 		// Query for js scripts and files
 		$query .= "SELECT `file`, `script`, `type`, `placement`
 					FROM `js_files_script`
-					WHERE (`general` = 1 OR `per_module` = 4 OR `all_public` = 'Y') AND `active` = 1
+					WHERE (`general` = 1 OR `per_module` = $this->current_module_id OR `all_public` = 'Y') AND `active` = 1
 					UNION
 					SELECT J.`file`, J.`script`, J.`type`, J.`placement`
 					FROM `js_files_script` AS J, `page_resources` AS R
-					WHERE R.`type`='JS' AND R.`page_id` = 17 AND J.`id` = R.`res_id`";
+					WHERE R.`type`='JS' AND R.`page_id` = $this->current_page_id AND J.`id` = R.`res_id`";
 		$result = $this -> selectDB($arg, $query, TRUE, 'default');
 		$this -> set_all_page_properties($result);
 		$result = array();
@@ -248,9 +225,10 @@ class GetMyPage extends DardSession {
 	}
 
 	private function set_all_page_properties($result) {
-		$this -> allPage = $result[0];
-		$this -> meta_tags = $result[2];
-		$this -> link_tags = $result[1];
+		$this -> all_page_properties = $result[0];
+		$this -> meta_tags = $result[1];
+		$this -> link_tags = $result[2];
+		$this -> js_scripts = $result[3];
 		$this -> page_file_path = $this -> all_page_properties['page_file_path'];
 	}
 
@@ -269,51 +247,37 @@ class GetMyPage extends DardSession {
 		}
 	}
 
-	private function createDocTop() {
+	private function create_doc_top($tag){
+		
+		$head = $tag -> tag('head', '', '');
+		$prepare_attributes = function($value, $key){
+			if($value !== null || !empty($value))
+				return $key.'="'.$value.'" ';
+		};
+		
+		$elements = function($tag, $varr, $el, $prepare, &$head){
+			for ($i = 0 ; $i < count($varr); $i++) {
+				$attr = '';
+				foreach ($varr[$i] as $k => $val) {
+					$attr .= $prepare ($val, $k);
+				}
+				$attr = substr_replace($attr, '', -1, strlen($attr));
+				$tag -> append_tag($head, $tag -> tag($el, $attr, ''));
+			}
+		};
+		
+		$tag -> append_tag($head, $tag -> tag('title', '', $this -> all_page_properties['title']));
+		$elements($tag, $this -> meta_tags, 'meta', $prepare_attributes, $head);
+		$elements($tag, $this -> link_tags, 'link', $prepare_attributes, $head);
+		
 		$doc = "<!DOCTYPE html>\n";
 		$doc .= "<html lang=" . $this -> cf_language . ">\n";
-		$doc .= $this -> createHtmlHead();
-		$doc .= "\t<body>\n";
-		return $doc;
-	}
-
-	private function createHtmlHead() {
-		$head = "\t<head>\n";
-		$head .= $this -> create_html_meta_tags();
-		$head .= $this -> create_html_link_tags();
-		$head .= $this -> insertFavicon();
-		$head .= "\t</head>\n";
-		return $head;
-	}
-
-	private function create_html_meta_tags() {
-		$meta = "\t\t<meta charset=\"UTF-8\">\n";
-		$meta .= "\t\t<title>" . $this -> allPage['title'] . "</title>\n";
-		foreach ($this -> meta_tags as $key => $value) {
-			$meta .= "\t\t<meta name=\"" . $this -> meta_tags[$key]['name'] . "\" content=\"" . $this -> meta_tags[$key]['content'] . "\">\n";
-		}
-		return $meta;
-	}
-
-	private function create_html_link_tags() {
-		$link = "";
-		foreach ($this -> link_tags as $key => $value) {
-			$rel = $this -> link_tags[$key]['rel'];
-			$type = $this -> link_tags[$key]['type'];
-			$href = $this -> relativePath . $this -> link_tags[$key]['href'];
-			$link .= "\t\t<link rel=\"" . $rel . "\" type=\"" . $type . "\" href=\"" . $href . "\" />\n";
-		}
-		return $link;
+		printf("%s", $doc);
+		$tag ->print_doc($head, 1);
+		printf("%s", "\t<body>\n");
+		//var_dump($head);
 	}
 	
-	private function insertFavicon(){
-		$favicon = "\t\t".'<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">'."\n";
-		$favicon .= "\t\t".'<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">'."\n";
-		$favicon .= "\t\t".'<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">'."\n";
-		$favicon .= "\t\t".'<link rel="manifest" href="/site.webmanifest">'."\n";
-		return $favicon;
-	}
-
 	private function checkAjax() {
 		$ajax = FALSE;
 		$headers = apache_request_headers();
@@ -336,14 +300,13 @@ class GetMyPage extends DardSession {
 	}
 
 	private function printTopDoc($tag) {
-		if (printf("%s", $this -> createDocTop())) {
-			if (file_exists($this -> page_file_path)) {
-				$dard = $this;
+		if (file_exists($this -> page_file_path)) {
+			$this -> create_doc_top($tag);
+			$dard = $this;
 
-				include_once $this -> page_file_path;
-			} elseif (!$this -> page_file_path) {
-				array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
-			}
+			include_once $this -> page_file_path;
+		} elseif (!$this -> page_file_path) {
+			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
 		}
 	}
 
