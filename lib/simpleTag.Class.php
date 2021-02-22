@@ -54,8 +54,8 @@
 class simpleTag {
 
 	private $Doc = '';
-	private $inline_tag = array('a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br',  'button', 'i', 'cite', 'code', 'dfn', 'dd', 'dt', 'em', 'hr', 'img', 'input', 'kbd', 'label', 'li', 'link', 'map', 'meta', 'object', 'option', 'q', 'script', 'samp',  'small', 'span', 'strong', 'sub', 'sup', 'textarea', 'td', 'th', 'time', 'tt', 'var');
-	private $block_tag = array('address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'main', 'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'select', 'table', 'tr', 'tfoot', 'ul', 'video');
+	private $inline_tag = array('a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br',  'button', 'i', 'cite', 'code', 'dfn', 'dd', 'dt', 'em', 'hr', 'img', 'input', 'kbd', 'label', 'li', 'link', 'map', 'meta', 'object', 'option', 'q', 'script', 'samp',  'small', 'span', 'strong', 'sub', 'sup', 'textarea', 'td', 'th', 'time', 'title', 'tt', 'var');
+	private $block_tag = array('address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'main', 'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'select', 'table', 'tr', 'tfoot', 'ul', 'video');
 	private $single_tag = array('!DOCTYPE html', 'meta', 'link', 'br', 'img', 'hr', 'input', 'embed', 'bgsound', 'base', 'col', 'source');
 	private $indentNum = 0;
 	private $set_count = TRUE;
@@ -274,10 +274,25 @@ class simpleTag {
 						// increment the indenting if block tag
 						$this -> check_start_tag($value[0]) ? $this -> indentNum++ : '';
 						$this -> docOutput($value);
-					} elseif ($this -> check_tag_type($value, $this -> inline_tag) & count($value) === 3) {
+					} elseif ($this -> check_tag_type($value, $this -> inline_tag) && count($value) === 3) {
 						$this -> print_inline_tag($value);
-					} elseif (count($value) === 1) {
-						$this -> print_text($value);
+					} elseif (count($value) >= 1) {
+						if(count($value) === 1 && $this -> check_plain_txt($value)){
+							$this -> print_text($value);
+						} elseif(count($value) >= 1){
+							foreach ($value as $val){
+								if(is_string($val) && $this -> check_tag_type($val, $this -> single_tag))
+									$this -> print_single_tag($val);
+								if(is_array($val)){
+									if(count($val) === 3 && $this -> check_tag_type($val, $this -> inline_tag)){
+										$this -> print_inline_tag($val);
+									}else{
+										$this -> check_start_tag($value[0]) ? $this -> indentNum++ : '';
+										$this -> docOutput($val);
+									}
+								}
+							}
+						}
 					}
 				} else {
 					$this -> docOutput($value);
