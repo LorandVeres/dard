@@ -157,7 +157,11 @@ class simpleTag {
 	 * @author  Lorand Veres
 	 */
 	private function check_plain_txt($value) {
-		substr($value, 0, 1) !== "<" & substr($value, -1, 1) !== ">" ? $start_tag = true : $start_tag = false;
+		$start_tag = false;
+		if(is_array($value))
+			$value = $value[0];
+		if(is_string($value))
+			substr($value, 0, 1) !== "<" & substr($value, -1, 1) !== ">" ? $start_tag = true : $start_tag = false;
 		return $start_tag;
 	}
 
