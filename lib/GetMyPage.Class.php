@@ -61,139 +61,141 @@ class GetMyPage extends DardSession {
 		$this -> relativePath = $relative;
 	}
 
-	private function getTopPageName() {
+	private function set_up_error_page_headers($num) {
+		$header;
+		switch ($num) {
+			case '404':
+				$header = header('HTTP/1.0 404 Not Found');
+				break;
+			case '403':
+				$header = header('HTTP/1.0 403 Forbidden');
+				break;
+			case '500':
+				$header = header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+				break;
+		}
+		$this -> top_page_name = $num.'_error';
+		array_push($this -> headers, $header);
+	}
+
+	private function prep_all_page_properties($arg) {
+		if(is_array($arg)) {
+			$this -> current_page_id = $arg['id'];
+			$this -> current_module_id = $arg['module_id'];
+			$this -> current_page_groups_priv = $arg['user_priv'];
+			$this -> all_page_properties['page_name'] = $arg['pagename'];
+			$this -> all_page_properties['type'] = $arg['type'];
+			$this -> all_page_properties['title'] = $arg['title'];
+			$this -> all_page_properties['file_path'] = $arg['file_path'];
+		}
+	}
+
+	private function get_error_page($num) {
+		$error_page = $num.'_error';
+		$query = "SELECT `id`, `pagename`, `type`, `title`, `user_priv`, `file_path`, `module_id`  FROM `page` WHERE `pagename` = '$error_page';";
+		$result = $this -> selectDB($num, $query, TRUE, 'array');
+		$this -> prep_all_page_properties($result);
+		$this -> set_up_error_page_headers($num);
+	}
+
+	private function sql_top_page() {
+		$query = "SELECT `id`, `pagename`, `type`, `title`, `user_priv`, `file_path`, `module_id`, `parentpage`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
+		$result = $this -> selectDB($this -> top_page_name, $query, TRUE, 'array');
+		if( !$result){
+			$this -> get_error_page('404');
+		} else if( $result['parentpage'] != null && ($result['type'] != 'top' || $result['type'] != 'main')){
+			$this -> get_error_page('500');
+		} elseif(is_array($result)) {
+			$this -> prep_all_page_properties($result);
+		}
+	}
+
+	private function sql_sub_page($sub_page) {
+		$query = "SET @parent_id = (SELECT `parentpage` FROM `page` WHERE `pagename` = '$sub_page');";
+		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`user_priv`) AS user_priv, S.`file_path`, S.`module_id`, P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
+		$result = $this -> selectDB($sub_page, $query, TRUE, 'array');
+		if (!$result || $result['top_page_name'] !== $this -> URI[0]) {
+			$this -> get_error_page('404');
+		} else if($result) {
+			$this -> top_page_name = $this -> URI[0];
+			$this -> prep_all_page_properties($result);
+		}
+	}
+
+	private function get_top_page_from_url() {
 		if ($this -> URI !== NULL) {
 			$pos = strpos($this -> URI[0], '?');
 			$pos ? $this -> top_page_name = substr($this -> URI[0], 0, $pos) : $this -> top_page_name = $this -> URI[0];
-		} else {
+		} else if($this -> URI === NULL){
 			$this -> top_page_name = 'home';
 		}
+		preg_match("/^[\w-]*$/u", $this -> top_page_name) ? $this -> sql_top_page() : $this -> get_error_page('404');
 	}
 
-	private function setIfTopPage() {
-		if (preg_match("/^[\w-]*$/", $this -> top_page_name)) {
-			$this -> sqlTopPage();
-		} else {
-			$this -> current_page_id = 1;
-			$this -> top_page_name = 'error';
+	private function get_sub_page_from_url(){
+		if (count($this -> URI) >= 2) {
+			$pos = strpos($this -> URI[1], '?');
+			$pos ? $sub_page = substr($this -> URI[1], 0, $pos) : $sub_page = $this -> URI[1];
+			preg_match("/^[\w-]*$/u", $sub_page) ? $this -> sql_sub_page($sub_page) : $this -> get_error_page('404');
 		}
 	}
 
-	private function sqlTopPage() {
-		$arg = $this -> top_page_name;
-		$query = "SELECT `id`, `type`, `user_priv`, `parentpage`, `module_id` FROM `page` WHERE `pagename` = '$arg';";
-		$result = $this -> selectDB($arg, $query, TRUE, 'array');
-		if (!$result) {
-			$this -> current_page_id = 1;
-			$this -> top_page_name = 'error';
-		} elseif ($result['id']) {
-			if ($result['parentpage'] && ($result['type'] !== 'top' || $result['type'] !== 'main')) {
-				$this -> current_page_id = 1;
-			} else {
-				$this -> current_page_id = $result['id'];
-				$this -> current_page_groups_priv = $result['user_priv'];
-				$this -> current_module_id = $result['module_id'];
-			}
-		}
-	}
-
-	private function setIfSubPage() {
-		$pos = strpos($this -> URI[1], '?');
-		if ($pos !== false) {
-			$sub_page = substr($this -> URI[1], 0, $pos);
-			preg_match("/^[\w-]*$/", $sub_page) ? $this -> sqlSubPage($sub_page) : $this -> sub_page_id = 1;
-		} else {
-			preg_match("/^[\w-]*$/", $this -> URI[1]) ? $this -> sqlSubPage($this -> URI[1]) : $this -> sub_page_id = 1;
-		}
-	}
-
-	private function sqlSubPage($sub_page) {
-		$arg = $sub_page;
-		$parent_id = "
-                    SELECT
-                        `parentpage`
-                    FROM
-                        `page`
-                    WHERE
-                        `pagename` = '$arg'
-                    ";
-		$query = "SELECT
-                    S.`id`,
-                    S.`pagename`,
-                    S.`user_priv`,
-                    S.`module_id`,
-                    P.`pagename` AS top_page_name
-                FROM
-                    `page` AS S,
-                    `page` AS P
-                WHERE
-                    P.`id` = ($parent_id) AND S.`pagename` = '$arg';";
-		$result = $this -> selectDB($arg, $query, TRUE, 'array');
-		if (!$result || $result['top_page_name'] !== $this -> top_page_name) {
-			$this -> sub_page_id = 1;
-			$this -> top_page_name = 'error';
-		} elseif ($result) {
-			if ($result['top_page_name'] !== $this -> top_page_name) {
-				$this -> sub_page_id = 1;
-				$this -> top_page_name = 'error';
-			} else {
-				$this -> sub_page_id = $result['id'];
-				$this -> current_page_groups_priv = $result['user_priv'];
-				$this -> current_module_id = $result['module_id'];
-			}
-		}
-	}
-
-	//
-	//Need attention
-	//
-	private function setIsPage() {
+	private function chose_page_type() {
 		$this -> genURI();
-		$this -> getTopPageName();
-		if (is_array($this -> URI) ? count($this -> URI) <= 1 || $this -> URI === null : FALSE) {
-			$this -> setIfTopPage();
-		} elseif (is_array($this -> URI) ? count($this -> URI) == 2 : FALSE) {
-			$this -> setIfSubPage();
-		} else {
-			$this -> current_page_id = 1;
+		if($this -> URI === NULL) {
+			$this -> get_top_page_from_url();
+		} else if(Count($this -> URI) === 1) {
+			$this -> get_top_page_from_url();
+		} else if(count($this -> URI) >=2 ) {
+			$this -> get_sub_page_from_url();
 		}
 	}
 
-	//
-	//Need attention
-	//
-	private function prepAllPage() {
-		$this -> setIsPage();
-		if (is_array($this -> URI) ? count($this -> URI) > 1 && $this -> sub_page_id > 1 : FALSE) {
-			$this -> current_page_id = $this -> sub_page_id;
-		} elseif (is_array($this -> URI) ? count($this -> URI) <= 1 && $this -> current_page_id > 1 : FALSE) {
-			$this -> current_page_id;
-		} else {
-			$this -> current_page_id = 1;
-			$this -> top_page_name = 'error';
+	private function check_user_priv() {
+		$query = "SET @pagepriv = (SELECT HEX(`user_priv`) FROM `page` WHERE `id` = $this->current_page_id);";
+		$user_id = '';
+		if(!$_SESSION['user_loged']){
+			$query .= "SET @userpriv = (SELECT HEX (`priv_flag`) FROM `user_group` WHERE `id` = 2);";
+		}elseif(isset($_SESSION['user_id'])){
+			$user_id = $_SESSION['user_id'];
+			$query .= "SET @userpriv = (SELECT HEX (`u_group`) FROM `user` WHERE `id` = $user_id );";
+		}else{
+			$this -> get_error_page('500');
 		}
-		if ($this -> current_page_id === 1)
-			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
+		$query .= "SELECT ( HEX (@pagepriv & @userpriv) NOT LIKE '0') AS access;";
+		$result = $this -> selectDB($user_id, $query, TRUE, 'array');
+		if ($result === NULL || $result['access'] === '0') {
+				$this -> get_error_page('403');
+		}
+	}
+
+	private function set_page_head_properties($result) {
+		count($result) > 1 ? $this -> meta_tags = $result[0] : '';
+		count($result) > 2 ? $this -> link_tags = $result[1] : '';
+		count($result) > 3 ? $this -> js_scripts = $result[2] : '';
+	}
+
+	private function set_url_arguments() {
+		$pos = strpos($_SERVER["REQUEST_URI"], "?");
+		$pos ? $argstr = substr($_SERVER["REQUEST_URI"], $pos + 1) : $argstr = '';
+		$arg = array();
+		if (!empty($argstr)) {
+			$argpairs = explode('&', $argstr);
+			foreach ($argpairs as $key => $value) {
+				$param = substr($value, 0, strpos($value, '='));
+				$val = substr($value, strpos($value, '=') + 1);
+				$arg[$param] = $val;
+			}
+			$this -> url_arguments = $arg;
+		}
 	}
 
 	private function getAllPage() {
 		$start = microtime(1);
+		$this -> chose_page_type();
+		$this -> check_user_priv();
 		$this -> set_url_arguments();
-		$this -> prepAllPage();
-		$this -> checkUserPriv();
-		$arg = $this -> current_page_id;
-		$query = " 
-            SELECT
-                `pagename`,
-                `title`,
-                `file_path` AS page_file_path
-            FROM
-                `page`
-            WHERE
-                `id` = '$arg'
-            ;";
-		// Query for meta tags
-		$query .= "SELECT `name`, `http-equiv`, `property`, `itemprop`, `content`, `charset`
+		$query = "SELECT `name`, `http-equiv`, `property`, `itemprop`, `content`, `charset`
 					FROM `meta_tag`
 					WHERE (`general` = 1 OR `per_module` = $this->current_module_id OR `all_public` = 'Y') AND `active` = 1
 					UNION
@@ -216,35 +218,12 @@ class GetMyPage extends DardSession {
 					SELECT J.`file`, J.`script`, J.`type`, J.`placement`
 					FROM `js_files_script` AS J, `page_resources` AS R
 					WHERE R.`type`='JS' AND R.`page_id` = $this->current_page_id AND J.`id` = R.`res_id`";
-		$result = $this -> selectDB($arg, $query, TRUE, 'default');
-		$this -> set_all_page_properties($result);
+		$result = $this -> selectDB($this -> current_page_id, $query, TRUE, 'default');
+		$this -> set_page_head_properties($result);
 		$result = array();
 		unset($result);
 		$end = microtime(1);
 		$this -> dard_stats['get_from_db_all_page']= $end - $start;
-	}
-
-	private function set_all_page_properties($result) {
-		$this -> all_page_properties = $result[0];
-		$this -> meta_tags = $result[1];
-		$this -> link_tags = $result[2];
-		$this -> js_scripts = $result[3];
-		$this -> page_file_path = $this -> all_page_properties['page_file_path'];
-	}
-
-	private function set_url_arguments() {
-		$pos = strpos($_SERVER["REQUEST_URI"], "?");
-		$pos ? $argstr = substr($_SERVER["REQUEST_URI"], $pos + 1) : $argstr = '';
-		$arg = array();
-		if (!empty($argstr)) {
-			$argpairs = explode('&', $argstr);
-			foreach ($argpairs as $key => $value) {
-				$param = substr($value, 0, strpos($value, '='));
-				$val = substr($value, strpos($value, '=') + 1);
-				$arg[$param] = $val;
-			}
-			$this -> url_arguments = $arg;
-		}
 	}
 
 	private function create_doc_top($tag){
@@ -275,7 +254,6 @@ class GetMyPage extends DardSession {
 		printf("%s", $doc);
 		$tag ->print_doc($head, 1);
 		printf("%s", "\t<body>\n");
-		//var_dump($head);
 	}
 	
 	private function checkAjax() {
@@ -289,24 +267,25 @@ class GetMyPage extends DardSession {
 	}
 
 	private function includeAjaxBody($tag) {
-		if (file_exists($this -> page_file_path)) {
+		if (file_exists($this -> all_page_properties['file_path'])) {
 			$dard = $this;
 
-			include_once $this -> page_file_path;
-		} elseif (!file_exists($this -> page_file_path)) {
-			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
+			include_once $this -> all_page_properties['file_path'];
+		} elseif (!file_exists($this -> all_page_properties['file_path'])) {
+			$this -> get_error_page('500');
 		}
 
 	}
 
 	private function printTopDoc($tag) {
-		if (file_exists($this -> page_file_path)) {
+		if (file_exists($this -> all_page_properties['file_path'])) {
 			$this -> create_doc_top($tag);
 			$dard = $this;
 
-			include_once $this -> page_file_path;
-		} elseif (!$this -> page_file_path) {
-			array_push($this -> headers, header('HTTP/1.0 404 Not Found'));
+			include_once $this -> all_page_properties['file_path'];
+		} elseif (!file_exists($this -> all_page_properties['file_path'])) {
+			$this -> get_error_page('500');
+			$this -> create_doc_top($tag);
 		}
 	}
 
@@ -347,6 +326,12 @@ class GetMyPage extends DardSession {
 		printf("%s", $doc);
 	}
 
+	private function sendHeaders() {
+		foreach ($this->headers as $value) {
+			$value;
+		}
+	}
+
 	private function sendDoc($tag) {
 		$this -> sendHeaders();
 		if ($this -> checkAjax()) {
@@ -354,30 +339,6 @@ class GetMyPage extends DardSession {
 		} else {
 			$this -> printTopDoc($tag);
 			$this -> printBottomDoc();
-		}
-	}
-
-	private function sendHeaders() {
-		foreach ($this->headers as $value) {
-			$value;
-		}
-	}
-
-	private function checkUserPriv() {
-		$query = "SET @nobody = (SELECT HEX ( `priv_flag` ) FROM `user_group` WHERE `id`=1);";
-		if(!$_SESSION['user_loged']){
-			$query .= "SET @comp = (SELECT HEX ( `priv_flag` ) FROM `user_group` WHERE `id` = 2);";
-			$user_id = '';
-		}else{
-			isset($_SESSION['user_id']) ? $user_id = $_SESSION['user_id'] : '';
-			$query .= "SET @comp = (SELECT HEX ( P.`user_priv` & U.`u_group` ) FROM `page` AS P, `user` AS U WHERE P.`id` = $this->current_page_id AND U.`id` = $user_id );";
-		}
-		$query .= "SELECT @nobody <> @comp AS access;";
-		$result = $this -> selectDB($user_id, $query, TRUE, 'array');
-		if ($result['access'] !== '1') {
-				array_push($this -> headers, header('HTTP/1.0 403 Forbidden'));
-				$this -> current_page_id = 6;
-				$this -> top_page_name = 'forbidden';
 		}
 	}
 
