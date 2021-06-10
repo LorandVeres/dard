@@ -285,16 +285,7 @@ class simpleTag {
 							$this -> print_text($value);
 						} elseif(count($value) >= 1){
 							foreach ($value as $val){
-								if(is_string($val) && $this -> check_tag_type($val, $this -> single_tag))
-									$this -> print_single_tag($val);
-								if(is_array($val)){
-									if(count($val) === 3 && $this -> check_tag_type($val, $this -> inline_tag)){
-										$this -> print_inline_tag($val);
-									}else{
-										$this -> check_start_tag($value[0]) ? $this -> indentNum++ : '';
-										$this -> docOutput($val);
-									}
-								}
+								$this -> docOutput($val);
 							}
 						}
 					}
