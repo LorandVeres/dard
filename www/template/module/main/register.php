@@ -27,6 +27,13 @@ include_once 'template/module/live/layout/menu.php';
             <input type="submit" value="Register">
 
         </form>
-    </div>
+	<script>
+		(function(){
+			let el = document.getElementById("captcha");
+			el.style.backgroundImage  = "url('https://dard.dard/images/captcha.php')";
+			el.style.backgroundRepeat = "no-repeat";
+		}());
+	</script>
+	</div>
 </div>
         </div>

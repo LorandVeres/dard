@@ -28,6 +28,13 @@ include_once 'template/module/live/layout/menu.php';
             <span class="left hr"> <a href="<?php mylink('register'); ?> ">Register account</a> </span>
             <span class="right hr"> <a href="<?php mylink('forgot-password'); ?>">Forgot password</a> </span>
         </nav>
+        <script>
+    		(function(){
+    			let el = document.getElementById("captcha");
+    			el.style.backgroundImage  = "url('https://dard.dard/images/captcha.php')";
+    			el.style.backgroundRepeat = "no-repeat";
+    		}());
+    	</script>
     </div>
 </div>
         </div>
