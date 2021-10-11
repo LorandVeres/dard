@@ -10,7 +10,7 @@ class pages extends FormCleaner {
 		parent::__construct($dard);
 		$this -> modules = $this -> getModules($dard);
 		$this -> setModuleIdName();
-		$this -> getMainPages($this -> module_id);
+		$this -> getMainPages($this -> module_id, $dard);
 		$this -> css = $this -> getCssId($dard);
 	}
 
@@ -63,9 +63,8 @@ class pages extends FormCleaner {
 		}
 	}
 
-	private function getMainPages($module_id) {
-		if ($module_id === null)
-			$module_id = 1;
+	private function getMainPages($module_id, $dard) {
+		$module_id === null ? $module_id = 1 : $module_id = $dard->module_id;
 		$query = "SELECT `id`, `pagename` FROM `page` WHERE `module_id` = $module_id AND `type` <> 'sub';";
 		$pages = $dard -> selectDB($module_id, $query, TRUE, 'array');
 		if (is_array($pages)){
@@ -76,7 +75,7 @@ class pages extends FormCleaner {
 	}
 
 	private function getCssId($dard) {
-		$query = "SELECT `id`, `href` FROM `css` WHERE `active` = 1 AND `general` = '0';";
+		$query = "SELECT `id`, `href` FROM `link_tag` WHERE `active` = 1 AND `general` = '0' AND `type` = 'text/css';";
 		$result = $dard -> selectDB('', $query, TRUE, 'array');
 		return $result;
 	}
@@ -216,21 +215,21 @@ class pages extends FormCleaner {
 	public function search($dard) {
 		if (isset($dard -> url_arguments['search'])) {
 			$param = $dard -> url_arguments['search'];
-			$this -> wrapSearchAddErrorMessage($param);
+			$this -> wrapSearchAddErrorMessage($param, $dard);
 			if (!$dard -> ajax) {
 				return ;
 			}
 		}
 	}
 
-	private function searchPageSql($param) {
+	private function searchPageSql($param, $dard) {
 		$query = "SELECT P.`id`, P.`pagename`, P.`module_id`, M.`name` FROM `page` AS P , `module` AS M WHERE P.`pagename` LIKE '%" . $param . "%' AND P.`module_id` = M.`id` ;";
 		$result = $dard -> selectDB($param, $query, TRUE, 'array');
 		return $result;
 	}
 
-	private function wrapSearchAddErrorMessage($param) {
-		$result = $this -> searchPageSql($param);
+	private function wrapSearchAddErrorMessage($param, $dard) {
+		$result = $this -> searchPageSql($param, $dard);
 		$link = 'error-messages?a=add&pageid=';
 		$print = '<div>';
 		if (isset($result[0])) {
