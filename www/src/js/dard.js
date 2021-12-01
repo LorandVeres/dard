@@ -460,7 +460,12 @@ var $ = ( function() {
 
 	type(Dard);
 	type(GetEl);
-
+	
+	var utils = function(){
+		this.e = function(){console.log('test object working');};
+	};
+	
+	
 	return function() {
 		var arg = varyArgs(arguments),
 		    itemNo,
@@ -468,8 +473,12 @@ var $ = ( function() {
 		if (arg.length > 0) {
 			isNum(arg[1]) ? itemNo = arg[1] : itemNo = null;
 			return new GetEl(arg[0], itemNo);
+		}else if(arg.length === 0 || arguments === null){
+			return new utils;
 		}
 	};
+	
+	
 }());
 /*
  *
