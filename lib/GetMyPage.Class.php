@@ -321,6 +321,7 @@ class GetMyPage extends DardSession {
 		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/main.live.js\"></script>\n";
 		$doc .= $this -> get_js_files();
 		$doc .= $this -> wrap_dard_Statistics();
+		$doc .= "<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>";
 		$doc .= "\t</body>\n";
 		$doc .= "</html>\n";
 		printf("%s", $doc);
