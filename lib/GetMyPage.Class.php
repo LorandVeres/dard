@@ -27,7 +27,6 @@ class GetMyPage extends DardSession {
 	function __construct($tag) {
 		$this -> init_user_session();
 		$this -> getAllPage();
-		$this -> generate_relative_path();
 		$this -> sendDoc($tag);
 	}
 
@@ -56,7 +55,8 @@ class GetMyPage extends DardSession {
 		$relative = '';
 		if (is_array($this -> URI)) {
 			for ($i = 0; $i < count($this -> URI); $i++) {
-				$relative .= '../';
+				if($i >= 1)
+					$relative .= '../';
 			}
 		}
 		$this -> relativePath = $relative;
@@ -143,6 +143,7 @@ class GetMyPage extends DardSession {
 
 	private function chose_page_type() {
 		$this -> genURI();
+		$this -> generate_relative_path();
 		if($this -> URI === NULL) {
 			$this -> get_top_page_from_url();
 		} else if(Count($this -> URI) === 1) {
@@ -220,7 +221,7 @@ class GetMyPage extends DardSession {
 		if (!empty($this ->all_js_scripts)) {
 			$loop($this ->all_js_scripts, $this ->relativePath);
 			$this ->head_js_sripts = $head;
-			$this ->body_js_scripts = $body."\n";//var_dump($this ->head_js_sripts);
+			$this ->body_js_scripts = $body."\n";
 		}
 	}
 
