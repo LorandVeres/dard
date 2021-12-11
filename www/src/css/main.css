@@ -447,15 +447,14 @@ a:hover{
 	display: none;
 }
 header{
-	background-color: #e06900;/*#efffef;*/
+	background-color: #ff861b;
 	display: block;
-	padding: 10px;
 	min-height: 50px;
 	border-bottom: 1px solid #361901;
 }
 
 header h1{
-	margin: 10px 30px;
+	margin: 10px 15px;
 }
 header a:hover{
 	color: inherit;
@@ -474,6 +473,7 @@ header > .head-link ~ .head-link{
 	border-right: 1px solid #693101;
 	padding: 0 15px;
 	line-height: 50px;
+	transition: 0.5s;
 }
 .head-link:hover{
 	background-color: #ba5600;
@@ -511,7 +511,7 @@ mark{
 .wrap{
 	display: block;
 	width: 80%;
-	min-height: 80%;
+	min-height: 800px;
 	margin: 20px auto;
 	overflow-x: auto;
 	background-color: #ffffff;
@@ -557,7 +557,7 @@ td, th{
 	padding: 10px;
 }
 td a{
-	color: #358405;/*#007f1c*/
+	color: #358405;
 	display: block;
 	text-align: center;
 }
@@ -614,7 +614,7 @@ td a:hover{
 .content{
 	display: block;
 	float: left;
-	width: 95%;
+	width: 100%;
 }
 @media only screen and (max-width: 480px) {
 	.sub-menu{
@@ -623,7 +623,6 @@ td a:hover{
 		overflow-y: none;
 	}
 	.content{
-		width: 100%;
 		min-height: 100%;
 	}
 }
