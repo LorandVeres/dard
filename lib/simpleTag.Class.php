@@ -199,7 +199,11 @@ class simpleTag {
 	 */
 	private function print_inline_tag($value) {
 		$tf = str_pad("", $this -> indentNum + 1, "\t");
-		printf("%s", $tf . $value[0] . $value[1][0] . $value[2] . "\n");
+		if(is_array($value[1])){
+			printf("%s", $tf . $value[0] . $value[1][0] . $value[2] . "\n");
+		}else if(is_string($value[1])){
+			printf("%s", $tf . $value[0] . $value[1] . $value[2] . "\n");
+		}
 	}
 
 	/**
