@@ -11,7 +11,8 @@ class GetMyPage extends DardSession {
 	protected $meta_tags = array();
 	protected $link_tags = array();
 	protected $all_js_scripts = array();
-	protected $body_js_scripts = array();
+	protected $body_js_scripts = '';
+	protected $head_js_sripts = array();
 	protected $URI = array(); // $_SERVER["REQUEST_URI"] directories splitted in an array
 	protected $current_page_id = 1;
 	protected $all_page_properties;
@@ -170,9 +171,57 @@ class GetMyPage extends DardSession {
 	}
 
 	private function set_page_head_properties($result) {
-		count($result) > 1 ? $this -> meta_tags = $result[0] : '';
-		count($result) > 2 ? $this -> link_tags = $result[1] : '';
-		count($result) > 3 ? $this -> js_scripts = $result[2] : '';
+		count($result) >= 1 ? $this -> meta_tags = $result[0] : '';
+		count($result) >= 2 ? $this -> link_tags = $result[1] : '';
+		count($result) >= 3 ? $this -> all_js_scripts = $result[2] : '';
+	}
+	
+	private function set_js_script_tags() {
+		$body = '';
+		$head = array();
+		$string = function($a, $path){
+			$src = '';
+			if($a["type"] === "file"){
+				$src = "\n\t\t<script src=\"" . $path . $a["file"] . "\"></script>";
+			}else if(($a["type"] === "script")){
+				$src = "\n\t\t<script type=\"text/javascript\">". $a["script"] ."</script>";
+			}
+			return $src;
+		};
+		$thag = function($a, $path) use (&$head){
+			$src = array();
+			if($a["type"] === "file"){
+				$src[] = "<script src=\"" . $path . $a["file"] . "\">";
+				$src[] ="";
+				$src[] ="</script>";
+			}else if(($a["type"] === "script")){
+				$src[] = "<script type=\"text/javascript\">";
+				$src[] = $a["script"];
+				$src[] ="</script>";
+			}
+			if(is_array($head))
+				array_push($head, $src);
+		};
+		
+		$head_fn = function($a, $p) use (&$thag){
+			if($a['placement'] === "head")
+				$thag($a, $p);
+		};
+		$body_fn = function($a, $path) use (&$string, &$body){
+			if($a['placement'] === "body")
+				$body .= $string($a, $path);
+		};
+		$loop = function($js, $path) use (&$head_fn, &$body_fn){
+			foreach ($js as $value) {
+				$head_fn($value, $path);
+				$body_fn($value, $path);
+			}
+		};
+		if (!empty($this ->all_js_scripts)) {
+			$loop($this ->all_js_scripts, $this ->relativePath);
+			$this ->head_js_sripts = $head;
+			$this ->body_js_scripts = $body."\n";//var_dump($this ->head_js_sripts);
+		}
 	}
 
 	private function set_url_arguments() {
@@ -220,12 +269,12 @@ class GetMyPage extends DardSession {
 					WHERE R.`type`='JS' AND R.`page_id` = $this->current_page_id AND J.`id` = R.`res_id`";
 		$result = $this -> selectDB($this -> current_page_id, $query, TRUE, 'default');
 		$this -> set_page_head_properties($result);
+		$this ->set_js_script_tags();
 		$result = array();
 		unset($result);
 		$end = microtime(1);
 		$this -> dard_stats['get_from_db_all_page']= $end - $start;
 	}
-
 	private function create_doc_top($tag){
 		
 		$head = $tag -> tag('head', '', '');
@@ -234,20 +283,29 @@ class GetMyPage extends DardSession {
 				return $key.'="'.$value.'" ';
 		};
 		
-		$elements = function($tag, $varr, $el, $prepare, &$head){
+		$elements = function($tag, $varr, $el) use (&$prepare_attributes, &$head){
 			for ($i = 0 ; $i < count($varr); $i++) {
 				$attr = '';
 				foreach ($varr[$i] as $k => $val) {
-					$attr .= $prepare ($val, $k);
+					$attr .= $prepare_attributes ($val, $k);
 				}
 				$attr = substr_replace($attr, '', -1, strlen($attr));
 				$tag -> append_tag($head, $tag -> tag($el, $attr, ''));
 			}
 		};
 		
+		$js = function($js_tags, $tag) use (&$head){
+			if(!empty($js_tags)){
+				for ($i=0; $i < count($js_tags); $i++) { 
+					$tag ->append_tag($head, $js_tags[$i]);
+				}
+			}
+		};
+		
 		$tag -> append_tag($head, $tag -> tag('title', '', $this -> all_page_properties['title']));
-		$elements($tag, $this -> meta_tags, 'meta', $prepare_attributes, $head);
-		$elements($tag, $this -> link_tags, 'link', $prepare_attributes, $head);
+		$elements($tag, $this -> meta_tags, 'meta');
+		$elements($tag, $this -> link_tags, 'link');
+		$js($this ->head_js_sripts, $tag);
 		
 		$doc = "<!DOCTYPE html>\n";
 		$doc .= "<html lang=" . $this -> cf_language . ">\n";
@@ -289,39 +347,22 @@ class GetMyPage extends DardSession {
 		}
 	}
 
-	private function get_js_files() {
-		$doc = '';
-		if ($this -> current_module_id !== null) {
-			$query = "SELECT `file` FROM `js_files_script` WHERE `per_module` = " . $this -> current_module_id . " AND `active` = 1;";
-			$result = $this -> selectDB('', $query, false, 'array');
-			if (!empty($result)) {
-				foreach ($result as $key => $value) {
-					$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . $value . "\"></script>\n";
-				}
-			}
-		}
-		return $doc;
-	}
-
 	private function wrap_dard_Statistics(){
 		$doc = '';
 		if($this -> cf_dard_statisctics){
-			$doc = "\t\t<div>\n";
-			foreach ($this -> dard_stats as $key => $value) {
-				$doc.= "\t\t\t<p>". $key ." = ". $value ."</p>\n";
-			}
+			$doc = "\t\t<div class=\"debug\">\n";
+				foreach ($this ->dard_stats as $key => $value) {
+					$doc .= "\t\t\t<p>". $key ." = ". $value ."</p>\n";
+				}
 			$doc .= "\t\t</div>\n";
 		}
 		return $doc;
 	}
 
 	private function printBottomDoc() {
-		$doc = "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dard.js\"></script>\n";
-		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/dialog.js\"></script>\n";
-		$doc .= "\n\t\t<script type=\"text/javascript\" src=\"" . $this -> relativePath . "src/js/main.live.js\"></script>\n";
-		$doc .= $this -> get_js_files();
+		$doc = "<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>";
 		$doc .= $this -> wrap_dard_Statistics();
-		$doc .= "<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>";
+		$doc .= $this -> body_js_scripts;
 		$doc .= "\t</body>\n";
 		$doc .= "</html>\n";
 		printf("%s", $doc);
