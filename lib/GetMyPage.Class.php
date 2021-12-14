@@ -361,7 +361,7 @@ class GetMyPage extends DardSession {
 	}
 
 	private function printBottomDoc() {
-		$doc = "<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>";
+		$doc = "\t\t<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>\n";
 		$doc .= $this -> wrap_dard_Statistics();
 		$doc .= $this -> body_js_scripts;
 		$doc .= "\t</body>\n";
