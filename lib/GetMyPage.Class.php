@@ -99,27 +99,44 @@ class GetMyPage extends DardSession {
 		$this -> set_up_error_page_headers($num);
 	}
 
+	/**
+	 * undocumented function
+	 *
+	 * @return bool
+	 * @author  Lorand Veres
+	 */
+	private function check_active_page_status($tatus) {
+		$bool = FALSE;
+		if(is_string($tatus))
+			$tatus === "activ" ? $bool = TRUE : $bool = FALSE;
+		return $bool;
+	}
+
 	private function sql_top_page() {
-		$query = "SELECT `id`, `pagename`, `type`, `title`, `user_priv`, `file_path`, `module_id`, `parentpage`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
+		$query = "SELECT `id`, `pagename`, `type`, `title`, `user_priv`, `file_path`, `module_id`, `parentpage`, `status`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
 		$result = $this -> selectDB($this -> top_page_name, $query, TRUE, 'array');
 		if( !$result){
 			$this -> get_error_page('404');
 		} else if( $result['parentpage'] != null && ($result['type'] != 'top' || $result['type'] != 'main')){
 			$this -> get_error_page('500');
-		} elseif(is_array($result)) {
-			$this -> prep_all_page_properties($result);
+		} elseif(is_array($result) && !empty($result)) {var_dump($result['status']);
+			$this -> check_active_page_status($result['status']) ? $this -> prep_all_page_properties($result) : $this -> get_error_page('404');
 		}
 	}
 
 	private function sql_sub_page($sub_page) {
 		$query = "SET @parent_id = (SELECT `parentpage` FROM `page` WHERE `pagename` = '$sub_page');";
-		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`user_priv`) AS user_priv, S.`file_path`, S.`module_id`, P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
+		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`user_priv`) AS user_priv, S.`file_path`, S.`module_id`, `status`,  P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
 		$result = $this -> selectDB($sub_page, $query, TRUE, 'array');
 		if (!$result || $result['top_page_name'] !== $this -> URI[0]) {
 			$this -> get_error_page('404');
-		} else if($result) {
-			$this -> top_page_name = $this -> URI[0];
-			$this -> prep_all_page_properties($result);
+		} else if(is_array($result) && !empty($result)) {
+			if($this -> check_active_page_status($result['status'])) {
+				$this -> top_page_name = $this -> URI[0];
+				$this -> prep_all_page_properties($result);
+			}else{
+				$this -> get_error_page('404');
+			}
 		}
 	}
 
