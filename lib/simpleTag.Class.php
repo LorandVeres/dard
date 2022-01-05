@@ -115,7 +115,7 @@ class simpleTag {
 		if (!$single) {
 			$tag = array();
 			$tag[] = $o . $tagname . $this -> setAttr($attr) . $c;
-			$tag[] = !empty($txt) ? array($txt) : array();
+			$tag[] = !empty($txt) || $txt === '0' ? array($txt) : array();
 			$tag[] = $o . $e . $tagname . $c;
 
 		} elseif ($single) {
@@ -200,6 +200,8 @@ class simpleTag {
 	private function print_inline_tag($value) {
 		$tf = str_pad("", $this -> indentNum + 1, "\t");
 		if(is_array($value[1])){
+			if(!isset($value[1][0]) && empty($value[1]))
+			 	$value[1][0] = '';
 			printf("%s", $tf . $value[0] . $value[1][0] . $value[2] . "\n");
 		}else if(is_string($value[1])){
 			printf("%s", $tf . $value[0] . $value[1] . $value[2] . "\n");
@@ -394,9 +396,12 @@ class simpleTag {
 	 */
 	private function table_body($my_data, $in_attr, $table) {
 		if (isset($my_data['data'])) {
+			$attr = $in_attr;
 			for ($i = 0; $i < count($my_data['data']); $i++) {
 				$tr[$i] = $this -> tag('tr', '', '');
 				for ($j = 0; $j < count($my_data['data'][$i]); $j++) {
+					$my_data['data'][$i][$j] === NULL ? $my_data['data'][$i][$j] = '' : $my_data['data'][$i][$j] ;
+					$in_attr = $attr;
 					$in_attr[$j] = $this -> cell_numeric_right($in_attr[$j], $my_data['data'][$i][$j]);
 					$this -> append_tag($tr[$i], $this -> tag('td', $in_attr[$j], $my_data['data'][$i][$j]));
 				}
@@ -409,11 +414,11 @@ class simpleTag {
 	/**
 	 * Print the table. All array elemets are optinal but 'data' .
 	 *
-	 * @param  array('tb' => string, 'th' => array(), 'attr' => array()), 'data' => array(array(), array()....))
-	 * 'tb' = string table attributes
-	 * 'th' = th elements text insertion
+	 * @param  array('tb' => string, 'th' => array(), 'attr' => array(), 'data' => array(array(), array()....))
+	 * 'tb' = string like, table attributes
+	 * 'th' = th elements text values
 	 * 'attr' = optional attributes like style. it has no individual id posibility yet
-	 * 'data' = the text data what will be inserted in each cell
+	 * 'data' = the text data value what will be inserted in each cell
 	 *
 	 * @param  int, the indentation deepness optional
 	 *
