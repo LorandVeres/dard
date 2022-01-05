@@ -18,7 +18,7 @@ $dard->ifNoAjaxTop($tag);
 						</div>
 					</div>
 				</header>
-<?php $dard_modules -> print_modules_combo_boxes($dard, $tag); ?>
+<?php $dard_modules -> call_action($dard, $tag); ?>
 			
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu </p>
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu </p>
