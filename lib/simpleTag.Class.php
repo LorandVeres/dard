@@ -247,7 +247,7 @@ class simpleTag {
 		}
 		// printing the block tags
 		$this -> check_tag_type($value, $this -> block_tag) ? printf("%s", $tf . $value . "\n") : '';
-		!$this -> check_start_tag($value) | $this -> check_tag_type($value, $this -> inline_tag) ? $this -> indentNum-- : '';
+		!$this -> check_start_tag($value) || $this -> check_tag_type($value, $this -> inline_tag) ? $this -> indentNum-- : '';
 	}
 
 	/*
@@ -339,10 +339,10 @@ class simpleTag {
 	 */
 	private function table_attr($my_data) {
 		$in_attr =array();
-		if (isset($my_data['attr'])) {
+		if (isset($my_data['attr']) && !empty($my_data['attr'])) {
 			$in_attr = $my_data['attr'];
 		} else {
-			if(!empty($my_data['data']) | $my_data['data'] !== NULL){
+			if(!empty($my_data['data']) || $my_data['data'] !== NULL){
 				for ($i = 0; $i < count($my_data['data'][0]); $i++) {
 					$in_attr[$i] = '';
 				}
@@ -359,7 +359,7 @@ class simpleTag {
 	 * @author  Lorand Veres
 	 */
 	private function table_head($my_data, $in_attr, $table) {
-		if (!empty($my_data['th']) | $my_data['th'] !==NULL) {
+		if (!empty($my_data['th']) || $my_data['th'] !==NULL) {
 			$tr = $this -> tag('tr', '', '');
 			for ($i = 0; $i < count($my_data['th']); $i++) {
 				!empty($in_attr) ? $attr = $in_attr[$i] : $attr ='';
@@ -378,10 +378,10 @@ class simpleTag {
 	 */
 	private function cell_numeric_right($attr, $data){
 		if(is_numeric($data)){
-			if(strpos($attr, 'text-align:left') | strpos($attr, 'text-align: left')){
-				str_replace('text-align:left', 'text-align: right', $attr) | str_replace('text-align: left', 'text-align: right', $attr);
+			if(strpos($attr, 'text-align:left') || strpos($attr, 'text-align: left')){
+				str_replace('text-align:left', 'text-align: right ', $attr) || str_replace('text-align: left', 'text-align: right ', $attr);
 			}else{
-				$attr .= 'style="text-align: right"';
+				$attr .= 'style="text-align: right; "';
 			}
 		}
 		return $attr;
@@ -460,7 +460,7 @@ class simpleTag {
 		is_array($my_list_type) & isset($my_list_type[1]) ? $attr = $my_list_type[1][0] : $attr = '';
 		!is_string($my_list_type) ? $list_type = $my_list_type[0] : $list_type = $my_list_type;
 		$list = $this -> tag($list_type, $attr, '');
-		if ($list_type === 'ol' | $list_type === 'ul') {
+		if ($list_type === 'ol' || $list_type === 'ul') {
 			foreach ($my_items as $key => $value) {
 				$this -> append_tag($list, $this -> tag('li', '', $value));
 			}
