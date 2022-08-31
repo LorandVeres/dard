@@ -41,6 +41,17 @@ class FormCleaner {
 		return $result;
 	}
 
+	/*
+	 * Compare a string against a patern
+	 * 
+	 * @params
+	 * 
+	 * $patern the patern to be compared against
+	 * $string the string to be checked
+	 * $error_number is the number of the error per module what will be generated
+	 * 
+	 * @return Bool : true on success false otherwise
+	 */
 	protected function match($patern, $string, $error_number) {
 		$result = FALSE;
 		if (isset($string)) {
@@ -55,17 +66,50 @@ class FormCleaner {
 		return $result;
 	}
 
+	/*
+	 *  Check if string is not empty and against a patern
+	 * 
+	 * @params
+	 * Same as match function
+	 * $field the name of the field
+	 * 
+	 * @return Bool : true on success false otherwise
+	 */
+	protected function non_empty_match($patern, $string, $error_number, $field) {
+		$result = FALSE;
+		if (isset($string)) {
+			if (empty($string)) {
+				$result = TRUE;
+				$this -> is_error = TRUE;
+				array_push($this -> error_msg, 'Field ' . $field . 'is empty.');
+			} else {
+				$result = $this -> match($patern, $string, $error_number);
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * undocumented function
+	 *
+	 * @return bool
+	 */
 	protected function clean_email($email) {
-		return $this -> match($this -> regex_email, $email, 1);
+		return $this -> non_empty_match($this -> regex_email, $email, 1, 'Email');
+	}
+
+	/**
+	 * undocumented function
+	 *
+	 * @return bool
+	 */
+	protected function clean_paswd($paswd) {
+		return $this -> non_empty_match($this -> regex_paswd, $passwd, 2, 'Password');
 	}
 
 	protected function clean_login($email, $passwd) {
-		$this -> match($this -> regex_email, $email, 4);
-		$this -> match($this -> regex_paswd, $passwd, 4);
-	}
-
-	protected function clean_paswd($paswd) {
-		return $this -> match($this -> regex_paswd, $paswd, 2);
+		$this -> non_empty_match($this -> regex_email, $email, 4, 'Email');
+		$this -> non_empty_match($this -> regex_paswd, $passwd, 4, 'Password');
 	}
 
 	protected function clean_captcha($captcha) {
