@@ -287,11 +287,23 @@ class simpleTag {
 					} elseif ($this -> check_tag_type($value, $this -> inline_tag) && count($value) === 3) {
 						$this -> print_inline_tag($value);
 					} elseif (count($value) >= 1) {
+						if(count($value) === 1 && $this -> check_tag_type($value, $this -> single_tag))
+							$this -> print_single_tag($value);
 						if(count($value) === 1 && $this -> check_plain_txt($value)){
 							$this -> print_text($value);
 						} elseif(count($value) >= 1){
 							foreach ($value as $val){
-								$this -> docOutput($val);
+								if(is_array($val)){
+									if($this -> check_tag_type($val, $this -> inline_tag)){
+										$this -> print_inline_tag($val);
+									}else{
+										$this -> docOutput($val);
+									}
+								}elseif(is_string($val) && $this -> check_tag_type($value, $this -> single_tag)){
+									$this -> print_single_tag($val);
+								}else{
+									$this -> print_block_tag($val);
+								}
 							}
 						}
 					}
