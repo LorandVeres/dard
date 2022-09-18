@@ -486,7 +486,7 @@ class simpleTag {
 	}
 
 	/**
-	 * Print out a select option group
+	 * Returns a select option group
 	 * @param (string) $attr , representing select element attributes
 	 * @param (array) $values = array( array('value="peach"' , 'Peach'), array('value="apple"' , 'Apple'))
 	 * @param (int) the indent deepnes, optional
@@ -494,7 +494,7 @@ class simpleTag {
 	 * @return void
 	 * @author  Lorand Veres
 	 */
-	public function print_select_option($attr, $values){
+	private function build_select_option($attr, $values){
 		if(func_num_args() > 2)
 			$this -> indentNum = func_get_arg(2);
 		$select_el = $this -> tag('select', $attr, '');
@@ -505,7 +505,87 @@ class simpleTag {
 				$this -> append_tag($select_el, $this -> tag('option', $clean[0], $clean[1]));
 			}
 		}
-		$this -> print_doc($select_el);
+		return $select_el;
+	}
+	
+	// Print out a select option group
+	public function print_select_option($attr, $values){
+		$this -> print_doc($this -> build_select_option($attr, $values));
+	}
+	
+	/**
+	 * Build an input tag
+	 * @param (array) array(label =>array('attr'=>for="first-name"', text=>'First name') , input=>array('attr'=>'type="text" name="sure-name"', 'text'=>'')))
+	 * 
+	 * @return void
+	 * @author  Lorand Veres
+	 */
+	private function build_input_tag($cur){
+		$input_tag = array();
+		foreach($cur as $key => $new){
+			switch ($key) {
+				case 'select':
+					$input_tag[] = $this -> print_select_option($new['select']['attr'], $new['select']['val']);
+					break;
+				default :
+					$input_tag[] = $this -> tag($key, $new['attr'], $new['text']);
+					break;
+			}
+		}
+		return $input_tag;
+	}
+	
+	// Print input tag
+	public function print_input_tag($cur){
+		$this -> print_doc($this -> build_input_tag($cur));
+	}
+	
+	// build a bloc of input tags
+	private function build_input_bloc($bloc, $cur_array){
+		foreach ($cur_array as $value) {
+			$this -> append_tag($bloc, $this -> build_input_tag($value));
+		}
+		return $bloc;
+	}
+	
+	// Print a bloc of input tags
+	public function print_input_bloc_tags($bloc, $cur_array){
+		$this -> print_doc($this -> build_input_bloc($bloc, $cur_array));
+	} 
+	
+	/**
+	 * build a simple form
+	 * @param $attr (string) representing form element attributes
+	 * @param $values (array)  array(label =>array('attr'=>for="first-name"', text=>'First name') , input=>array('attr'=>'type="text" name="sure-name"', 'text'=>'')))
+	 * @param (string) submit button attributes optional
+	 * @param (int) the indent deepnes, optional
+	 *
+	 * @return void
+	 * @author  Lorand Veres
+	 */
+	private function build_simple_form($attr, $values){
+		$submit = '';
+		$args_num = func_num_args();
+		if( $args_num > 2)
+			is_numeric(func_get_arg(2)) ? $this -> indentNum = func_get_arg(2) : $header = func_get_arg(2) ;
+		if($args_num > 3)  $this -> indentNum = func_get_arg(3);
+		$form = $this -> tag('form', $attr, '');
+		if(isset($header) && is_array($header))
+			$this -> append_tag($form, $this -> tag($header[0], '', $header[1]));
+		for($i = 0; $i <= count($values)-1; $i++) {
+			if(is_array($values[$i])) {
+				$form_body = $this -> build_input_tag($values[$i]);
+				foreach ($form_body as $val) {
+					$this -> append_tag($form, $val);
+				}
+			}
+		}
+		return $form;
+	}
+
+	// Print out a form
+	public function print_simple_form($attr, $values){
+		$this -> print_doc($this -> build_simple_form($attr, $values));
 	}
 
 }// end of class
