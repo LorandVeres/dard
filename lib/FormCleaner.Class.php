@@ -7,7 +7,7 @@ class FormCleaner {
 	public $post = FALSE;
 	// $error store an array of error id's
 	protected $errors = array();
-	// $error_msg store an array of error message
+	// $error_msg store an array of error messages
 	protected $error_msg = array();
 	protected $is_error = FALSE;
 	private $regex_paswd = "/^[\S\p{L}\p{M}*0-9]{6,50}$/";
@@ -43,13 +43,13 @@ class FormCleaner {
 
 	/*
 	 * Compare a string against a patern
-	 * 
+	 *
 	 * @params
-	 * 
+	 *
 	 * $patern the patern to be compared against
 	 * $string the string to be checked
 	 * $error_number is the number of the error per module what will be generated
-	 * 
+	 *
 	 * @return Bool : true on success false otherwise
 	 */
 	protected function match($patern, $string, $error_number) {
@@ -68,11 +68,11 @@ class FormCleaner {
 
 	/*
 	 *  Check if string is not empty and against a patern
-	 * 
+	 *
 	 * @params
 	 * Same as match function
 	 * $field the name of the field
-	 * 
+	 *
 	 * @return Bool : true on success false otherwise
 	 */
 	protected function non_empty_match($patern, $string, $error_number, $field) {
@@ -132,17 +132,17 @@ class FormCleaner {
 		}
 		$query = "SELECT `message` FROM `error_message` WHERE ";
 		$where = '';
-		$error_num =count($this -> errors);
+		$error_num = count($this -> errors);
 		if ($error_num > 0) {
 			for ($i = 0; $i < count($this -> errors); $i++) {
 				$j = $this -> errors[$i];
 				if ($i == 0) {
 					$where = "(`number` = '$j'";
-					if($error_num === 1)
+					if ($error_num === 1)
 						$where .= ")";
 				} else {
 					$where .= " OR `number` = '$j'";
-					if($i === $error_num - 1)
+					if ($i === $error_num - 1)
 						$where .= ")";
 				}
 			}
@@ -164,6 +164,55 @@ class FormCleaner {
 			}
 			$tag -> print_doc($wrap);
 		}
+	}
+
+	//=============================================
+	//
+	// Form preparing functions from db
+	//
+	//=============================================
+
+	/**
+	 * Retriving the form data from data base
+	 * @param $form_identifier
+	 * --Can be a numerical form id from db or a string for form name
+	 *
+	 * @return array
+	 */
+	private function get_form_fields($dard, $form_identifier) {
+		if (is_numeric($form_identifier)) {
+			$query = "SELECT * FROM `forms` WHERE `id` = '$form_identifier';";
+			$query .= "SELECT * FROM `form_fields` WHERE `form_id` = '$form_identifier';";
+		} elseif (is_string($form_identifier)) {
+			$query = "SELECT * FROM `forms` WHERE `name` = '$form_identifier';";
+			$query .= "SELECT * FROM `form_fields` WHERE `form_id` = (SELECT `id` FROM `forms` WHERE `name` = '$form_identifier');";
+		}
+		return $dard -> selectDB($form_identifier, $query, TRUE, 'default');
+	}
+
+	public function wrap_form_array($dard, $form_identifier) {
+		$form_array = array();
+		$form_data = $this -> get_form_fields($dard, $form_identifier);
+		$form = $form_data[0];
+		$form_array['header'] = array($form["header_type"], $form["form_header"]);
+		$form_array['attr'] = 'name="' . $form['name'] . '" id="' . $form['form_id'] . '" method="' . $form['method'] . '" action="' . $form['action'] . '" ' . $form['attributes'] !== NULL ? $form['attributes'] : '';
+		$form_array['fields'] = array();
+		foreach ($form_data[1] as $val) {
+			// checking possible null or empty values
+			$val['label_for'] === NULL ? $label = FALSE : $label = TRUE;
+			$val['field_text'] === NULL || empty($val['field_text']) ? $field_text = '' : $field_text = $val['field_text'];
+			$val['field_attributes'] === NULL ? $field_attr = '' : $field_attr = ' ' . $val['field_attributes'];
+			$val['field_placeholder'] === '' ? $field_place_holder = '' : $field_place_holder = ' placeholder="' . $val['field_placeholder'] . '"';
+			$val['value'] === NULL ? $field_value = '' : $field_value = ' value="' . $val['value'] . '"';
+			if (is_array($val)) {
+				if ($label) {
+					array_push($form_array['fields'], array('label' => array('attr' => 'for="' . $val['label_for'] . '"', 'text' => $val['label_text']), $val['field'] => array('attr' => 'type="' . $val['type'] . '" name="' . $val['name'] . '" id="' . $val['field_id'] . '"' . $field_value . $field_place_holder . $field_attr, 'text' => $field_text)));
+				} else {
+					array_push($form_array['fields'], array($val['field'] => array('attr' => 'type="' . $val['type'] . '" name="' . $val['name'] . '" id="' . $val['field_id'] . '"' . $field_value . $field_place_holder . $field_attr, 'text' => $field_text)));
+				}
+			}
+		}
+		return $form_array;
 	}
 
 }
