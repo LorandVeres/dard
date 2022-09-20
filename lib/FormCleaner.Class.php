@@ -204,11 +204,14 @@ class FormCleaner {
 			$val['field_attributes'] === NULL ? $field_attr = '' : $field_attr = ' ' . $val['field_attributes'];
 			$val['field_placeholder'] === '' ? $field_place_holder = '' : $field_place_holder = ' placeholder="' . $val['field_placeholder'] . '"';
 			$val['value'] === NULL ? $field_value = '' : $field_value = ' value="' . $val['value'] . '"';
+			$val['type'] === NULL ? $field_type = '' : $field_type = ' type="' . $val['type'] . '"';
+			$val['name'] === NULL || empty($val['name']) || $val['type'] ==='submit' ? $field_name = '' : $field_name = ' name="' . $val['name'] . '"';
+			$val['id'] === NULL ? $field_id = '' : $field_id = ' id="' . $val['field_id'] . '"';
 			if (is_array($val)) {
 				if ($label) {
-					array_push($form_array['fields'], array('label' => array('attr' => 'for="' . $val['label_for'] . '"', 'text' => $val['label_text']), $val['field'] => array('attr' => 'type="' . $val['type'] . '" name="' . $val['name'] . '" id="' . $val['field_id'] . '"' . $field_value . $field_place_holder . $field_attr, 'text' => $field_text)));
+					array_push($form_array['fields'], array('label' => array('attr' => 'for="' . $val['label_for'] . '"', 'text' => $val['label_text']), $val['field'] => array('attr' => ltrim($field_type . $field_name . $field_id . $field_value . $field_place_holder . $field_attr), 'text' => $field_text)));
 				} else {
-					array_push($form_array['fields'], array($val['field'] => array('attr' => 'type="' . $val['type'] . '" name="' . $val['name'] . '" id="' . $val['field_id'] . '"' . $field_value . $field_place_holder . $field_attr, 'text' => $field_text)));
+					array_push($form_array['fields'], array($val['field'] => array('attr' => ltrim($field_type . $field_name . $field_id . $field_value . $field_place_holder . $field_attr), 'text' => $field_text)));
 				}
 			}
 		}
