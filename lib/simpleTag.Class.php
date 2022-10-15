@@ -251,7 +251,8 @@ class simpleTag {
 	}
 
 	/*
-	 * Helper function, appending the attributes, used inside simpleTag ->tag(..)
+	 *  Helper function, appending the attributes, used inside simpleTag ->tag(..)
+	 *  Attributes can be passed to the tag function as a string or as an associative array
 	 *
 	 * @return void
 	 * @author  Lorand Veres
@@ -260,7 +261,7 @@ class simpleTag {
 		$attributes = '';
 		if (is_array($attr) && !empty($attr)) {
 			foreach ($attr as $key => $value) {
-				$attributes .= ' ' . $key . '="' . $value . '"';
+				is_numeric($key) && is_string($value)? ($attributes .= $value) : ($attributes .= ' ' . $key . '="' . $value . '"');
 			}
 		} elseif (is_string($attr) && !empty($attr)) {
 			$attributes .= ' ' . $attr;
@@ -381,7 +382,7 @@ class simpleTag {
 		}
 		return $table;
 	}
-	
+
 	/**
 	 * Numeric data will have cells style text-align:right
 	 *
