@@ -573,7 +573,24 @@ var $ = function () {
 	}
 };
 
-/*
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+// $ object prototype extended
+//
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+/**
  *
  *
  * AJAX function with main funcionality on POST GET and JSON
@@ -587,25 +604,27 @@ var $ = function () {
  * @  	type : 'GET',  // type of request POST or GET
  * @  	url : 'your/page/url', // the page url
  * @  	response : 'function', //handle the response from server
- * @  	send : null, // in GET request is optional
- * @  	json : true, // optional required if you do not stringify before the object
+ * @  	send : null, // in GET request is optional or can be set to null
+ * @  	json : true, // optional required if you do not stringify before the object, otherwise can be set to false
  * @  	error : 'custom error message' // optional to see for errors in consol log
  *
  * };
  *
  */
 
-var ajax = function(obj) {
-	var getPostJson = function() {
-		var xhr = new XMLHttpRequest();
+$.constructor.prototype.ajax = function(obj) {
+	let getPostJson = function() {
+		let xhr = new XMLHttpRequest();
 		xhr.open(obj.type, obj.url);
 		xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "dard_ajax");
-		if (obj.type === 'POST' && !obj.keyIn('json'))
+		if (obj.type === 'POST' && !obj.keyIn('json')){
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		param(obj.send);
-		if (obj.keyIn('json') && obj.json === true) {
+			param(obj.send);
+		}
+		if (obj.keyIn('json') ) {
 			xhr.setRequestHeader("Content-Type", "application/json ; charset=UTF-8");
-			obj.send = JSON.stringify(obj.send);
+			if(obj.json === true)
+				obj.send = JSON.stringify(obj.send);
 		}
 		if (obj.type === 'GET' && obj.keyIn('send')) {
 			if (isObj(obj.send))
@@ -626,8 +645,8 @@ var ajax = function(obj) {
 	};
 
 	function param(object) {
-		var encodedString = '';
-		for (var prop in object) {
+		let encodedString = '';
+		for (let prop in object) {
 			if (object.hasOwnProperty(prop)) {
 				if (encodedString.length > 0) {
 					encodedString += '&';
@@ -641,32 +660,7 @@ var ajax = function(obj) {
 	getPostJson();
 };
 
-/*
- *
- *  Starting DOM manipulation functions
- *
- *
- * str2el()
- *
- * Create a valid DOM element from a html string
- *
- */
 
-function str2el(html) {
-	var fakeEl = document.createElement('iframe');
-	fakeEl.style.display = 'none';
-	document.body.appendChild(fakeEl);
-	fakeEl.contentDocument.open();
-	fakeEl.contentDocument.write(html);
-	fakeEl.contentDocument.close();
-	var el = fakeEl.contentDocument.body.firstChild;
-	document.body.removeChild(fakeEl);
-	return el;
-};
 
-function emptyEl(el) {
-	var e = $(el);
-	while (e.firstChild) {
-		e.removeChild(e.firstChild);
 	}
 }
