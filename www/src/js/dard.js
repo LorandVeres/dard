@@ -4,11 +4,15 @@
  *
  */
 
-/*
- * Basic comparison
- * and other useful functions
- *
- */
+/*******************************************************************************
+*===============================================================================
+*
+* Basic comparison
+* and other useful functions
+*
+*===============================================================================
+********************************************************************************
+*/
 function isObj(o) {
 	return typeof o === "object" || toString.call(o).split(/\W/)[2].toLowerCase() === "object";
 }
@@ -36,9 +40,9 @@ function isNum(n) {
 function isSet(o) {
 	return typeof o === 'undefined' || o === undefined ? false : true;
 }
-
+// Checks if a string is empty
 function empty(v) {
-	var r = false;
+	let r = false;
 	if (isStr(v)) {
 		v.length == 0 ? r = true : r = false;
 		if (v.length == 1 && (v == '0' || v == "0" ))
@@ -64,8 +68,22 @@ function argsLength(arguments) {
 	return varyArgs(arguments).length;
 }
 
+/*******************************************************************************
+*===============================================================================
+*
+* A few small handfull functions
+*
+*
+*===============================================================================
+********************************************************************************
+*/
+
+/*
+* Set css properties provided as an object to an elemnt
+*
+*/
 function setCss(el, css) {
-	var k,
+	let k,
 	    f = '';
 	if (isObj(css)) {
 		for (k in css) {
@@ -75,24 +93,59 @@ function setCss(el, css) {
 		el.style.cssText = f;
 	}
 }
-
+/*
+* Toggle the element provided
+*
+*/
 function toggle(el) {
-	var s = window.getComputedStyle(el, null).getPropertyValue("display");
+	let s = window.getComputedStyle(el, null).getPropertyValue("display");
 	s === 'none' ? el.style.display = 'block' : el.style.display = 'none';
 };
 
-//
-// recomended usage for testing pourpuse only
-//
+/*
+* recomended usage for testing pourpuse only
+*
+*/
 function simulateClick(onTarget) {
-	var evt = document.createEvent("MouseEvents");
+	let evt = document.createEvent("MouseEvents");
 	evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 	$(onTarget).dispatchEvent(evt);
 }
+/*
+* str2el(html_string)
+* Creates a valid DOM element from a html string
+*/
 
+function str2el(html) {
+   let fakeEl = document.createElement('iframe');
+
+   fakeEl.style.display = 'none';
+   document.body.appendChild(fakeEl);
+   fakeEl.contentDocument.open();
+   fakeEl.contentDocument.write(html);
+   fakeEl.contentDocument.close();
+
+   let el = fakeEl.contentDocument.body.firstChild;
+   document.body.removeChild(fakeEl);
+   return el;
+};
+/*
+*  Empty the element provided
+*
+*/
+function emptyEl(el) {
+   let e = $(el);
+   while (e.firstChild) {
+	   e.removeChild(e.firstChild);
+   }
+}
+/*
+* Counter function. Tthe perfect example for a closure
+*
+*/
 function counter() {
-	var count = 0;
-	var change = function(val) {
+	let count = 0,
+		change = function(val) {
 		count += val;
 	};
 
@@ -151,11 +204,11 @@ function require_js_module(src) {
  */
 function include_module(obj) {
 	if (obj.keyIn('el')) {
-		var el = obj.el;
+		let el = obj.el;
 		while (el.hasChildNodes()) {
 			el.removeChild(el.firstChild);
 		}
-		isObj(obj.html) ? el.appendChild(obj.html) : el.appendChild(str2el(obj.html));
+		isObj(obj.html) ? el.appendChild(obj.html) : isStr(obj.html) ? el.appendChild(str2el(obj.html)) : null;
 		if (obj.keyIn('js'))
 			require_js_module(obj.js);
 	}
@@ -164,7 +217,7 @@ function include_module(obj) {
 // Useful Object relating functions
 
 function myObj() {
-	self = {};
+	let self = {};
 	self.keyIn = function(k) {
 		return this.hasOwnProperty(k) ? true : false;
 	};
@@ -178,20 +231,21 @@ function myObj() {
 		}
 	};
 	self.size = function() {
-		var c = 0,
+		let c = 0,
 		    k,
 		    o = this;
 		if ( typeof this == 'object') {
 			for (k in o) {
-				if (!( k in Object.prototype)) {
-					o.keyIn(k) ? c++ : null;
-				}
+				o.keyIn(k) ? c++ : null;
 			}
 			return c;
 		}
 	};
 	return self;
 }
+
+//   Asigning myObj to Object prototype
+Object.assign(Object.prototype, new myObj());
 
 function camelCase(str) {
 	// Lower cases the string
@@ -209,142 +263,258 @@ function camelCase(str) {
 	.replace(/ /g, '');
 }
 
-// end of basic functions
+/*
+********************************************************************************
+*===============================================================================
+*
+* This is the MAIN selector function
+*
+*
+*
+*===============================================================================
+********************************************************************************
+*/
 
-// the MAIN selector function
-//
 
-var $ = ( function() {
-	var args = [],
-	    document = window.document,
-	    idRE = /^#{1}[a-z0-9\-\_]+\-*$/i, // id REgex
+
+var $ = function () {
+	let itemNo,
+		el = this,
+		args = varyArgs(arguments),
+		arg ,
+		toType = {},
+		toString = toType.toString;
+	const idRE = /^#{1}[a-z0-9\-\_]+\-*$/i, // id REgex
 	    classNameRE = /^\.{1}[a-z0-9\-\_\s]+$/i, // class REgex
 	    tagNameRE = /^<{1}[a-z0-9]+>{1}$/i, // html tag REgex
-	    plainTagRE = /^[a-z1-6]+$/,
-	    toType = {},
-	    toString = toType.toString;
-	//
-	Object.assign(Object.prototype, new myObj());
+	    plainTagRE = /^[a-z1-6]+$/;
 
-	var Dard = function() {
-		var self = this;
-		self.extendProto = function(prop) {
-			if ( typeof prop === 'object')
-				Object.assign(self, prop);
-			return this;
+	args[0] ? arg = args[0] : console.warn('Dard function has no arguments');
+	isNum(args[1]) ? itemNo = args[1] : itemNo = 0;
+
+	if ( typeof arg == 'string') {
+		if (idRE.test(arg))
+			el = document.getElementById(arg.substring(1));
+		if (classNameRE.test(arg))
+			el = document.getElementsByClassName(arg.substring(1))[itemNo];
+		if (tagNameRE.test(arg))
+			el = document.createElement(arg.replace(/^<+|>+$/gm, ''));
+		if (plainTagRE.test(arg))
+			el = document.getElementsByTagName(arg)[itemNo];
+	} else if (isObj(arg) && ( arg instanceof HTMLElement || arg instanceof HTMLDocument )) {
+		el = arg;
+	} else if (isObj(arg) || arg instanceof HTMLCollection) {
+		console.log("collection handling not yet implemented, returned as bare HTMLCollection");
+		return arg;
+	}
+
+	if (el) {
+
+		/**
+		* On window.onload attaching an event to this element
+		*
+		*/
+
+		el.constructor.prototype.on= function(ev, fn) {
+			if (isFunc(fn)) {
+				window.onload = this.addEventListener(ev, fn, false);
+				return this;
+			}
 		};
-		// has been modified
-		self.append = function(e) {
-			if (this[0]) {
-				if ( typeof e === 'object') {
+
+		/**
+		* Append one Html object or an HTML string to itself (element)
+		*
+		*/
+
+		el.constructor.prototype.append = function(e) {
+			if ( typeof e === 'object') {
+				try {
+					this.appendChild(e);
+				} catch(err) {
 					try {
-						this[0].appendChild(e[0]);
-					} catch(err) {
-						try {
-							this[0].appendChild(e);
-						} catch(err2) {
-							console.log(err + "\n" + err2);
-						}
-					}
-				}
-				if (isStr(e)) {
-					this[0].appendChild(str2el(e[0]));
-				}
-			}
-			return this;
-		};
-		// new function
-		self.remove = function(e) {
-			if (this[0]) {
-				this[0].removeChild(e);
-			}
-			return this;
-		};
-		self.clone = function(fn) {
-			if (this[0] && isFunc(fn)) {
-				fn(this[0].cloneNode(true));
-			}
-			return this;
-		};
-		self.ihtml = function(t) {
-			if (this[0]) {
-				if (isStr(t)) {
-					this[0].innerHTML = t;
-				} else if (isFunc(t)) {
-					t(this[0].innerHTML);
-				}
-			}
-			return this;
-		};
-		self.ohtml = function(fn) {
-			if (this[0] && isFunc(fn)) {
-				fn(his[0].outerHTML);
-			}
-			return this;
-		};
-		self.cnode = function() {
-			if (this[0]) {
-				var arg = arguments;
-				el = this[0].childNodes,
-				k = 0;
-				for (var i = 0,
-				    j = el.length; i < j; i++) {
-					if (el[i]) {
-						if (el[i].nodeName.toLowerCase() === arg[0].toLowerCase()) {
-							if (arg.length == 2 && isFunc(arg[1]))
-								arg[1](el[i]);
-							if (arg.length == 3 && el[i].nodeName.toLowerCase() === arg[0].toLowerCase()) {
-								if (arg[1] == k++ && isFunc(arg[2])) {
-									arg[2](el[i]);
-								}
-							}
-						}
+						if (isStr(e))
+							this.appendChild(str2el(e[0]));
+					} catch(err2) {
+						console.log(err + "\n" + err2);
 					}
 				}
 			}
 			return this;
 		};
-		self.toggle = function() {
-			if (this[0]) {
-				var s = window.getComputedStyle(this[0], null).getPropertyValue("display");
-				s === 'none' ? this[0].style.display = 'block' : this[0].style.display = 'none';
+
+		/**
+		*  Removes one child element specified as the parameter
+		*
+		*/
+
+		el.constructor.prototype.remove = function(e) {
+			this.removeChild(e);
+			return this;
+		};
+
+		/**
+		*  Empty the element removing all its child elements
+		*
+		*/
+
+		el.constructor.prototype.empty = function() {
+			while (this.firstChild) {
+					this.removeChild(this.firstChild);
 			}
 			return this;
 		};
-		self.css = function(val) {
-			var k,
+
+		/**
+		*  It clones itself,
+		*  if a callback is pased as parameter than the cloned element becomes
+		*  that callback parameter oterwise it will return itself
+		*
+		*/
+
+		el.constructor.prototype.clone = function(fn) {
+			if (this && isFunc(fn)) {
+				fn(this.cloneNode(true));
+			}else{
+				return this.cloneNode(true);
+			}
+			return this;
+		};
+
+		/**
+		*  Adding attributes to itself, attribut and value or just an attribut
+		*  Second parameter is optional
+		*  .addattr(attr, value);
+		*/
+
+		el.constructor.prototype.addattr = function() {
+			let arg = varyArgs(arguments);
+			if (arguments.length === 2) {
+				this.setAttribute(arg[0], arg[1]);
+			}else if (arguments.length === 1) {
+				this.createAttribute(arg[0]);
+			}
+			return this;
+		};
+
+		/**
+		*  Adds or change the value of an element, or if a callback is pased it
+		*  will use this element value as parameter for the callbacks
+		*
+		*/
+
+		el.constructor.prototype.val = function(v) {
+			if (isStr(v)) {
+				this.value = v;
+			} else if (isFunc(v)) {
+				v(this.value);
+			}
+			return this;
+		};
+
+		/**
+		*  Toggle the element
+		*
+		*/
+
+		el.constructor.prototype.toggle = function() {
+			let s = window.getComputedStyle(this, null).getPropertyValue("display");
+			s === 'none' ? this.style.display = 'block' : this.style.display = 'none';
+			return this;
+		};
+
+		/**
+		*  Adding a class to the element class list
+		*
+		*/
+
+		el.constructor.prototype.addclass = function(newclass) {
+			if (this && isStr(newclass)) {
+				this.classList.add(newclass);
+			}
+			return this;
+		};
+
+		/**
+		*  Adding css to itself (element). It takes an object as parameter like
+		*  {margin:"3%", padding:"3%", "font-size":"16px"}
+		*/
+
+		el.constructor.prototype.css = function(val) {
+			let k,
 			    f = '',
 			    c;
-			if (isObj(val) && this[0]) {
+			if (isObj(val) && this) {
 				for (k in val) {
 					if (val.hasOwnProperty(k)) {
 						c = k.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 						f += c + ':' + val[k] + ';';
 					}
 				}
-				this[0].style.cssText = f;
+				this.style.cssText = f;
 			}
 			return this;
 		};
-		self.me = function() {
-			if (this[0]) {
-				return this[0];
+
+		/**
+		*  It sets innerHTML if string is passed as parameter
+		*  It gets the innerHTML if no parameter is passed
+		*  It gets the innerHTML and pased it to the callback function
+		*/
+
+		el.constructor.prototype.ihtml = function() {
+			let t = varyArgs(arguments);
+			if(t.length === 1){
+				if (isStr(t[0])) {
+					this.innerHTML = t;
+				} else if (isFunc(t[0])) {
+					let callback = t[0];
+					callback(this.innerHTML);
+				}
+			}else if (t.length === 0) {
+				return this.innerHTML;
 			}
-		};
-		self.on = function(ev, fn) {
-			if (this[0]) {
-				window.onload = this[0].addEventListener(ev, fn, false);
-			}
+
 			return this;
 		};
-		// new function
-		self.onclick = function() {
-			var callback = arguments[0],
+
+		/**
+		*  It sets outerHTML if string is passed as parameter
+		*  It gets the outerHTML if no parameter is passed
+		*  It gets the outerHTML an pased it to the callback function if the
+		*  parameter is a function
+		*/
+
+		el.constructor.prototype.ohtml = function() {
+			let t = varyArgs(arguments);
+			if(t.length === 1){
+				if (isStr(t[0])) {
+					this.outerHTML = t;
+				} else if (isFunc(t[0])) {
+					let callback = t[0];
+					callback(this.outerHTML);
+				}
+			}else if (t.length === 0) {
+				return this.outerHTML;
+			}
+			if(dom_object.e_content)
+			return this;
+		};
+
+		/** UNTESTED YET
+		*  It may have an unexpected behavior yet
+		*****************************************
+		*  It supouse to attach an event to the element. One time click it may
+		*  be possible
+		*/
+
+		el.constructor.prototype.click = function() {
+			let callback = arguments[0],
 			    prevent = arguments[1],
 			    once = arguments[2],
 			    tip;
 			function doclick() {
-				var el = this;
+				let el = this;
 				callback();
 				if (prevent) {
 					event.preventDefault("click");
@@ -353,133 +523,56 @@ var $ = ( function() {
 					this.removeEventListener("click", doclick, tip);
 				}
 			}
-			if (this[0]) {
-				if (isSet(prevent) && prevent == true) {
-					if (isSet(once) && once == true) {
-						this[0].addEventListener("click", doclick, false);
-						tip = false;
-					} else if (!isSet(once) || once == false) {
-						this[0].addEventListener("click", doclick, true);
-						tip = true;
-					}
-				} else {
-					if (isSet(once) && once == true) {
-						this[0].addEventListener("click", doclick, false);
-						tip = false;
-					} else if (!isSet(once) || once == false) {
-						this[0].addEventListener("click", doclick, true);
-						tip = true;
-					}
+			if (isSet(prevent) && prevent == true) {
+				if (isSet(once) && once == true) {
+					this[0].addEventListener("click", doclick, false);
+					tip = false;
+				} else if (!isSet(once) || once == false) {
+					this[0].addEventListener("click", doclick, true);
+					tip = true;
 				}
-			}
-		};
-		self.val = function(v) {
-			if (this[0]) {
-				if (isStr(v)) {
-					this[0].value = v;
-				} else if (isFunc(v)) {
-					v(this[0].value);
+			} else {
+				if (isSet(once) && once == true) {
+					this[0].addEventListener("click", doclick, false);
+					tip = false;
+				} else if (!isSet(once) || once == false) {
+					this[0].addEventListener("click", doclick, true);
+					tip = true;
 				}
 			}
 			return this;
 		};
-		self.empty = function() {
-			if (this[0]) {
-				while (this[0].firstChild) {
-					this[0].removeChild(this[0].firstChild);
-				}
-			}
-			return this;
-		};
-		// new function
-		self.addattr = function(att, val) {
-			if (this[0]) {
-				this[0].setAttribute(att, val);
-			}
-			return this;
-		};
-		// new function
-		self.addclass = function(newclass) {
-			if (this[0] && isStr(newclass)) {
-				this[0].classList.add(newclass);
-			}
-			return this;
-		};
-		// new function
-		self.getTags = function() {
-			var tags;
-			if (this[0] && isStr(arguments[0])) {
-				tags = this[0].getElementsByTagName(arguments[0]);
-			}
-			if (arguments.length > 1) {
-				tags = $(tags[arguments[1]]);
-				if (tags) {
-					return tags;
-				} else {
-					console.log("No html element has been found.");
-				}
-				//return tags;
-			}
-			if (arguments.length === 1) {
-				if (tags) {
-					return tags;
-				} else {
-					console.log("No html elements has been found.");
-				}
-			}
-		};
-		return self;
-	};
 
-	// Selecting the element from first parameter
-	function GetEl(arg, item) {
-		var itemNo,
-		    el = this,
-		    args = varyArgs(arguments);
-		el.constructor.prototype = new Dard();
-		isNum(args[1]) ? itemNo = args[1] : itemNo = 0;
-		if ( typeof arg == 'string') {
-			if (idRE.test(arg))
-				el[0] = document.getElementById(arg.substring(1));
-			if (classNameRE.test(arg))
-				el[0] = document.getElementsByClassName(arg.substring(1))[itemNo];
-			if (tagNameRE.test(arg))
-				el[0] = document.createElement(arg.replace(/^<+|>+$/gm, ''));
-			if (plainTagRE.test(arg))
-				el[0] = document.getElementsByTagName(arg)[itemNo];
-		} else if (isObj(arg) && ( arg instanceof HTMLElement || arg instanceof HTMLDocument )) {
-			el[0] = arg;
-		} else if (isObj(arg) || arg instanceof HTMLCollection) {
-			console.log("collection handling not yet implemented, returned as bare HTMLCollection");
-			return arg;
-		}
-		if (el[0]) {
-			return el;
-		}
+		/** UNTESTED
+		*  It may have an unexpected behavior yet
+		*****************************************
+		*
+		* @param first is a callback functions, apply the array or object on childNodes
+		* @param second an array or iterate object
+		*/
+
+		el.constructor.prototype.walk_Child = function() {
+			let arg = varyArgs(arguments),
+				callback = arg[0],
+				el = this.childNodes,
+				k = 0;
+				for (let i = 0, j = el.length; i < j; i++) {
+					if (el[i]) {
+						if (arg.length === 1 && isFunc(arg[1]))
+							callback(el[i]);
+						// This behavior has to be checked
+						if (arg.length === 2 && (isObj(arg[1] || isArray(arg[1])))) {
+							callback(el[i], arg[1]);
+						}
+					}
+				}
+			return this;
+		};
+
+		return el;
 	}
+};
 
-	type(Dard);
-	type(GetEl);
-	
-	var utils = function(){
-		this.e = function(){console.log('test object working');};
-	};
-	
-	
-	return function() {
-		var arg = varyArgs(arguments),
-		    itemNo,
-		    el;
-		if (arg.length > 0) {
-			isNum(arg[1]) ? itemNo = arg[1] : itemNo = null;
-			return new GetEl(arg[0], itemNo);
-		}else if(arg.length === 0 || arguments === null){
-			return new utils;
-		}
-	};
-	
-	
-}());
 /*
  *
  *
