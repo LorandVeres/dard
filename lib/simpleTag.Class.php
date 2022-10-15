@@ -199,12 +199,28 @@ class simpleTag {
 	 */
 	private function print_inline_tag($value) {
 		$tf = str_pad("", $this -> indentNum + 1, "\t");
+		$loop_inline_tags = function($var, $tf){
+			$inline = '';
+			if(is_array($var)){
+				foreach ($var as $key => $val) {
+					if(is_string($val))
+						$inline .= $val;
+					if(is_array($val)){
+						if(count($val) == 3)
+							$inline .= str_replace("\n", "", $this -> tag($val[0], $val[1], $val[2]));
+					}
+				}
+			}elseif(is_string($var)){
+				$inline .= $var;
+			}
+			return $inline;
+		};
 		if(is_array($value[1])){
 			if(!isset($value[1][0]) && empty($value[1]))
 			 	$value[1][0] = '';
-			printf("%s", $tf . $value[0] . $value[1][0] . $value[2] . "\n");
+			printf("%s", $tf . $value[0] . $loop_inline_tags($value[1][0], $tf) . $value[2] . "\n");
 		}else if(is_string($value[1])){
-			printf("%s", $tf . $value[0] . $value[1] . $value[2] . "\n");
+			printf("%s", $tf . $value[0] . $loop_inline_tags($value[1], $tf) . $value[2] . "\n");
 		}
 	}
 
