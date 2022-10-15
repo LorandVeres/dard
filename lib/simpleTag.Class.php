@@ -136,9 +136,9 @@ class simpleTag {
 		return $b;
 	}
 
-	/*
-	 * @parameter passed is a string. Returning TRUE if if is an opening tag
-	 * Helper function inside docOutput(...).
+	/**
+	 * @param passed is a string. Returning TRUE if it is an opening tag
+	 * Helper function inside print_block_tag(...).
 	 *
 	 * @return bool
 	 * @author  Lorand Veres
@@ -146,6 +146,18 @@ class simpleTag {
 	private function check_start_tag($value) {
 		substr($value, 0, 2) !== "</" ? $start_tag = true : $start_tag = false;
 		return $start_tag;
+	}
+
+	/**
+	 * @param passed is a string. Returning TRUE if it is an empty end tag
+	 * Helper function inside print_block_tag(...).
+	 *
+	 * @return bool
+	 * @author  Lorand Veres
+	 */
+	private function check_empty_end_tag($value){
+		substr($value, 0, 3) === "</>" ? $bool = true : $bool = false;
+		return $bool;
 	}
 
 	/*
@@ -264,7 +276,7 @@ class simpleTag {
 		}
 		// printing the block tags
 		$this -> check_tag_type($value, $this -> block_tag) ? printf("%s", $tf . $value . "\n") : '';
-		!$this -> check_start_tag($value) || $this -> check_tag_type($value, $this -> inline_tag) ? $this -> indentNum-- : '';
+		!$this -> check_start_tag($value) || $this -> check_tag_type($value, $this -> inline_tag) ? ( !$this -> check_empty_end_tag($value) ? $this -> indentNum-- : null ): null;
 	}
 
 	/*
