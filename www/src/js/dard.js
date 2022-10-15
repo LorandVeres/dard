@@ -660,7 +660,150 @@ $.constructor.prototype.ajax = function(obj) {
 	getPostJson();
 };
 
+/** SnipetHandler
+*  Dynamic and asynchronous HTML snipet handling
+*************************************************
+*
+*  snipetHandler object, with methods and properties to handle one own style
+*  of JSON type HTML snipets to and from the server. Adding a convenient way of
+*  handling, storing in a data base on the server, or in a js object on the client.
+*
+*/
 
+$.constructor.prototype.snipetHandler = (function() {
+	let self = {},
+		snipet_JSON = {},
+		snipet_object = {};
 
+	/**
+	*  Creating an object from an existing HTMLdom element from the document
+	*
+	*
+	*/
+
+	self.gett = function(el)  {
+		let block = {},
+		    build_Block,
+		    get_Attributes,
+		    walk_Siblings;
+
+		get_Attributes = function(e) {
+			let attr = {},
+			    attr_Name;
+			for (let i = 0; i < e.attributes.length ; i++) {
+				attr_Name = e.attributes.item(i).name.toString();
+				if (attr_Name.toLocaleString())
+					attr[attr_Name.toLocaleString()] = e.attributes.item(i).value;
+			}
+			return attr;
+		};
+
+		walk_Siblings = function(element) {
+			let i = 0,
+				j = 0,
+			    the_Child = element.childNodes,
+			    siblings = {},
+			    text;
+			    do {
+					if (the_Child[i].nodeType === 1) {
+						siblings[j] = self.gett(the_Child[i]);
+						j++;
+					} else if (the_Child[i].nodeType === 3) {
+						text = the_Child[i].nodeValue.replace(((/\n|\t/gi)), "");
+						if (text.trim() != "") {
+							siblings[j] = {};
+							siblings[j].e_name = "#text";
+							siblings[j].e_type = 3;
+							siblings[j].e_content = text;
+							j++;
+						}
+					}
+					i++;
+				} while(i < the_Child.length);
+			return siblings;
+		};
+
+		build_Block = function(e) {
+			let inner_Block = {},
+			    the_First_Child;
+			(e.firstElementChild != (null || undefined)) ? the_First_Child = e.firstElementChild : the_First_Child = null;
+			inner_Block.e_name = e.nodeName;
+			inner_Block.e_type = e.nodeType;
+			inner_Block.e_type === 1 ? inner_Block.e_attr = get_Attributes(e) : null;
+			the_First_Child ? inner_Block.e_content = walk_Siblings(e) : (inner_Block.e_type === 1 ? inner_Block.e_content = e.innerHTML.replace((/\n|\t/gi), "") : null);
+
+			return inner_Block;
+		};
+
+		if (el.nodeType === 1) {
+			block = build_Block(el);
+		}
+
+		return block;
 	}
-}
+
+	/**
+	*  Insert an HTML node in the document from a snipet object or JSON snipet string
+	*
+	*
+	*
+	*/
+
+	self.sett = function(dom_object, recipient_Element) {
+		var dom ={},
+			set_Attributes,
+			set_TextNode,
+			walk_Content,
+			set_Element;
+		const e_attr = 'e_attr';
+		const e_content = 'e_content';
+
+		set_Attributes = function(attr_Obj, el){
+			var attr={};
+			for (var prop in attr_Obj){
+				if(attr_Obj.hasOwnProperty(prop)){
+					if(!empty(attr_Obj[prop])){
+						attr = document.createAttribute(prop);
+						attr.value = attr_Obj[prop];
+						el.setAttributeNode(attr);
+					}
+				}
+			}
+		};
+
+		walk_Content = function(content_obj, parent){
+			if(content_obj.keyIn(e_content)){
+				for (var prop in content_obj.e_content){
+					self.sett(content_obj.e_content[prop], parent);
+				};
+			}
+		};
+
+		set_TextNode = function(txt_Obj, parent){
+			const text = document.createTextNode(txt_Obj);
+			parent.appendChild(text);
+		};
+
+		set_Element = function(obj){
+			if(obj.e_type === 1){
+				const element = document.createElement(obj.e_name);
+				if(obj.keyIn(e_attr))
+					set_Attributes(obj.e_attr, element);
+				if(obj.keyIn(e_content)){
+					if(isStr(obj.e_content) || obj.e_content.e_type === 3){
+						set_TextNode(obj.e_content, element);
+					}
+					if(isObj(obj.e_content) && !isStr(obj.e_content))
+						walk_Content(obj, element);
+				}
+				recipient_Element.appendChild(element);
+			}else if(obj.e_type === 3 || isStr(obj.e_content)){
+				set_TextNode(obj.e_content, recipient_Element);
+			}
+		};
+
+		set_Element(dom_object);
+	};
+
+	return self;
+}());
