@@ -2,8 +2,8 @@
 function addpageid(e, doit){
 	var page, mod, href,
 		path = window.location.pathname;
-		path.indexOf("?") == -1 ? 
-			href = path.slice(path.indexOf("/"))+"?a="+ doit : 
+		path.indexOf("?") == -1 ?
+			href = path.slice(path.indexOf("/"))+"?a="+ doit :
 			href = path.slice(path.indexOf("/"), path.lastIndexOf("?")) + "?a=" + doit;
 	e.removeAttribute('href');
 	$('#pageid').ihtml(function (s){ page = s; });
@@ -20,8 +20,8 @@ function addpageid(e, doit){
 function addmoduleid(e, doit){
 	var mod, href,
 		path = window.location.pathname;
-		path.indexOf("?") == -1 ? 
-			href = path.slice(path.indexOf("/"))+"?a="+ doit : 
+		path.indexOf("?") == -1 ?
+			href = path.slice(path.indexOf("/"))+"?a="+ doit :
 			href = path.slice(path.indexOf("/"), path.lastIndexOf("?"))+"?a="+ doit;
 	e.removeAttribute('href');
 	mod = $('#moduleid')[0].innerHTML;
@@ -54,7 +54,7 @@ function addmoduleid(e, doit){
 			}
 			return [m, c, x];
 		}
-		
+
 		function rotate(v){
 			var val = v + 'deg';
 			$('.sub-menu-h-i').css({
@@ -64,38 +64,38 @@ function addmoduleid(e, doit){
 			});
 		}
 
-		if ($('.sub-menu')[0]) {
+		if ($('.sub-menu')) {
 			var el = $('.sub-menu'),
-				elH = $('#content')[0].scrollHeight.toString() +'px';
+				elH = $('#content').scrollHeight.toString() +'px';
 			setInterval(function(el) {
 				var w;//el = $('.sub-menu'),
 				   // w;
-				if (window.screen.width < 481 && el[0].style.height !== 'auto'){
+				if (window.screen.width < 481 && el.style.height !== 'auto'){
 					el.css({
 						height : '0px'
 					});
 					$('.content').css({width : '100%'});
 					rotate(90);
 				}
-				if (window.screen.width > 480 && (el[0].style.height !== ('100%' || elH))) {
-					w = el[0].style.width;
+				if (window.screen.width > 480 && (el.style.height !== ('100%' || elH))) {
+					w = el.style.width;
 					el.css({
 						height : elH,
 						width : w
 					});
-					if(w == '') el[0].style.width = '0%';
+					if(w == '') el.style.width = '0%';
 					if(w == '0%' || w == '') rotate(0);
 					w == '0%' || w == '' ? $('.content').css({width : '100%'}) : $('.content').css({width : getx()[1]});
 				}
 			}, 300, el, elH);
-			$('.sub-menu-h-i').me().onclick = function() {
+			$('.sub-menu-h-i').onclick = function() {
 				var d = getx(),
 				    m = d[0],
 				    c = d[1],
 				    kit = ('-ms-' || '-mos-' || '-webkit-' || ''),
 				    transition = kit + 'transition';
 				if (d[2] > 480) {
-					if($('.sub-menu')[0].style.width == '0%'){
+					if($('.sub-menu').style.width == '0%'){
 						rotate(+180);
 						$('.sub-menu').css({
 							transition : 'width .3s ease-in-out',
@@ -119,7 +119,7 @@ function addmoduleid(e, doit){
 						setTimeout(function(){$('.sub-menu-b').toggle();}, 300);
 					};
 				} else if (d[2] < 481) {
-					if($('.sub-menu')[0].style.height == '0px'){
+					if($('.sub-menu').style.height == '0px'){
 						rotate(270);
 						$('.sub-menu').css({
 							transition : 'height .9s ease-in-out',
@@ -141,9 +141,9 @@ function addmoduleid(e, doit){
 		}
 	}());
 
-dialog($('#search')[0], {
+dialog($('#search'), {
 	title : 'Page id search box',
-	body : $('#box')[0],
+	body : $('#box'),
 	onside : true,
 	drag : true,
 	css : ['dard_d_box_two', 'dard_d_hd', 'dard_d_bt', 'dard_d_bt', 'dard_d_bt', 'dard_d_bd_two', 'dard_d_f'],
@@ -178,10 +178,10 @@ dialog($('#search')[0], {
  *
  */
 function searchPageId(val) {
-	var links = $('#searchlinks');
+	let links = $('#searchlinks');
 
 	function log() {
-		var page,
+		let page,
 		    mod;
 		if (this.hasAttribute('data-pageid'))
 			$('#pageid').ihtml(this.getAttribute('data-pageid'));
@@ -193,16 +193,16 @@ function searchPageId(val) {
 		}
 		$('#searchbox').val('');
 		$('.modulename').ihtml('');
-		$('.wrap', 0).cnode('table', function(el){
+		$('.wrap', 0).walk_Child('table', function(el){
 			el.parentNode.removeChild(el);
 		});
-		$('.wrap', 0).cnode('div', function(el){
+		$('.wrap', 0).walk_Child('div', function(el){
 			el.parentNode.removeChild(el);
 		});
 	}
 
 	if (!empty(val)) {
-		ajax({
+		$.ajax({
 			type : 'GET',
 			url : 'search?search=' + val,
 			response : function(s) {
@@ -213,7 +213,7 @@ function searchPageId(val) {
 				});
 				if (el) {
 					if (links.append(el)) {
-						var c = links[0].childNodes[0].childNodes;
+						var c = links.childNodes[0].childNodes;
 						for (var i = 0,
 						    j = c.length; i < j; i++) {
 							if (c[i].nodeName.toLowerCase() == 'p') {
@@ -249,10 +249,10 @@ function searchPageId(val) {
 
 var toggleMenu = ( function() {
 		showHideMenu = function() {
-			var e = $("#menu").me(),
-			    c = $("#main").me(),
-			    om = $("#menuicon").me(),
-			    mes = $("#menu-body").me();
+			var e = $("#menu"),
+			    c = $("#main"),
+			    om = $("#menuicon"),
+			    mes = $("#menu-body");
 			if (e.style.width === 0 | e.clientWidth === 0) {
 				e.style.width = '260px';
 				c.style.marginLeft = '260px';
@@ -297,8 +297,8 @@ var toggleMenu = ( function() {
 //
 //
 function toggle_login_menu(){
-	var panel = $('.user-account-logins-panel', 0).me(),
-		logins = $('.user-account-logins', 0).me();
+	var panel = $('.user-account-logins-panel', 0),
+		logins = $('.user-account-logins', 0);
 	if(panel.style.display === 'none' | panel.style.display === ""){
 		logins.style.backgroundColor ='#b55400';
 		logins.style.borderBottom = '1px solid #914501';
