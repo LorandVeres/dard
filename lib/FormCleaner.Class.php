@@ -195,25 +195,33 @@ class FormCleaner {
 		$form_data = $this -> get_form_fields($dard, $form_identifier);
 		$form = $form_data[0];
 		$form_array['header'] = array($form["header_type"], $form["form_header"]);
-		$form_array['attr'] = 'name="' . $form['name'] . '" id="' . $form['form_id'] . '" method="' . $form['method'] . '" action="' . $form['action'] . '" ' . $form['attributes'] !== NULL ? $form['attributes'] : '';
+		$form_array['attr'] = 'name="' . $form['name'] . '" id="' . $form['form_id'] . '" method="' . $form['method'] . '" action="' . $form['action'] . '" ' . ($form['attributes'] !== NULL ? $form['attributes'] : '');
 		$form_array['fields'] = array();
+		$field_attr = '';
 		foreach ($form_data[1] as $val) {
 			// checking possible null or empty values
 			$val['label_for'] === NULL ? $label = FALSE : $label = TRUE;
+			$val['label_attr'] === NULL ? $label_attr = '' : $label_attr = ' ' . $val['label_attr'];
 			$val['field_text'] === NULL || empty($val['field_text']) ? $field_text = '' : $field_text = $val['field_text'];
-			$val['field_attributes'] === NULL ? $field_attr = '' : $field_attr = ' ' . $val['field_attributes'];
-			$val['field_placeholder'] === '' ? $field_place_holder = '' : $field_place_holder = ' placeholder="' . $val['field_placeholder'] . '"';
-			$val['value'] === NULL ? $field_value = '' : $field_value = ' value="' . $val['value'] . '"';
-			$val['type'] === NULL ? $field_type = '' : $field_type = ' type="' . $val['type'] . '"';
-			$val['name'] === NULL || empty($val['name']) || $val['type'] ==='submit' ? $field_name = '' : $field_name = ' name="' . $val['name'] . '"';
-			$val['id'] === NULL ? $field_id = '' : $field_id = ' id="' . $val['field_id'] . '"';
+			$val['id'] === NULL ? $field_attr .= '' : $field_attr .= ' id="' . $val['field_id'] . '"';
+			$val['type'] === NULL ? $field_attr .= '' : $field_attr .= ' type="' . $val['type'] . '"';
+			$val['name'] === NULL || empty($val['name']) || $val['type'] ==='submit' ? $field_attr .= '' : $field_attr .= ' name="' . $val['name'] . '"';
+			$val['value'] === NULL ? $field_attr .= '' : $field_attr .= ' value="' . $val['value'] . '"';
+			$val['field_placeholder'] === '' ? $field_attr .= '' : $field_attr .= ' placeholder="' . $val['field_placeholder'] . '"';
+			$val['field_attributes'] === NULL ? $field_attr .= '' : $field_attr .= ' ' . $val['field_attributes'];
 			if (is_array($val)) {
 				if ($label) {
-					array_push($form_array['fields'], array('label' => array('attr' => 'for="' . $val['label_for'] . '"', 'text' => $val['label_text']), $val['field'] => array('attr' => ltrim($field_type . $field_name . $field_id . $field_value . $field_place_holder . $field_attr), 'text' => $field_text)));
+					if(substr_count($field_attr, 'type="radio"') ==1 || substr_count($field_attr, 'type="checkbox"') == 1){
+						array_push($form_array['fields'], array('label',  array('for'=>$val['label_for'], $label_attr), array(array($val['field'], $field_attr, $field_text ), $val['label_text'])));
+					}else{
+						array_push($form_array['fields'], array('label',  array('for'=>$val['label_for'], $label_attr), $val['label_text']));
+						array_push($form_array['fields'], array($val['field'], $field_attr, $field_text ));
+					}
 				} else {
-					array_push($form_array['fields'], array($val['field'] => array('attr' => ltrim($field_type . $field_name . $field_id . $field_value . $field_place_holder . $field_attr), 'text' => $field_text)));
+					array_push($form_array['fields'], array($val['field'], $field_attr, $field_text ));
 				}
 			}
+			$field_attr  ='';
 		}
 		return $form_array;
 	}
