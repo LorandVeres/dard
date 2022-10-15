@@ -2,7 +2,10 @@
 include_once '../module/main/modules.Class.php';
 $dard_modules = new modules($dard, $tag);
 $dard->ifNoAjaxTop($tag);
-
+if($dard -> ajax){
+	$dard_modules -> call_action($dard, $tag);
+	exit;
+}
 ?>
 
 			<div id="content">

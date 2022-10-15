@@ -11,8 +11,7 @@ class modules extends FormCleaner {
 	private $action;
 
 	function __construct($dard, $tag) {
-		//$this -> select_all_modules();
-		//$this ->call_action($dard, $tag);
+		FormCleaner::__construct($dard);
 	}
 
 	/**
@@ -91,9 +90,62 @@ class modules extends FormCleaner {
 	 * @author  Lorand Veres
 	 */
 	private function add_module($dard, $tag) {
-		echo "I am here it works";
+		$form = $this -> wrap_form_array($dard, 'add_module');
+		$hdl_post = function(){
+
+		};
+
+		$json_snipet_to_html = function($snipet, $tag) use (&$json_snipet_to_html){
+			$new_tag = array();
+			$set_attributes = function($snipet_attr){
+				$attr = '';
+				foreach ($snipet_attr as $key => $value) {
+					$attr .= ' '.$key.'="'.$value.'"';
+				}
+				return $attr;
+			};
+			if(isset($snipet['e_type'])){
+				if(is_string($snipet['e_content'])){
+					$new_tag = $tag -> tag(($snipet['e_name'] !== '#text' ? strtolower($snipet['e_name']) : ''), (isset($snipet['e_attr']) ? $set_attributes($snipet['e_attr']) : ''), $snipet['e_content']);
+				}elseif(is_array($snipet['e_content'])){
+					$new_tag = $tag -> tag(strtolower($snipet['e_name']), $set_attributes($snipet['e_attr']), '');
+					foreach ($snipet['e_content'] as $value) {
+						if(is_array($value)){
+							if(count($value) >=1){
+								$tag -> append_tag($new_tag, $json_snipet_to_html($value, $tag));
+								//var_dump($value);
+							}
+						}else{
+							//var_dump($value);
+							if (is_string($value))
+								$tag ->append_tag($new_tag, $tag -> tag('', '', $snipet['e_content']));
+						}
+					}
+				}
+			}
+			return $new_tag;
+		};
+
+		if( $_SERVER['REQUEST_METHOD'] === 'POST'){
+			if( $dard->ajax ) {
+				$post = file_get_contents('php://input');
+				$query = "UPDATE `snipets` SET `snipet` = \"" . $post . "\" WHERE `id` = 1;";
+				//$dard -> insertDB($post, $query);
+			}
+		}elseif($_SERVER['REQUEST_METHOD'] === 'GET' ){
+			if($dard -> ajax ) {
+				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15;";
+				echo trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0");
+			}else{
+				//$tag -> print_simple_form($form, 4);
+				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15;";
+				$snipet = json_decode(trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0"), TRUE);
+				//var_dump($json_snipet_to_html($snipet, $tag));
+				$tag -> print_doc($json_snipet_to_html($snipet, $tag), 4);
+			}
+		}
 	}
-	
+
 	/**
 	 * undocumented function
 	 *
@@ -148,7 +200,7 @@ class modules extends FormCleaner {
 		}
 		$tag -> print_table($table);
 	 }
-	 
+
 	 /**
 	 * undocumented function
 	 *
