@@ -176,8 +176,9 @@ class simpleTag {
 		$n = false;
 		$txt_tag;
 		if (is_array($tag)) {
-			if (is_string($tag[0]))
-				$txt_tag = $tag[0];
+			if (count($tag) >= 1){
+				is_string($tag[0]) ? $txt_tag = $tag[0] : null;
+			}
 		} elseif (is_string($tag)) {
 			$txt_tag = $tag;
 		}
