@@ -4,3 +4,4 @@ db.mwb.bak
 session/*
 logs/*
 www/template/test.php
+temp/*
