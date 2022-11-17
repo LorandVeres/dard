@@ -28,7 +28,7 @@ class FormCleaner {
 	}
 
 	protected function BoleanPost() {
-		if (isset($_POST) && count($_POST) > 0 && !empty($_POST)) {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' || (isset($_POST) && count($_POST) > 0 && !empty($_POST))) {
 			$this -> post = TRUE;
 		}
 	}
