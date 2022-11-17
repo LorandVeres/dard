@@ -7,7 +7,7 @@ function addpageid(e, doit){
 			href = path.slice(path.indexOf("/"), path.lastIndexOf("?")) + "?a=" + doit;
 	e.removeAttribute('href');
 	$('#pageid').ihtml(function (s){ page = s; });
-	mod = $('#moduleid')[0].innerHTML;
+	mod = $('#moduleid').innerHTML;
 	if(!empty(page) && !empty(mod)){
 		e.setAttribute('href', href+'&pageid='+page+'&moduleid='+mod);
 	}else{
@@ -24,7 +24,7 @@ function addmoduleid(e, doit){
 			href = path.slice(path.indexOf("/"))+"?a="+ doit :
 			href = path.slice(path.indexOf("/"), path.lastIndexOf("?"))+"?a="+ doit;
 	e.removeAttribute('href');
-	mod = $('#moduleid')[0].innerHTML;
+	mod = $('#moduleid').innerHTML;
 	if(!empty(mod)){
 		e.setAttribute('href', href+'&moduleid='+mod);
 	}else{
