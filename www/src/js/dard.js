@@ -140,7 +140,7 @@ function emptyEl(el) {
    }
 }
 /*
-* Counter function. Tthe perfect example for a closure
+* Counter function. The perfect example for a closure
 *
 */
 function counter() {
@@ -673,12 +673,14 @@ $.constructor.prototype.ajax = function(obj) {
 $.constructor.prototype.snipetHandler = (function() {
 	let self = {},
 		snipet_JSON = {},
-		snipet_object = {};
+		snipets = {};
 
 	/**
-	*  Creating an object from an existing HTMLdom element from the document
+	*  Creating an snipet object from an existing HTMLdom element from the document
 	*
+	*  @param el A DOM element
 	*
+	*  @return object
 	*/
 
 	self.gett = function(el)  {
@@ -743,24 +745,37 @@ $.constructor.prototype.snipetHandler = (function() {
 	}
 
 	/**
-	*  Insert an HTML node in the document from a snipet object or JSON snipet string
+	*  Insert an HTML node in the document from a snipets object or JSON snipet string
 	*
+	*  @param dom_object The dom object or JSON string passed
+	*  @param recipient_Element The recipient or adjacent element if el_Position is specified
+	*  @param el_Position [ optional ] String as position param for insertAdjacentElement, one of ( afterbegin, beforeend, beforebegin, afterend )
 	*
+	*  @Use
+	*  snipetHandler.sett(snipet.object, recipient_Element);
+	*  snipetHandler.sett(snipet.object, adjacent_Element, el_Position);
 	*
+	*  @return void
 	*/
 
-	self.sett = function(dom_object, recipient_Element) {
-		var dom ={},
-			set_Attributes,
-			set_TextNode,
-			walk_Content,
-			set_Element;
-		const e_attr = 'e_attr';
-		const e_content = 'e_content';
+	self.sett = function() {
+		let set_Attributes, // Function
+			set_TextNode, // Function
+			walk_Content, // Function
+			set_Element, // Function
+			insert_Element, // Function
+			arg = varyArgs(arguments), // array of arguments
+			dom_object = arg[0], // DOM object pased to the function
+			recipient_Element = arg[1], // Recipient or reference element
+			el_Position, // The element position when adjacent element is used
+			inserted = false; // Once adjacent element is set it will became true, used as a switch variable
+			arg.length === 3 ? el_Position = arg[2] : null;
+		const e_attr = 'e_attr',
+			e_content = 'e_content';
 
 		set_Attributes = function(attr_Obj, el){
-			var attr={};
-			for (var prop in attr_Obj){
+			let attr={};
+			for (let prop in attr_Obj){
 				if(attr_Obj.hasOwnProperty(prop)){
 					if(!empty(attr_Obj[prop])){
 						attr = document.createAttribute(prop);
@@ -771,11 +786,21 @@ $.constructor.prototype.snipetHandler = (function() {
 			}
 		};
 
-		walk_Content = function(content_obj, parent){
+		walk_Content = function(content_obj, parent_El){
 			if(content_obj.keyIn(e_content)){
-				for (var prop in content_obj.e_content){
-					self.sett(content_obj.e_content[prop], parent);
+				for (let prop in content_obj.e_content){
+					set_Element(content_obj.e_content[prop], parent_El);
 				};
+			}
+		};
+
+		insert_Element = function(el, parent_El){
+			if(arg.length === 3 && !inserted){
+				if(parent_El.insertAdjacentElement(el_Position, el)){
+					inserted = true;
+				}
+			}else if(arg.length === 2 || inserted){
+				parent_El.appendChild(el);
 			}
 		};
 
@@ -784,25 +809,28 @@ $.constructor.prototype.snipetHandler = (function() {
 			parent.appendChild(text);
 		};
 
-		set_Element = function(obj){
+		set_Element = function(obj, parent_El){
 			if(obj.e_type === 1){
 				const element = document.createElement(obj.e_name);
 				if(obj.keyIn(e_attr))
 					set_Attributes(obj.e_attr, element);
+				insert_Element(element, parent_El);
 				if(obj.keyIn(e_content)){
-					if(isStr(obj.e_content) || obj.e_content.e_type === 3){
-						set_TextNode(obj.e_content, element);
+					if(isStr(obj.e_content)){
+						if(obj.e_content !== "")
+							set_TextNode(obj.e_content, element);
 					}
-					if(isObj(obj.e_content) && !isStr(obj.e_content))
+					if(isObj(obj.e_content) && !isStr(obj.e_content)){
 						walk_Content(obj, element);
+					}
 				}
-				recipient_Element.appendChild(element);
+			// Not a practical mode to include a one single text node.
 			}else if(obj.e_type === 3 || isStr(obj.e_content)){
-				set_TextNode(obj.e_content, recipient_Element);
+				set_TextNode(obj.e_content, parent_El);
 			}
 		};
 
-		set_Element(dom_object);
+		set_Element(dom_object, recipient_Element);
 	};
 
 	return self;
