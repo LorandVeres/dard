@@ -599,14 +599,14 @@ var $ = function () {
  *
  * The ajax object
  *
- *	var ajaxObj = {
+ * @ajaxObj = {
  *
- * @  	type : 'GET',  // type of request POST or GET
- * @  	url : 'your/page/url', // the page url
- * @  	response : 'function', //handle the response from server
- * @  	send : null, // in GET request is optional or can be set to null
- * @  	json : true, // optional required if you do not stringify before the object, otherwise can be set to false
- * @  	error : 'custom error message' // optional to see for errors in consol log
+ *      @type : 'GET',  // type of request POST or GET
+ *      @url : 'your/page/url', // the page url
+ *      @response : 'function', //handle the response from server
+ *      @send : null, // in GET request is optional or can be set to null
+ *      @json : true, // optional required if you do not stringify before the object, otherwise can be set to false
+ *      @error : 'custom error message' // optional to see for errors in consol log
  *
  * };
  *
