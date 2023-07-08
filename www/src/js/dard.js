@@ -590,11 +590,9 @@ var $ = function () {
 
 
 
-/**
- *
- *
- * AJAX function with main funcionality on POST GET and JSON
- *
+/** ajax
+ *AJAX function with main funcionality on POST GET and JSON
+ **************************************************
  *
  *
  * The ajax object
@@ -659,6 +657,50 @@ $.constructor.prototype.ajax = function(obj) {
 
 	getPostJson();
 };
+
+/** send_json
+ *  Send an object to server via ajax in json format
+ **************************************************
+ *  The parameters object
+ * @obj = {
+ *
+ *      @data : $.snipetHandler.gett($('form')),  // A valid object or a function what will return an object
+ *      @meta : {
+ *          url: 'funnypage?parameter=value', // Mandatory parameter, the page url the data to be sent
+ *          other: 'any type of data', // [ optionals ] Optional parameters to help sorting on server side. Pameter names at your choice
+ *          other1: 'any type of data' // [ optionals ] Optional parameters to help sorting on server side. Pameter names at your choice
+ *      }
+ *      @callback: function // [ optional ] Function to handle the response from server
+ *  };
+ *
+ * @Use
+ *  $.send_json({
+ *      data: $.snipetHandler.gett($('form')),
+ *      meta: {
+ *          url:'modules?a=add_module'
+ *      },
+ *      callback: function(){ console.log(arguments[0]);}
+ *  });
+ */
+
+$.constructor.prototype.send_json = function() {
+	let obj = {};
+	obj = arguments[0];
+	$.ajax({
+		type : 'POST',
+		url : obj.meta.url,
+		response : function(r) {
+			if(obj.keyIn('callback')){
+				if(isFunc( obj.callback)){
+					obj.callback(r);
+				}
+			}
+		},
+		json : true,
+		send : { meta:obj.meta, data:obj.data },
+		error : 'An error ocured sending data to  ' + obj.meta.url + ' '
+	});
+}
 
 /** SnipetHandler
 *  Dynamic and asynchronous HTML snipet handling
