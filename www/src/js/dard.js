@@ -779,8 +779,10 @@ $.constructor.prototype.snipetHandler = (function() {
 			return inner_Block;
 		};
 
-		if (el.nodeType === 1) {
-			block = build_Block(el);
+		if( isSet(el)){
+			if (el.nodeType === 1) {
+				block = build_Block(el);
+			}
 		}
 
 		return block;
@@ -919,7 +921,7 @@ $.constructor.prototype.snipetHandler = (function() {
 			},
 			json : false,
 			send : null,
-			error : "Could not get the snipet from" + obj.url
+			error : "Could not get the snipet from " + obj.url + " "
 		});
 	};
 
