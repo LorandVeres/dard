@@ -92,8 +92,6 @@ class modules extends FormCleaner {
 	 * @author  Lorand Veres
 	 */
 	private function add_module($dard, $tag) {
-		$form = $this -> wrap_form_array($dard, 'add_module');
-		$hdl_post = function(){
 
 		switch ($_SERVER['REQUEST_METHOD']) {
 			case 'POST':
