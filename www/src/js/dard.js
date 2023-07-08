@@ -835,3 +835,54 @@ $.constructor.prototype.snipetHandler = (function() {
 
 	return self;
 }());
+
+/** Element overlay
+*  Creates a modal or partial overlay over the given element 
+*************************************************
+* Parameters
+* @obj {
+*
+*       @el : The parent element for the overlay
+*       @elclass : The class aplied to the overlay element
+*       @headerclass : the class aplied to the overlay header
+* }
+*
+* @return The overlay HTMLElement
+*
+* @Use $.overlay({el:$("body"), elclass:"overlay-body", headerclass:"overlay-header"});
+* @use $.overlay(); // for a full body overlay
+*/
+
+$.constructor.prototype.overlay = function() {
+	// Giving a default full modal without parameters
+	let obj = {};
+	arguments.length === 1 ? obj = arguments[0] : obj = { el:$('body'), elclass:"overlay-body", headerclass:"overlay-header" };
+	// Init the main variables
+	let overlay = $("<div>").addclass(obj.elclass), // the main overlay body
+	    closeBtn = $("<button>").addclass("overlay-cl-btn").ihtml("&times;"), // creates the closing button
+	    oheader = $("<div>").addclass(obj.headerclass), // creates an overlay header
+	    body = obj.el, // assign the parent element
+	    closeme; // function
+	// Appending the elments to each other
+	overlay.append(oheader.append(closeBtn));
+	body.append(overlay);
+	// defining the closing function
+	closeme = function() {
+		let child = $(".overlay-cl-btn");
+		body.remove(overlay);
+		closeBtn.removeEventListener("click", closeme, true);
+		if(obj.elclass === "overlay-body"){
+			body.css({overflow : "auto"});
+			body.scroll = "yes";
+		}
+	};
+	// Full body overlay properties
+	if(obj.elclass === "overlay-body"){
+		body.css({overflow : "hidden"});
+		body.scroll = "no";
+	}
+	// Attaching the event handler to the closing button
+	closeBtn.addEventListener("click", closeme, false);
+	// Return the overlay body to have a reference to attache elements to
+	return overlay;
+}
