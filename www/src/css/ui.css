@@ -1,0 +1,181 @@
+/*
+ * 
+ * 
+ * 
+ */
+
+/*
+ * FORMS
+ * =================================================================
+ */
+
+
+/* =============================
+ * 
+ * Dard-form form css
+ * 
+ * =============================
+ */
+
+.dard-form {
+	margin: 40px auto;
+	padding-bottom: 2%;
+	display: block;
+	position: relative;
+	width: 96%;
+	max-width: 600px; 
+	background-color: #FFFFFF;
+	border: 1px solid #EDEDED;
+}
+
+.dard-form h1, h2, h3, h4{
+padding: 15px 0;
+color: #484848;
+text-align: center;
+font-weight: 400;
+display: block;
+border-bottom: 1px double #acebef;
+margin-bottom: 2%;
+}
+
+.dard-form h1 {
+	font-size: 1.8rem;
+}
+
+.dard-form h2{
+	font-size: 1.6rem;
+}
+
+.dard-form h3 {
+	font-size: 1.4rem
+}
+
+.dard-form h4 {
+	font-size: 1.3rem
+}
+
+.dard-form input[type="text"], textarea {
+	display:block;
+	border: 1px solid #dadada;
+	line-height: 22px;
+	font-size: 1rem;
+	margin: 0 auto 10px auto;
+	color: #878787;
+	border-radius: 3px;
+	padding: 6px;
+	width: 80%;
+	outline: none;
+}
+
+.dard-form textarea {
+	resize: vertical;
+}
+
+.dard-form input:focus, textarea:focus {
+	border: 1px solid #474747;/*#005aeb;/*#04b315;*/
+}
+.dard-form input::placeholder, textarea::placeholder {
+	color: #ACACAC;
+}
+
+.dard-form input[type="checkbox"], input[type="radio"] {
+	appearance: auto;
+	outline: none;
+	border: 1px solid #dadada;
+	display: block;
+	float: left;
+	min-width: 30px;
+	min-height: 30px;
+}
+
+.dard-form input[type="submit"] {
+	min-width: 150px;
+	height: 50px;
+	background: #05409e;
+	color: #FFFFFF;
+	font-size: 1.5rem;
+	text-align:center;
+	display: block;
+	margin: 20px auto;
+}
+
+.dard-form input[type="submit"]:hover {
+	background-color: #043585;
+}
+
+.dard-form label {
+	display: inline-block;
+	text-indent: 1rem;
+	padding: 6px;
+	color: #878787;
+	border-left: 1px solid #dadada;
+	position: relative;
+	margin-left: 10%;
+	border-top: 1px solid #dadada;
+	border-right: 1px solid #dadada;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.dard-form label.dard-form-check-label {
+	margin: 0 auto 10px auto;
+	display: block;
+	width: 80%;
+	line-height: 30px;
+	padding: 0 0 6px 0;
+	cursor: pointer;
+	border: none;
+	border-bottom: 1px solid rgba(255, 255, 255, .8);
+}
+
+.dard-form label.dard-form-check-label:hover {
+	color: #373737;
+}
+
+.dard-form-succes-dir {
+	width: 100%;
+	height: 60px;
+	margin: 40px auto;
+	border: 5px solid #49a800;
+}
+.block-form-succes-dir p {
+	text-align: center;
+	color: #49a800;
+}
+
+
+/*
+ * Overlays
+ * =================================================================
+ */
+ 
+/* =============================
+ * 
+ * Full body Overlays
+ * 
+ * =============================
+ */
+ 
+ .overlay-body {
+    position : fixed;
+	top : 0;
+	width : 100%;
+	height : 100%;
+	background-color: rgba(0, 0, 0, 0.8);
+ }
+ 
+ .overlay-body .overlay-cl-btn {
+    float: right;
+	padding: 1.2rem;
+	outline: none;
+	border: none;
+	color: #ffffff;
+	font-size: 2rem;
+	opacity: 0.6;
+	background-color: rgba(0,0,0, 0);
+ }
+ 
+ .overlay-body .overlay-header{
+    height: 4.4rem;
+    width: 100%;
+ }
