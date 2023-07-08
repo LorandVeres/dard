@@ -833,6 +833,54 @@ $.constructor.prototype.snipetHandler = (function() {
 		set_Element(dom_object, recipient_Element);
 	};
 
+	/**
+	*  Get via ajax a snipet from server, and store it or insert in a HTMLElement
+	*
+	*  @param object {
+	*       @url : Relative url including parameters too
+	*       @el : [ optional ] The parent element for this snipet 
+	*       @pos : [ optional ] String as position param for insertAdjacentElement, one of ( afterbegin, beforeend, beforebegin, afterend )
+	*       @
+	*   }
+	*  @Use
+	*   $.snipetHandler.get_http({ 
+	*       url: 'modules?a=add_module',
+	*       el: $.overlay(),
+	*       pos: 'afterend'
+	*   });
+	*   To store it, yet needs some work to be done 
+	*  $.snipetHandler.get_http({ 
+	*       url: 'modules?a=add_module'
+	*       name: snipet_name
+	*   })
+	*
+	*  @return void
+	*/
+	
+	self.get_http = function () {
+		let obj = {};
+		obj = arguments[0];
+		$.ajax({
+			type : 'GET',
+			url : obj.url,
+			response : function(r) {
+				let snipet = {};
+				snipet.form = JSON.parse(r);
+				if (obj.keyIn('el')){
+					obj.keyIn('pos')  ? self.sett(snipet.form , obj.el, obj.pos) : self.sett(snipet.form , obj.el);
+				}
+				// Here some extra work should be made
+				if(obj.keyIn('name')){
+					//snipets[ obj.name ] = snipet.form;
+					Object.defineProperty(snipets, obj.name, {value: snipet.form});
+				}
+			},
+			json : false,
+			send : null,
+			error : "Could not get the snipet from" + obj.url
+		});
+	};
+
 	return self;
 }());
 
