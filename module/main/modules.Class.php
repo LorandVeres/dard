@@ -6,6 +6,8 @@ include_once '../lib/FormCleaner.Class.php';
  */
 class modules extends FormCleaner {
 
+	use snipetHandler;
+
 	public $modules;
 	private $posible_actions = array('add_module', 'add_page', 'view_pages');
 	private $action;
@@ -93,56 +95,32 @@ class modules extends FormCleaner {
 		$form = $this -> wrap_form_array($dard, 'add_module');
 		$hdl_post = function(){
 
-		};
-
-		$json_snipet_to_html = function($snipet, $tag) use (&$json_snipet_to_html){
-			$new_tag = array();
-			$set_attributes = function($snipet_attr){
-				$attr = '';
-				foreach ($snipet_attr as $key => $value) {
-					$attr .= ' '.$key.'="'.$value.'"';
-				}
-				return $attr;
-			};
-			if(isset($snipet['e_type'])){
-				if(is_string($snipet['e_content'])){
-					$new_tag = $tag -> tag(($snipet['e_name'] !== '#text' ? strtolower($snipet['e_name']) : ''), (isset($snipet['e_attr']) ? $set_attributes($snipet['e_attr']) : ''), $snipet['e_content']);
-				}elseif(is_array($snipet['e_content'])){
-					$new_tag = $tag -> tag(strtolower($snipet['e_name']), $set_attributes($snipet['e_attr']), '');
-					foreach ($snipet['e_content'] as $value) {
-						if(is_array($value)){
-							if(count($value) >=1){
-								$tag -> append_tag($new_tag, $json_snipet_to_html($value, $tag));
-								//var_dump($value);
-							}
-						}else{
-							//var_dump($value);
-							if (is_string($value))
-								$tag ->append_tag($new_tag, $tag -> tag('', '', $snipet['e_content']));
-						}
-					}
-				}
-			}
-			return $new_tag;
-		};
-
-		if( $_SERVER['REQUEST_METHOD'] === 'POST'){
+		switch ($_SERVER['REQUEST_METHOD']) {
+			case 'POST':
 			if( $dard->ajax ) {
 				$post = file_get_contents('php://input');
 				$query = "UPDATE `snipets` SET `snipet` = \"" . $post . "\" WHERE `id` = 1;";
 				//$dard -> insertDB($post, $query);
 			}
-		}elseif($_SERVER['REQUEST_METHOD'] === 'GET' ){
+				break;
+
+			case 'GET':
 			if($dard -> ajax ) {
 				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15;";
 				echo trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0");
 			}else{
-				//$tag -> print_simple_form($form, 4);
-				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15;";
+					$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15 AND `name` = 'add_module';";
 				$snipet = json_decode(trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0"), TRUE);
-				//var_dump($json_snipet_to_html($snipet, $tag));
-				$tag -> print_doc($json_snipet_to_html($snipet, $tag), 4);
+					$tag -> print_doc($this -> snipet_json_to_html($snipet, $tag), 4);
 			}
+				break;
+
+			default:
+				// If no GET or POST method used
+				// Alternative could be redirected to 500 Server error page
+				// Loging of Request method could be implemented to be used in stats
+				// code...
+				break;
 		}
 	}
 

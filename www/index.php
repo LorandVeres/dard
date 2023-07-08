@@ -22,6 +22,8 @@ include_once '../lib/fileManager.Class.php';
 
 include_once '../lib/functions.php';
 
+include_once '../lib/snipet.Trait.php';
+
 $dard = new GetMyPage($tag);
 
 
