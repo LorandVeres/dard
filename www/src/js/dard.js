@@ -305,6 +305,7 @@ var $ = function () {
 		}
 		if (tagNameRE.test(arg))
 			el = document.createElement(arg.replace(/^<+|>+$/gm, ''));
+			isSet(args[1]) && isStr(args[1]) ? el.textContent = args[1] : null ;
 		if (plainTagRE.test(arg))
 			el = document.getElementsByTagName(arg)[itemNo];
 	} else if (isObj(arg) && ( arg instanceof HTMLElement || arg instanceof HTMLDocument )) {
