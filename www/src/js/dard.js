@@ -313,6 +313,14 @@ var $ = function () {
 			} else {
 				el = document.getElementsByTagName(arg)[itemNo];
 			}
+	} else if (isObj(arg)) {
+		if(arg instanceof HTMLElement ) {
+			el = arg;
+		} else if( arg instanceof HTMLCollection) {
+			console.warn("Dard warn : Dard parameter is a HTMLCollection and returned as HTMLCollection");
+			return arg;
+		}
+	}
 
 	if (el) {
 
