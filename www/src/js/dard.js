@@ -289,14 +289,20 @@ var $ = function () {
 	    tagNameRE = /^<{1}[a-z0-9]+>{1}$/i, // html tag REgex
 	    plainTagRE = /^[a-z1-6]+$/;
 
-	args[0] ? arg = args[0] : console.warn('Dard function has no arguments');
-	isNum(args[1]) ? itemNo = args[1] : itemNo = 0;
+	args[0] ? arg = args[0] : console.warn('Dard warn : Dard function has no arguments ' + args[0]);
+	isNum(args[1]) && !isFunc(args[1]) ? itemNo = args[1] : itemNo = 0;
 
 	if ( typeof arg == 'string') {
 		if (idRE.test(arg))
 			el = document.getElementById(arg.substring(1));
-		if (classNameRE.test(arg))
-			el = document.getElementsByClassName(arg.substring(1))[itemNo];
+		if (classNameRE.test(arg)){
+			if (isFunc(args[1])){
+				el = document.getElementsByClassName(arg.substring(1));
+				args[1].call( el );
+			} else {
+				el = document.getElementsByClassName(arg.substring(1))[itemNo];
+			}
+		}
 		if (tagNameRE.test(arg))
 			el = document.createElement(arg.replace(/^<+|>+$/gm, ''));
 		if (plainTagRE.test(arg))
