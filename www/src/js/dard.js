@@ -396,7 +396,7 @@ var $ = function () {
 		};
 
 		/**
-		*  Adding attributes to itself, attribut and value or just an attribut
+		*  Adding attributes to itself, attribute and value or just an attribute
 		*  Second parameter is optional
 		*  .addattr(attr, value);
 		*/
@@ -407,6 +407,31 @@ var $ = function () {
 				this.setAttribute(arg[0], arg[1]);
 			}else if (arguments.length === 1) {
 				this.createAttribute(arg[0]);
+			}
+			return this;
+		};
+		
+		/**
+		*  Add multiple attributes to itself, attribute and value or just an attribute
+		*  @Param Obj{ class:'whole class list', id:'anyid', style:'margin: 0;width:80%'}
+		*  .addattrlist( obj );
+		*/
+		
+		el.constructor.prototype.addattrlist = function() {
+			let attr={},
+				attr_Obj = arguments[0];
+			for (let prop in attr_Obj){
+				if(attr_Obj.hasOwnProperty(prop)){
+					if(!empty(attr_Obj[prop])){
+						attr = document.createAttribute(prop);
+						if(!empty(attr_Obj[prop])){
+							attr.value = attr_Obj[prop];
+							this.setAttributeNode(attr);
+						}else{
+							this.createAttribute(prop);
+						}
+					}
+				}
 			}
 			return this;
 		};
