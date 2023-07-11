@@ -863,8 +863,12 @@ $.constructor.prototype.snipetHandler = (function() {
 				if(attr_Obj.hasOwnProperty(prop)){
 					if(!empty(attr_Obj[prop])){
 						attr = document.createAttribute(prop);
-						attr.value = attr_Obj[prop];
-						el.setAttributeNode(attr);
+						if(!empty(attr_Obj[prop])){
+							attr.value = attr_Obj[prop];
+							el.setAttributeNode(attr);
+						}else{
+							el.createAttribute(prop);
+						}
 					}
 				}
 			}
