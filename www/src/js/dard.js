@@ -322,7 +322,7 @@ var $ = function () {
 		}
 	}
 
-	if (el) {
+	if (el instanceof HTMLElement) {
 
 		/**
 		* On window.onload attaching an event to this element
@@ -585,6 +585,7 @@ var $ = function () {
 
 		return el;
 	}
+	return el;
 };
 
 
