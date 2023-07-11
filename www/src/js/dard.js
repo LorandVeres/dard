@@ -307,13 +307,12 @@ var $ = function () {
 			el = document.createElement(arg.replace(/^<+|>+$/gm, ''));
 			isSet(args[1]) && isStr(args[1]) ? el.textContent = args[1] : null ;
 		if (plainTagRE.test(arg))
-			el = document.getElementsByTagName(arg)[itemNo];
-	} else if (isObj(arg) && ( arg instanceof HTMLElement || arg instanceof HTMLDocument )) {
-		el = arg;
-	} else if (isObj(arg) || arg instanceof HTMLCollection) {
-		console.log("collection handling not yet implemented, returned as bare HTMLCollection");
-		return arg;
-	}
+			if ( isFunc(args[1])) {
+				el = document.getElementsByTagName(arg);
+				args[1].call( el );
+			} else {
+				el = document.getElementsByTagName(arg)[itemNo];
+			}
 
 	if (el) {
 
