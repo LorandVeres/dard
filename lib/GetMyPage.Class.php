@@ -284,7 +284,7 @@ class GetMyPage extends DardSession {
 					UNION
 					SELECT J.`file`, J.`script`, J.`type`, J.`placement`
 					FROM `js_files_script` AS J, `page_resources` AS R
-					WHERE R.`type`='JS' AND R.`page_id` = $this->current_page_id AND J.`id` = R.`res_id`";
+					WHERE R.`type`='js' AND R.`page_id` = $this->current_page_id AND J.`id` = R.`res_id`";
 		$result = $this -> selectDB($this -> current_page_id, $query, TRUE, 'default');
 		$this -> set_page_head_properties($result);
 		$this ->set_js_script_tags();
@@ -378,8 +378,8 @@ class GetMyPage extends DardSession {
 	}
 
 	private function printBottomDoc() {
-		$doc = "\t\t<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>\n";
-		$doc .= $this -> wrap_dard_Statistics();
+		//$doc = "\t\t<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>\n";
+		$doc = $this -> wrap_dard_Statistics();
 		$doc .= $this -> body_js_scripts;
 		$doc .= "\t</body>\n";
 		$doc .= "</html>\n";
