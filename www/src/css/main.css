@@ -152,8 +152,6 @@
     max-height: 0;
     transition: max-height 0.2s ease-out;
 }
-.menu-section-list:last-child{
-}
 
 .ham-button{
     background-image: url(../../images/icons/191-menu2.png);
@@ -181,58 +179,11 @@
 
 /*  Responsive main part*/
 
-
-
-.left{
-    float: left;
-}
-.right{
-    float: right;
-}
-
 .center{
     text-align: center;
 }
 .block{
 	display: block;
-}
-
-
-
-/*  SECTIONS  */
-.section {
-    clear: both;
-    padding: 0px;
-    margin: 0px;
-}
-
-/*  COLUMN SETUP  */
-.col {
-    display: block;
-    float: left;
-    margin-left: 1.6%;
-}
-
-.col-r {
-    display: block;
-    float: right;
-    margin: 1% 0 1% 1.6%;
-}
-
-.col:first-child {
-    margin-left: 0;
-}
-
-/*  GROUPING  */
-.group:before, .group:after {
-    content: "";
-    display: table;
-}
-.group:after {
-    clear: both;
-}
-.group {
-    zoom: 1; /* For IE 6/7 */
 }
 
 /*   MINIMAL GRID    */
@@ -257,10 +208,10 @@
 }
 
 .fifth_1{
-    width: 19.2%;
+    width: 18.72%;
 }
 .fifth_2{
-    width: 39.4%;
+    width: 39.04%;
 }
 .fifth_3{
     width: 59.6%;
@@ -343,41 +294,6 @@
     margin-top: 15px;
     margin-bottom: 15px;
 }
-
-
-/* The emerging W3C standard
-   that is currently Firefox-only */
-* {
-  scrollbar-width: auto; /* "auto" or "thin"  */
-  scrollbar-color: #272727 #888888; /* "auto" or "thin"  */
-  scrollbar-heigth: 120px;
-}
-
-/* Works on Chrome/Edge/Safari */
-*::-webkit-scrollbar {
-  width: 12px;
-}
-*::-webkit-scrollbar-track {
-  background: #888888;
-}
-*::-webkit-scrollbar-thumb {
-  background-color: #272727;
-  border-radius: 1px;
-  border: 0;
-}
-.leftscrollbar {
-  direction: rtl;
-}
-
-.leftscrollbar>nav {
-  direction: ltr;
-}
-
-
-
-
-
-
 
 /*  CONTENT  */
 
