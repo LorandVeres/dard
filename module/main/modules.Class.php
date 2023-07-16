@@ -9,7 +9,7 @@ class modules extends FormCleaner {
 	use snipetHandler;
 
 	public $modules;
-	private $posible_actions = array('add_module', 'add_page', 'view_pages');
+	private $posible_actions = array('add_module', 'add_page', 'view_pages', 'snipets');
 	private $action;
 
 	function __construct($dard, $tag) {
@@ -43,6 +43,7 @@ class modules extends FormCleaner {
 			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=add-page&moduleid='. $module_id .'" class="col_r spacer_1"', 'Add page'));
 			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=view-pages&moduleid=' .$module_id. '" class="col_r spacer_1"', 'View pages'));
 			$tag -> append_tag($link_div, $tag -> tag('a', 'href="pages/error-messages?a=view&moduleid='. $module_id. '" class="col_r spacer_1"', 'Run time mesages'));
+			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=snipets&moduleid='. $module_id .'" class="col_r spacer_1"', 'Snipets'));
 			$tag -> append_tag($col, $tag -> tag('h3', '', $modules_all[$i]["name"]));
 			$tag -> append_tag($col, $tag -> tag('p', '', $modules_all[0]["description"]));
 			$tag -> append_tag($col, $link_div);
@@ -99,6 +100,10 @@ class modules extends FormCleaner {
 				$post = file_get_contents('php://input');
 				$query = "UPDATE `snipets` SET `snipet` = \"" . $post . "\" WHERE `id` = 1;";
 				//$dard -> insertDB($post, $query);
+				//echo $post;
+				$de =json_decode($post, true);
+				//var_dump( $de );
+				echo json_encode($de['data']);
 			}
 				break;
 
@@ -107,9 +112,9 @@ class modules extends FormCleaner {
 				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15;";
 				echo trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0");
 			}else{
-					$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15 AND `name` = 'add_module';";
+				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15 AND `name` = 'add_module';";
 				$snipet = json_decode(trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0"), TRUE);
-					$tag -> print_doc($this -> snipet_json_to_html($snipet, $tag), 4);
+				$tag -> print_doc($this -> snipet_json_to_html($snipet, $tag), 4);
 			}
 				break;
 
@@ -186,6 +191,16 @@ class modules extends FormCleaner {
 	 private function add_page($dard, $tag){
 	 	echo "Add pages.";
 	 }
+	 
+	  /**
+	 * undocumented function
+	 *
+	 * @return void
+	 * @author  Lorand Veres
+	 */
+	private function snipets($dard, $tag){
+		echo "Manage all snipets from this module.";
+	}
 
 }
 ?>
