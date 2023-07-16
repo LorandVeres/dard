@@ -28,14 +28,14 @@
 	border: 1px solid #EDEDED;
 }
 
-.dard-form h1, h2, h3, h4{
-padding: 15px 0;
-color: #484848;
-text-align: center;
-font-weight: 400;
-display: block;
-border-bottom: 1px double #acebef;
-margin-bottom: 2%;
+.dard-form h1, .dard-form h2, .dard-form h3, .dard-form h4{
+	padding: 15px 0;
+	color: #484848;
+	text-align: center;
+	font-weight: 400;
+	display: block;
+	border-bottom: 1px double #acebef;
+	margin-bottom: 2%;
 }
 
 .dard-form h1 {
@@ -54,7 +54,8 @@ margin-bottom: 2%;
 	font-size: 1.3rem
 }
 
-.dard-form input[type="text"], textarea {
+.dard-form input[type="text"],
+.dard-form textarea {
 	display:block;
 	border: 1px solid #dadada;
 	line-height: 22px;
@@ -71,14 +72,17 @@ margin-bottom: 2%;
 	resize: vertical;
 }
 
-.dard-form input:focus, textarea:focus {
+.dard-form input:focus,
+.dard-form textarea:focus {
 	border: 1px solid #474747;/*#005aeb;/*#04b315;*/
 }
-.dard-form input::placeholder, textarea::placeholder {
+.dard-form input::placeholder,
+.dard-form textarea::placeholder {
 	color: #ACACAC;
 }
 
-.dard-form input[type="checkbox"], input[type="radio"] {
+.dard-form input[type="checkbox"],
+.dard-form input[type="radio"] {
 	appearance: auto;
 	outline: none;
 	border: 1px solid #dadada;
