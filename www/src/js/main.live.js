@@ -274,14 +274,17 @@ var toggleMenu = ( function() {
 
 		var icon = $("#menuicon"),
 			menu = $(".close-menu", 0);
-		menu.on('click', function(e) {
-			e.preventDefault();
-			showHideMenu();
-		});
-		icon.on('click', function(e) {
-			e.preventDefault();
-			showHideMenu();
-		});//.on('click', showHideMenu);
+		if(menu && icon) {
+			menu.on('click', function(e) {
+				e.preventDefault();
+				showHideMenu();
+			});
+		
+			icon.on('click', function(e) {
+				e.preventDefault();
+				showHideMenu();
+			});//.on('click', showHideMenu);
+		}
 		// mousedown one event what is detected on mobile devices
 		hideMenuList = function(el) {
 			var e = el.parentElement.childNodes;
