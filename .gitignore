@@ -2,3 +2,4 @@ session/*
 logs/*
 www/template/test.php
 temp/*
+www/images/*
