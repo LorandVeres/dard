@@ -1031,3 +1031,75 @@ $.constructor.prototype.overlay = function() {
 	// Return the overlay body to have a reference to attache elements to
 	return overlay;
 }
+
+/** collapse
+*  By default collapses the next sibling element
+*************************************************
+* 
+*
+* Parameters
+* @obj {
+*
+*       @event : [ optional ] The event what would triger the collapse. Default to click
+*       @active : [ optional ] A class to toggle a collapsible sign
+*       @class : [ optional ] The element/s class to attache the event. Default class: collapse
+*       @content : [ optional ] The content element/s  class name to be collapsed. Default : next sibling element
+*       @html : [ Not yet implemented ] [ optional ] An array of elements to attach an event. 
+* }
+*
+* @NOTE The number of elemets returned by obj.class and obj.content has to be equal. Otherwise the function will exit.
+*       However if obj.clas is provided and not the obj.content the next sibling element is colapsed
+*       Also a good practice if obj.class has ben provided obj.active should be too.
+*       
+* @FIX_NEED Some more attention require for nested elements
+*
+* @return Void
+*
+* @Use $.collapse();
+* @use $.collapse( { class: 'faq-deliveries', content: 'faq-answers' } ); 
+*/
+
+$.constructor.prototype.collapse = function() {
+	let obj = arguments,
+		element,
+		collapsible,
+		content,
+		active = 'collapse-active',
+		e,
+		show_hide;
+		
+	find_height = function(number) {
+		let myclass;
+		!isSet( obj.content ) ? myclass = 'collapse-content' : myclass = obj.content ;
+		if( !this.style.maxHeight && this.parentElement && this.parentElement !== null) {
+			if(this.parentElement.classList.contains(myclass)) {
+				this.parentElement.style.maxHeight = this.parentElement.scrollHeight + number + 'px';
+			}
+			find_height.call(this.parentElement, number);
+		}
+	};
+	
+	show_hide = function() {
+		let c = arguments[0];
+		c.style.maxHeight ? c.style.maxHeight = null : c.style.maxHeight = c.scrollHeight + "px";
+	};
+	
+	!isSet( obj.class ) ? element = document.getElementsByClassName( 'collapse' ) : element = document.getElementsByClassName ( obj.class ) ;
+	!isSet( obj.content ) ? collapsible = 'undefined' : collapsible = document.getElementsByClassName ( obj.content );
+	!isSet( obj.event ) ? e = 'click' : e = obj.event;
+	!isSet( obj.active ) ? active = 'collapse-active' : active = obj.active;
+	// Checking if the number of elements are equal
+	if ( ( isSet( obj.class ) && isSet( obj.content ) ) && ( element.length !== collapsible.length )){
+		console.warn( 'Dard warn: Collapse function parameters legth are not equal. exiting function.' );
+		return ;
+	}
+	for(let i = 0; i < element.length; i++){
+		element[i].addEventListener(e, function() {
+			this.classList.toggle(active);
+			collapsible === 'undefined' ? content = this.nextElementSibling : content = collapsible[i] ;
+			find_height.call(content, content.scrollHeight);
+			content.style.maxHeight ? content.style.maxHeight = null : content.style.maxHeight = content.scrollHeight + "px";
+		});
+	}
+	
+}
