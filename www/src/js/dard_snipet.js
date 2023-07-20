@@ -573,6 +573,17 @@
 		
 		return self;
 	};
+	$d.cl = function(){
+	
+	};
+	
+	//console.log(location.href.split("=")[2]);
+	// Initializig the work enviroment
+	$d.init();
+	return $d;
+}());
+
+
 //let new_snipet = snipet_creator();
 
 
