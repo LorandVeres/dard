@@ -27,19 +27,19 @@
 			<section id="dsn-el-classes">
 				<button class="collapse dns-collapse-button">Element</button>
 				<div class="collapse-content dsn-element-properties">
-					<div class="section group b-space-10 t-space-15"> 
+					<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-tag-name">Current element :</label></div>
 						<div class="col-f span-50"><input type="text" id="dsn-el-tag-name" name="dsn-el-tag-name" class="span-70" disabled></div>
 					</div>
-					<div class="section group b-space-10">
+					<div class="section group b-space-10 dsn-dark-field">
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-index">Index :</label></div>
 						<div class="col-f span-50"><input type="text" id="dsn-el-index" name="dsn-el-index" class="span-20" disabled></div>
 					</div>
-					<div class="section group b-space-10">
+					<div class="section group b-space-10 dsn-dark-field">
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-siblings">Siblings :</label></div>
 						<div class="col-f span-50"><input type="text" id="dsn-el-siblings" name="dsn-el-siblings" class="span-20" disabled></div>
 					</div>
-					<div class="section group b-space-25">
+					<div class="section group b-space-25 dsn-dark-field">
 						<div class="col-f span-50"><label for="dsn-el-child-nodes">Children :</label></div>
 						<div class="col-f span-50"><input type="text" id="dsn-el-child-nodes" name="dsn-el-child-nodes" class="span-20" disabled></div>
 					</div>
@@ -56,76 +56,68 @@
 					
 					<div id="dsn-class-properties" class="space-15">
 						<p>Class list :</p>
-						<div class="dsn-button-like-box">
-							<span class="dsn-el-property">my-first-class</span>
-							<span class="dsn-el-property-del">&times;</span>
-						</div>
-						<div class="dsn-button-like-box">
-							<span class="dsn-el-property">first-class</span>
-							<span class="dsn-el-property-del">&times;</span>
-						</div>
-						<div class="dsn-button-like-box">
-							<span class="dsn-el-property">my-class</span>
-							<span class="dsn-el-property-del">&times;</span>
-						</div>
-						<div class="section group b-space-15">
-							<div class="col-f section group span-80">
-								<div class="col-f span-40"><label class="indent left-5" for="dsn-el-add-class">Class :</label></div>
-								<div class="col-f span-60"><input type="text" id="dsn-el-add-class" name="dsn-el-add-class" class="span-100"></div>
+						<div id="dsn_5" class="dsn-dark-box b-space-10 pad-5">
+							<div class="dsn-button-like-box">
+								<span class="dsn-el-property">my-first-class</span>
+								<span class="dsn-el-property-del">&times;</span>
 							</div>
-							<div class="col-f span-20">
-								<button class="dsn-small-button">+</button>
+							<div class="dsn-button-like-box">
+								<span class="dsn-el-property">first-class</span>
+								<span class="dsn-el-property-del">&times;</span>
 							</div>
+							<div class="dsn-button-like-box">
+								<span class="dsn-el-property">my-class</span>
+								<span class="dsn-el-property-del">&times;</span>
+							</div>
+							<div class="dsn-button-like-box">
+								<span class="dsn-el-property">my-class</span>
+								<span class="dsn-el-property-del">&times;</span>
+							</div>
+						</div>
+						<div class="section group dsn-attr" data-type="class" data-value="">
+							<label for="dsn-el-add-class">Class :</label>
+							<input type="text" placeholder="Enter class name here">
 						</div>
 					</div>
 					
 					<!-- Atributes list -->
 					
-					<div class="section group b-space-10 b-space-10"> 
-						<div class="col-f span-40"><label class="indent left-5" for="dsn-el-id">Id :</label></div>
-						<div class="col-f span-60"><input type="text" id="dsn-el-id" name="dsn-el-id" class="span-90"></div>
+					<div class="section group dsn-attr" data-type="id" data-value="">
+						<label for="dsn-el-add-class">Id :</label>
+						<input type="text" placeholder="id here">
 					</div>
-					<div class="section group b-space-10">
-						<div class="col-f span-40"><label class="indent left-5" for="dsn-el-title">Title :</label></div>
-						<div class="col-f span-60"><input type="text" id="dsn-el-title" name="dsn-el-title" class="span-90"></div>
+					<div class="section group dsn-attr" data-type="title" data-value="">
+						<label for="dsn-el-add-class">Title :</label>
+						<input type="text" placeholder="title here">
 					</div>
-					<div class="section group b-space-10">
-						<div class="col-f span-40"><label class="indent left-5" for="dsn-el-name">Name :</label></div>
-						<div class="col-f span-60"><input type="text" id="dsn-el-name" name="dsn-el-name" class="span-90"></div>
+					<div class="section group dsn-attr" data-type="name" data-value="">
+						<label for="dsn-el-add-class">Name :</label>
+						<input type="text" placeholder="name here">
 					</div>
-					<div class="section group b-space-15">
-						<div class="col-f span-40"><label for="dsn-el-value">Value :</label></div>
-						<div class="col-f span-60"><input type="text" id="dsn-el-value" name="dsn-el-value" class="span-90"></div>
+					<div class="section group dsn-attr" data-type="value" data-value="">
+						<label for="dsn-el-add-class">Value :</label>
+						<input type="text" placeholder="value here">
 					</div>
 					
 					<!-- Custom attributes -->
 					
 					<section>
 						<button class="collapse dsn-naked-collapse-button">Custom attributes</button>
-						<div id="dsn-custom-attr"  class="collapse-content dsn-element-properties">
-							<div class="b-space-15">
-								<div class="span-100 t-space-10">
-									<p class="b-space-10 left-5">Attributes list :</p>
-									<div class="dsn-button-like-box">
-										<span class="dsn-el-property">my-first-class</span>
-										<span class="dsn-el-property-del">&times;</span>
-									</div>
+						<div class="collapse-content dsn-element-properties">
+							<p class="b-space-10 left-5">Attributes list :</p>
+							<div id="dsn_6" class="dsn-dark-box b-space-10 pad-5">
+								<div class="dsn-button-like-box">
+									<span class="dsn-el-property">my-first-class</span>
+									<span class="dsn-el-property-del">&times;</span>
 								</div>
-								<div class="section group">
-									<div class="col-f span-80">
-										<div class="section group b-space-10">
-											<div class="col-f span-40"><label class="indent left-5" for="dsn-el-attr-name">Attr Name :</label></div>
-											<div class="col-f span-60"><input type="text" id="dsn-el-attr-name" name="dsn-el-attr-name" class="span-100"></div>
-										</div>
-										<div class="section group">
-											<div class="col-f span-40"><label for="dsn-el-attr-value">Attr Value :</label></div>
-											<div class="col-f span-60"><input type="text" id="dsn-el-attr-value" name="dsn-el-attr-value" class="span-100"></div>
-										</div>
-									</div>
-									<div class="col-f span-20">
-										<button id="dsn-custom-attr-save" class="dsn-small-button">+</button>
-									</div>
-								</div>
+							</div>
+							<div class="section group dsn-attr" data-type="attr-name" data-value="">
+								<label for="dsn-el-add-class">Attr Name :</label>
+								<input type="text" placeholder="name here">
+							</div>
+							<div class="section group dsn-attr b-space-15" data-type="attr-value" data-value="">
+								<label for="dsn-el-add-class">Attr Value :</label>
+								<input type="text" placeholder="value here">
 							</div>
 						</div>
 					</section>
@@ -145,43 +137,44 @@
 				
 						<button class="collapse dsn-naked-collapse-button">General</button>
 						<div class="collapse-content dsn-naked-element-properties">
-							<div class="section group span-80 c-box b-space-15">
-								<div class="col-f span-50">
-									<span class="line-box dsn-el-prop-active t-space-10 b-space-15 left-5 indent-05" style="line-height: 1.5rem;">Float<span class="dsn-el-prop-del">×</span></span>
+							<div class="section group span-80 c-box b-space-15 dsn-dark-field">
+								<div class="col-f span-48">
+									<span class="box dsn-el-prop-active t-space-10 b-space-15 indent-05" style="line-height: 1.5rem;">Float<span class="dsn-el-prop-del">×</span></span>
 								</div>
-								<div class="col-f span-50">
-									<select class="span-90 left-5 t-space-10 b-space-15" name="dsn-el-float" id="dsn-el-float">
+								<div class="col-f span-48 left-4">
+									<select class="span-100 t-space-10 b-space-15" name="dsn-el-float" id="dsn-el-float">
+										<option value=""></option>
 										<option value="left">left</option>
 										<option value="right">right</option>
 									</select>
 								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="line-box dsn-el-prop-selected t-space-10 b-space-5 left-5 indent-05">Display<span class="dsn-el-prop-del">&times;</span></span>
-									<select class="span-90 left-5 b-space-10" name="dsn-el-display" id="dsn-el-display">
+								<div class="col-f span-48 b-space-15">
+									<span class="box dsn-el-prop-selected t-space-10 b-space-5 indent-05">Display<span class="dsn-el-prop-del">&times;</span></span>
+									<select class="span-100 b-space-10" name="dsn-el-display" id="dsn-el-display">
 										<option value="block">block</option>
 										<option value="inline" selected>inline</option>
 										<option value="inline-block">inline-block</option>
 										<option value="flex">flex</option>
 										<option value="none">none</option>
 									</select>
-									<span class="box b-space-5 left-5 indent-05">Top</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-top" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Bottom</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-bottom" placeholder="0">
+									<span class="box b-space-5 indent-05">Top</span>
+									<input class="span-100 b-space-10" type="text" name="dsn-el-top" placeholder="0">
+									<span class="box b-space-5 indent-05">Bottom</span>
+									<input class="span-100" type="text" name="dsn-el-bottom" placeholder="0">
 								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-10 b-space-5 left-5 indent-05">Position</span>
-									<select class="span-90 left-5 b-space-10" name="dsn-el-position" id="dsn-el-position">
+								<div class="col-f span-48 left-4 b-space-15">
+									<span class="box t-space-10 b-space-5 indent-05">Position</span>
+									<select class="span-100 b-space-10" name="dsn-el-position" id="dsn-el-position">
 										<option value="static">static</option>
 										<option value="relative">relative</option>
 										<option value="fixed">fixed</option>
 										<option value="absolute">absolute</option>
 										<option value="sticky">sticky</option>
 									</select>
-									<span class="box b-space-5 left-5 indent-05">Left</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Right</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-right" placeholder="0">
+									<span class="box b-space-5 indent-05">Left</span>
+									<input class="span-100 b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<span class="box b-space-5 indent-05">Right</span>
+									<input class="span-100" type="text" name="dsn-el-right" placeholder="0">
 								</div>
 							</div>
 						</div>
@@ -190,9 +183,11 @@
 						
 						<button class="collapse dsn-naked-collapse-button">Dimensions</button>
 						<div class="collapse-content dsn-element-properties">
-							<div class="dsn-90-box c-box section group b-space-15">
-								<div class="col-r span-80">
-									<select class="span-1-of-4 right left-5" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+							<div class="dsn-90-box c-box section group t-space-10 b-space-15">
+								<div class="col-f span-48 b-space-15">
+									<span class="col-f span-100 dsn-el-prop-active t-space-10 b-space-5 indent-05">Width<span class="dsn-el-prop-del">&times;</span></span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -200,24 +195,59 @@
 										<option value="vh">vh</option>
 										<option value="vw">vw</option>
 									</select>
-									<span class="right" style="line-height:1.5rem;">Unit</span>
-								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="box dsn-el-prop-active t-space-10 b-space-5 left-5 indent-05">Width<span class="dsn-el-prop-del">&times;</span></span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Min width</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Max width</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-right" placeholder="0">
+									<span class="col-f span-100 b-space-5 indent-05">Min width</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
+									<span class="col-f span-100 b-space-5 indent-05">Max width</span>
+									<input class="span-4-of-6-f col-f" type="text" name="dsn-el-right" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
 								</div>
 								
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-10 b-space-5 left-5 indent-05">Height</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Min height</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Max height</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-right" placeholder="0">
+								<div class="col-f span-48 left-4 b-space-15">
+									<span class="col-f span-100 t-space-10 b-space-5 indent-05">Height</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
+									<span class="col-f span-100 b-space-5 indent-05">Min height</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
+									<span class="col-f span-100 b-space-5 indent-05">Max height</span>
+									<input class="span-4-of-6-f col-f" type="text" name="dsn-el-right" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
 								</div>
 							</div>
 						</div>
@@ -226,10 +256,12 @@
 
 						<button class="collapse dsn-naked-collapse-button">Spacing</button>
 						<div class="collapse-content dsn-element-properties">
-							<span class="line-box dsn-el-prop-active t-space-10 b-space-5 left-5 indent">Margin<span class="dsn-el-prop-del">×</span></span>
-							<div class="dsn-90-box c-box option group b-space-10">
-								<div class="col-r span-80">
-									<select class="span-1-of-4 right left-5" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+							<span class="box left-10 dsn-el-prop-active t-space-15 b-space-5">Margin<span class="dsn-el-prop-del">×</span></span>
+							<div class="dsn-90-box c-box option group b-space-15">
+								<div class="col-f span-48 b-space-15 t-space-5">
+									<span class="col-f span-100 b-space-5 indent-05">Margin left</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -237,26 +269,47 @@
 										<option value="vh">vh</option>
 										<option value="vw">vw</option>
 									</select>
-									<span class="right" style="line-height:1.5rem;">Unit</span>
+									<span class="col-f span-100 b-space-5 indent-05">Margin top</span>
+									<input class="span-4-of-6-f col-f" type="text" name="dsn-el-right" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
 								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-5 b-space-5 left-5 indent-05">Left</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Top</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-right" placeholder="0">
-								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-5 b-space-5 left-5 indent-05">Right</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Bottom</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-right" placeholder="0">
+								<div class="col-f span-48 left-4 t-space-5 b-space-15">
+									<span class="col-f b-space-5 indent-05">Margin right</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
+									<span class="col-f span-100 b-space-5 indent-05">Margin bottom</span>
+									<input class="span-4-of-6-f col-f" type="text" name="dsn-el-right" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
 								</div>
 							</div>
 							
-							<span class="line-box b-space-5 left-5 indent">Padding</span>
+							<span class="box left-10 b-space-5 t-space-10">Padding</span>
 							<div class="dsn-90-box c-box option group b-space-15">
-								<div class="col-r span-80">
-									<select class="span-1-of-4 right left-5" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+								<div class="col-f span-48 b-space-15 t-space-10">
+									<span class="col-f span-100 b-space-5 indent-05">Padding left</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -264,19 +317,38 @@
 										<option value="vh">vh</option>
 										<option value="vw">vw</option>
 									</select>
-									<span class="right" style="line-height:1.5rem;">Unit</span>
+									<span class="col-f span-100 b-space-5 indent-05">Padding top</span>
+									<input class="span-4-of-6-f col-f" type="text" name="dsn-el-right" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
 								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-10 b-space-5 left-5 indent-05">Left</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Top</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-right" placeholder="0">
-								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-10 b-space-5 left-5 indent-05">Right</span>
-									<input class="span-90 left-5 b-space-10" type="text" name="dsn-el-left" placeholder="0">
-									<span class="box b-space-5 left-5 indent-05">Bottom</span>
-									<input class="span-90 left-5" type="text" name="dsn-el-right" placeholder="0">
+								<div class="col-f span-48 left-4 b-space-15 t-space-10">
+									<span class="col-f span-100 b-space-5 indent-05">Padding right</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
+									<span class="col-f span-100 b-space-5 indent-05">Padding bottom</span>
+									<input class="span-4-of-6-f col-f" type="text" name="dsn-el-right" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+										<option value="px">px</option>
+										<option value="%">%</option>
+										<option value="rem">rem</option>
+										<option value="em">em</option>
+										<option value="vh">vh</option>
+										<option value="vw">vw</option>
+									</select>
 								</div>
 							</div>
 						</div>
@@ -285,22 +357,22 @@
 					
 						<button class="collapse dsn-naked-collapse-button">Typography</button>
 						<div class="collapse-content dsn-element-properties">
-							<div class="section group dsn-90-box c-box space-15">
-								<div class="col-f span-50">
-									<span class="line-box dsn-el-prop-active t-space-10 b-space-15 left-5 indent-05" style="line-height: 1.5rem;">Text align<span class="dsn-el-prop-del">×</span></span>
+							<div class="dsn-90-box c-box section group space-15">
+								<div class="col-f span-48 b-space-15">
+									<span class="box span-100 dsn-el-prop-active indent-05" style="line-height: 1.5rem;">Text align<span class="dsn-el-prop-del">×</span></span>
 								</div>
-								<div class="col-f span-50">
-									<select class="span-90 left-5 t-space-10 b-space-15" name="dsn-el-float" id="dsn-el-float">
+								<div class="col-f span-48 left-4 b-space-15">
+									<select class="box span-100" name="dsn-el-float" id="dsn-el-float">
 										<option value="left">left</option>
 										<option value="right">right</option>
 										<option value="center">center</option>
 										<option value="justify">justify</option>
 									</select>
 								</div>
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-10 b-space-5 left-5 indent-05">Font size</span>
-									<input class="span-60 left-2 b-space-10 line-box" type="text" style="display: inline;" name="dsn-el-left" placeholder="0">
-									<select class="span-1-of-3" style="display: inline;" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+								<div class="col-f span-48 b-space-15">
+									<span class="col-f span-100 t-space-10 b-space-5 indent-05">Font size</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -308,8 +380,8 @@
 										<option value="vh">vh</option>
 										<option value="vw">vw</option>
 									</select>
-									<span class="box b-space-5 left-5 indent-05">Font Family</span>
-									<select class="span-90 left-5 b-space-10" name="dsn-el-font-family" id="dsn-el-font-family">
+									<span class="col-f span-100 b-space-5 indent-05">Font Family</span>
+									<select class="span-100 b-space-10" name="dsn-el-font-family" id="dsn-el-font-family">
 										<option value="Arial, sans-serif">Arial</option>
 										<option value="Verdana, sans-serif">Verdana</option>
 										<option value="Times New Roman, serif">Times New Roman</option>
@@ -321,8 +393,8 @@
 										<option value="Helvetica">Helvetica</option>
 										<option value="Impact">Impact</option>
 									</select>
-									<span class="box b-space-5 left-5 indent-05">Font Weight</span>
-									<select class="span-90 left-5" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+									<span class="col-f span-100 b-space-5 indent-05">Font Weight</span>
+									<select class="span-100" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="100">Thin (Hairline)</option>
 										<option value="200">Extra Light (Ultra Light)</option>
 										<option value="300">Light</option>
@@ -335,10 +407,10 @@
 									</select>
 								</div>
 								
-								<div class="col-f span-50 b-space-15">
-									<span class="box t-space-10 b-space-5 left-5 indent-05">Line height</span>
-									<input class="span-60 left-2 b-space-10 line-box" type="text" style="display: inline;" name="dsn-el-left" placeholder="0">
-									<select class="span-1-of-3" style="display: inline;" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+								<div class="col-f span-48 b-space-15 left-4">
+									<span class="col-f span-100 t-space-10 b-space-5 indent-05">Line height</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6 col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -346,9 +418,9 @@
 										<option value="vh">vh</option>
 										<option value="vw">vw</option>
 									</select>
-									<span class="box b-space-5 left-5 indent-05">Letter spacing</span>
-									<input class="span-60 left-2 b-space-10 line-box" type="text" style="display: inline;" name="dsn-el-left" placeholder="0">
-									<select class="span-1-of-3" style="display: inline;" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+									<span class="col-f span-100 b-space-5 indent-05">Letter spacing</span>
+									<input class="span-4-of-6-f col-f b-space-10" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -356,9 +428,9 @@
 										<option value="vh">vh</option>
 										<option value="vw">vw</option>
 									</select>
-									<span class="box b-space-5 left-5 indent-05">Color</span>
-									<input class="span-60 left-2" type="text" style="display:inline;" name="dsn-el-right" value="#c99a16">
-									<input class="span-1-of-3 right" type="color" style="display:inline;" name="dsn-el-right" value="#c99a16">
+									<span class="col-f span-100 b-space-5 indent-05">Color</span>
+									<input class="span-4-of-6-f col-f" type="text" style="display:inline;" name="dsn-el-right" value="#c99a16">
+									<input class="span-2-of-6-f col-f" type="color" style="display:inline;" name="dsn-el-right" value="#c99a16">
 								</div>
 							</div>
 						</div>
@@ -371,21 +443,21 @@
 							<!-- Opacity -->
 							
 							<div class="span-80 c-box option group space-15">
-								<div class="col-f b-space-20 span-100">
-									<span class="col-f span-50 left">Opacity</span>
-									<input class="span-20 right" type="text" placeholder="0.5">
+								<div class="col-f b-space-15 span-100">
+									<span class="col-f pad-5 span-80">Opacity</span>
+									<input class="box span-20 right" type="text" placeholder="0.5">
 								</div>
 								<input type="range" min="1" max="100" value="50" class="dsn-slider" id="myRange">
 							</div>
 							
 							<!-- Borders -->
 							
-							<span class="line-box dsn-el-prop-active t-space-10 b-space-5 left-5 indent">Borders<span class="dsn-el-prop-del">×</span></span>
+							<span class="box span-100 dsn-el-prop-active t-space-10 b-space-5 left-5 indent">Borders<span class="dsn-el-prop-del">×</span></span>
 							<div class="dsn-90-box c-box option group b-space-10">
-								<div class="col span-48">
-									<span class="box b-space-5 indent-05">Width</span>
-									<input class="span-4-of-6 b-space-10 left" type="text" name="dsn-el-left" placeholder="0">
-									<select class="span-2-of-6" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+								<div class="col-f span-48">
+									<span class="col-f span-100 b-space-5 indent-05">Width</span>
+									<input class="span-4-of-6-f b-space-10 col-f" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -394,27 +466,27 @@
 										<option value="vw">vw</option>
 									</select>
 								</div>
-								<div class="col span-48 left-4">
-									<span class="box b-space-5 indent-05">Style</span>
-									<select class="span-100" style="display: inline;" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+								<div class="col-f span-48 left-4">
+									<span class="col-f span-100 b-space-5 indent-05">Style</span>
+									<select class="span-100 col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="none">none</option>
+										<option value="solid">solid</option>
+										<option value="inherit">inherit</option>
 										<option value="hidden">hidden</option>
 										<option value="dotted">dotted</option>
 										<option value="dashed">dashed</option>
-										<option value="solid">solid</option>
 										<option value="double">double</option>
 										<option value="groove">groove</option>
 										<option value="ridge">ridge</option>
 										<option value="inset">inset</option>
 										<option value="outset">outset</option>
 										<option value="initial">initial</option>
-										<option value="inherit">inherit</option>
 									</select>
 								</div>
 								<span class="col-f span-100 b-space-5 indent-05">Color</span>
 								<div class="span-100 col-f">
-									<input class="span-6-of-7 left" type="text" style="display:inline;" name="dsn-el-right" value="#c99a16">
-									<input class="span-1-of-7" type="color" style="display:inline;" name="dsn-el-right" value="#c99a16">
+									<input class="span-6-of-7-f col-f" type="text" name="dsn-el-right" value="#c99a16">
+									<input class="span-1-of-7-f col-f" type="color" name="dsn-el-right" value="#c99a16">
 								</div>
 							</div>
 							
@@ -422,10 +494,10 @@
 							
 							<span class="line-box dsn-el-prop-selected t-space-10 b-space-5 left-5 indent">Border radius<span class="dsn-el-prop-del">×</span></span>
 							<div class="dsn-90-box c-box option group b-space-10">
-								<div class="col span-48">
-									<span class="box b-space-5 indent-05">Top left</span>
-									<input class="span-4-of-6 b-space-10 left" type="text" name="dsn-el-left" placeholder="0">
-									<select class="span-2-of-6" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+								<div class="col-f span-48">
+									<span class="col-f span-100 b-space-5 indent-05">Top left</span>
+									<input class="span-4-of-6-f b-space-10 col-f" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -434,8 +506,8 @@
 										<option value="vw">vw</option>
 									</select>
 									<span class="col-f span-100 b-space-5 indent-05">Bottom left</span>
-									<input class="span-4-of-6 b-space-10 left" type="text" name="dsn-el-left" placeholder="0">
-									<select class="span-2-of-6" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+									<input class="span-4-of-6-f b-space-10 col-f" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -444,10 +516,10 @@
 										<option value="vw">vw</option>
 									</select>
 								</div>
-								<div class="col span-48 left-4">
-									<span class="box b-space-5 indent-05">Top right</span>
-									<input class="span-4-of-6 b-space-10 left" type="text" name="dsn-el-left" placeholder="0">
-									<select class="span-2-of-6" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+								<div class="col-f span-48 left-4">
+									<span class="col-f span-100 b-space-5 indent-05">Top right</span>
+									<input class="span-4-of-6-f b-space-10 col-f" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -456,8 +528,8 @@
 										<option value="vw">vw</option>
 									</select>
 									<span class="col-f span-100 b-space-5 indent-05">Bottom Right</span>
-									<input class="span-4-of-6 b-space-10 left" type="text" name="dsn-el-left" placeholder="0">
-									<select class="span-2-of-6" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
+									<input class="span-4-of-6-f b-space-10 col-f" type="text" name="dsn-el-left" placeholder="0">
+									<select class="span-2-of-6-f col-f" name="dsn-el-margin-unit" id="dsn-el-margin-unit">
 										<option value="px">px</option>
 										<option value="%">%</option>
 										<option value="rem">rem</option>
@@ -474,12 +546,12 @@
 							<div class="dsn-90-box c-box option group b-space-10">
 								<span class="col-f span-100 b-space-5 indent-05">Background Color</span>
 								<div class="span-100 col-f b-space-10">
-									<input class="span-6-of-7 left" type="text" style="display:inline;" name="dsn-el-right" value="#c99a16">
-									<input class="span-1-of-7" type="color" style="display:inline;" name="dsn-el-right" value="#c99a16">
+									<input class="span-6-of-7-f col-f" type="text" style="display:inline;" name="dsn-el-right" value="#c99a16">
+									<input class="span-1-of-7-f col-f" type="color" style="display:inline;" name="dsn-el-right" value="#c99a16">
 								</div>
-								<span class="col-f span-100 b-space-5 indent-05">Background Color</span>
+								<span class="col-f span-100 b-space-5 indent-05">Background Image</span>
 								<div class="span-100 col-f">
-									<input class="span-100 left" type="text" style="display:inline;" name="dsn-el-right" placeholder="url(img_tree.gif)">
+									<input class="span-100 left" type="text" style="display:inline;" name="dsn-el-right" placeholder="url('img_tree.gif')">
 								</div>
 							</div>
 						</div>
@@ -503,7 +575,14 @@
 			</section>
 		</div>
 	</div>
-	<div id="dsn_4" class="dsn-body" contenteditable="true">
-
+	<div id="dsn_5" class="dsn-body" contenteditable="true">
+		<div>
+			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
+			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
+			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
+		</div>
+		<div>
+			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
+		</div>
 	</div>
 </div>
