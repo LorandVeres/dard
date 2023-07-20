@@ -213,7 +213,16 @@
 			!isFunc( callable ) ? console.warn( warn1 ) : callable() ;
 		}) : console.warn( warn0 ) ;
 	};
-
+	
+	/**
+	**************************************	
+	* Returns the current element if called from outside;
+	* @returns current element
+	*/ 
+	$d.getEl = function(){
+		return el;
+	};
+		
 //let new_snipet = snipet_creator();
 
 
