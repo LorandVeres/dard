@@ -544,6 +544,33 @@
 				bool = true;
 			}
 		};
+		
+		self.resetEl = function() {
+			let att, val, i, rc, ra;
+			reseting = true ; // reseting start 
+			eattr = {};
+			rc = new resetClasses(); // reset classes
+			ra = new resetAttributes();
+			rc.rm();
+			ra.rm();
+			// reseting the attributes obj
+			att = el.getAttributeNames();
+			for(i = 0; i < att.length; i++){
+				eattr[att[i]] = el.getAttribute(att[i]);
+			}
+			
+			// clearing all fields values
+			{   
+				for(i=0; i < fields.length; i++){
+					fields[i].e.value = "";
+				}
+				//fields.splice(0, (fields.length));
+			}
+			rc.add();
+			ra.add();
+			reseting = false; // reseting done .
+		}
+		
 		return self;
 	};
 //let new_snipet = snipet_creator();
