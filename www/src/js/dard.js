@@ -702,7 +702,7 @@ $.constructor.prototype.ajax = function(obj) {
  *  The parameters object
  * @obj = {
  *
- *      @data : $.snipetHandler.gett($('form')),  // A valid object or a function what will return an object
+ *      @data : $.snipetHandler.gett($('form')),  // A valid object or a function what will return any object
  *      @meta : {
  *          url: 'funnypage?parameter=value', // Mandatory parameter, the page url the data to be sent
  *          other: 'any type of data', // [ optionals ] Optional parameters to help sorting on server side. Pameter names at your choice
