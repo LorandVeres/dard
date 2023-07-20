@@ -197,6 +197,34 @@
 	 *  
 	 */
 	 
+	$d.copyEl = function(){
+		let copy, self = {}, newEl = {}, copyButton, pasteButton;
+		
+		self.save = function(){
+			el.classList.contains("dsn-active") && el.classList.toggle('dsn-active');
+			el.classList.contains("dsn-hover") && el.classList.toggle('dsn-hover');
+			copy = $.snipetHandler.gett(el);
+			el.classList.toggle("dsn-active");
+		};
+		
+		self.paste = function(obj) {
+			$.snipetHandler.sett.call();
+		}
+		
+		copyButton = document.getElementById("dsn_106");
+		copyButton.addEventListener('click', function(){self.save(); console.log(copy);});
+		
+		pasteButton = document.getElementById("dsn_100");
+		pasteButton.addEventListener('click', function(){
+			newEl.obj = copy;
+			newEl.position = "beforeend";   //  default in to the current element at the end
+			newEl.recipient = el; // default the recipient is the curently selected element 
+			newEl.contentArray = [];
+			$.snipetHandler.sett.call(newEl);
+		});
+		
+		return self;
+	};
 	
 	/**
 	 *  Seting up the event listeners on the menu items 
