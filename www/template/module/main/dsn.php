@@ -9,13 +9,13 @@
 		<!-- Element actions nav -->
 		
 		<div class="dsn-node-tree">
-			<button id="dsn_100" class="left dsn-node-link" title="Insert element">&lt;&and;&gt;</button>
-			<button id="dsn_101" class="left dsn-node-link" title="Next sibling up">&#8648;</button>
-			<button id="dsn_102" class="left dsn-node-link" title="Next sibling down">&#8650;</button>
-			<button id="dsn_103" class="left dsn-node-link" title="Parent element">[::]</button>
-			<button id="dsn_104" class="left dsn-node-link" title="First child">&gt;::</button>
-			<button id="dsn_105" class="left dsn-node-link" title="Delete"><img src="images/icons/g/16/l/delete.png"></button>
-			<button id="dsn_106" class="left dsn-node-link" title="Copy"><img src="images/icons/g/16/l/copy.png"></button>
+			<button id="dsn_100" class="left dsn-node-link" title="Paste element">&lt;&and;&gt;</button>
+			<button id="dsn_101" class="left dsn-node-link" title="Go Next sibling up">&#8648;</button>
+			<button id="dsn_102" class="left dsn-node-link" title="Go Next sibling down">&#8650;</button>
+			<button id="dsn_103" class="left dsn-node-link" title="Go Parent element">[::]</button>
+			<button id="dsn_104" class="left dsn-node-link" title="Go First child">&gt;::</button>
+			<button id="dsn_105" class="left dsn-node-link" title="Delete selected"><img src="images/icons/g/16/l/delete.png"></button>
+			<button id="dsn_106" class="left dsn-node-link" title="Copy this"><img src="images/icons/g/16/l/copy.png"></button>
 		</div>
 		
 		<!-- Element setings and styling collapsible -->
@@ -57,22 +57,7 @@
 					<div id="dsn-class-properties" class="space-15">
 						<p>Class list :</p>
 						<div id="dsn_5" class="dsn-dark-box b-space-10 pad-5">
-							<div class="dsn-button-like-box">
-								<span class="dsn-el-property">my-first-class</span>
-								<span class="dsn-el-property-del">&times;</span>
-							</div>
-							<div class="dsn-button-like-box">
-								<span class="dsn-el-property">first-class</span>
-								<span class="dsn-el-property-del">&times;</span>
-							</div>
-							<div class="dsn-button-like-box">
-								<span class="dsn-el-property">my-class</span>
-								<span class="dsn-el-property-del">&times;</span>
-							</div>
-							<div class="dsn-button-like-box">
-								<span class="dsn-el-property">my-class</span>
-								<span class="dsn-el-property-del">&times;</span>
-							</div>
+							
 						</div>
 						<div class="section group dsn-attr" data-type="class" data-value="">
 							<label for="dsn-el-add-class">Class :</label>
@@ -106,10 +91,7 @@
 						<div class="collapse-content dsn-element-properties">
 							<p class="b-space-10 left-5">Attributes list :</p>
 							<div id="dsn_6" class="dsn-dark-box b-space-10 pad-5">
-								<div class="dsn-button-like-box">
-									<span class="dsn-el-property">my-first-class</span>
-									<span class="dsn-el-property-del">&times;</span>
-								</div>
+								
 							</div>
 							<div class="section group dsn-attr" data-type="attr-name" data-value="">
 								<label for="dsn-el-add-class">Attr Name :</label>
