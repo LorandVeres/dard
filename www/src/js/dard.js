@@ -846,15 +846,25 @@ $.constructor.prototype.snipetHandler = (function() {
 	/**
 	*  Insert an HTML node in the document from a snipets object or JSON snipet string
 	*
-	*  @param dom_object The dom object or JSON string passed
-	*  @param recipient_Element The recipient or adjacent element if el_Position is specified
-	*  @param el_Position [ optional ] String as position param for insertAdjacentElement, one of ( afterbegin, beforeend, beforebegin, afterend )
+	*  @param snipet {
+	*           obj: {},    //  snipet object
+	*           recipient: element, // The recipient or adjacent element [ HTMLElement object ]
+	*           position: 'afterend' // [ optional ] one of ( afterbegin, beforeend, beforebegin, afterend )
+	*           },
+	*  @param contentArray // [ optional ] The array for the content. 
 	*
 	*  @Use
-	*  snipetHandler.sett(snipet.object, recipient_Element);
-	*  snipetHandler.sett(snipet.object, adjacent_Element, el_Position);
+	*  snipetHandler.sett.call(
+	*       snipet {
+	*           obj: {},
+	*           recipient: element,
+	*           position: 'afterend'
+	*           },
+	*       contentArray 
+	*   );
+	*  
 	*
-	*  @return void
+	*  @return element { The newly created HTMLElement object }
 	*/
 
 	self.sett = function() {
@@ -864,11 +874,18 @@ $.constructor.prototype.snipetHandler = (function() {
 			set_Element, // Function
 			insert_Element, // Function
 			arg = varyArgs(arguments), // array of arguments
-			dom_object = arg[0], // DOM object pased to the function
-			recipient_Element = arg[1], // Recipient or reference element
+			dom_object = this.obj, // DOM object pased to the function
+			recipient_Element = this.recipient, // Recipient or reference element
 			el_Position, // The element position when adjacent element is used
-			inserted = false; // Once adjacent element is set it will became true, used as a switch variable
-			arg.length === 3 ? el_Position = arg[2] : null;
+			contentArray = [], // Array elements to be inserted in the obj.e_content based on data-dsn-id attribute value 
+			inserted = false, // Once adjacent element is set it will became true, used as a switch variable
+			arrayElements = {},
+			oneElement,
+			j = 0,
+			stopBool = false;
+			isSet( this.position ) && ( el_Position = this.position ) ;
+			arg.length > 0 && ( contentArray = arg[0] );
+			
 		const e_attr = 'e_attr',
 			e_content = 'e_content';
 
@@ -876,7 +893,7 @@ $.constructor.prototype.snipetHandler = (function() {
 			let attr={};
 			for (let prop in attr_Obj){
 				if(attr_Obj.hasOwnProperty(prop)){
-					if(!empty(attr_Obj[prop])){
+					if(!empty(attr_Obj[prop]) && prop !== 'data-dsn-txt-id' ){
 						attr = document.createAttribute(prop);
 						if(!empty(attr_Obj[prop])){
 							attr.value = attr_Obj[prop];
