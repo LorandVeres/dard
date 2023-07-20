@@ -68,6 +68,16 @@ function argsLength(arguments) {
 	return varyArgs(arguments).length;
 }
 
+// Removes the specified value from array
+function arrayRemove(arr, val){
+	for( var i = 0; i < arr.length; i++){ 
+        if ( arr[i] === val) { 
+            arr.splice(i, 1);
+            i--;
+        }
+    
+    }
+}
 /*******************************************************************************
 *===============================================================================
 *
