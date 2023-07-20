@@ -921,33 +921,43 @@ $.constructor.prototype.snipetHandler = (function() {
 			if(isSet(obj.e_type) && (obj.e_type === 1 || obj.e_type === 3)){
 				if(obj.e_type === 1){
 					const element = document.createElement(obj.e_name);
+					!isSet(parent_El) ? console.log(element) : insert_Element(element, parent_El);
 					if(obj.keyIn(e_attr))
 						set_Attributes(obj.e_attr, element);
-					!isSet(parent_El) ? console.log(element) : insert_Element(element, parent_El);
 					if(obj.keyIn(e_content)){
 						if(isStr(obj.e_content)){
+							if((obj.e_content === "" || obj.e_attr.hasOwnProperty('data-dsn-txt-id')) && isSet( contentArray ))
+								set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
 							if(obj.e_content !== "")
 								set_TextNode(obj.e_content, element);
 						}
 						if(isObj(obj.e_content) && !isStr(obj.e_content)){
-							walk_Content(obj, element);
+							walk_Content(obj.e_content, element);
 						}
-					}
+					}return element
 				// Not a practical mode to include a one single text node.
 				}else if(obj.e_type === 3 || isStr(obj.e_content)){
 					set_TextNode(obj.e_content, parent_El);
 				}
 			}else {
+				// Dealing with Array like object 
 				for( let prop in obj){
 					if(isObj(obj[prop]) && obj[prop].hasOwnProperty('e_type')){
-						set_Element(obj[prop], parent_El);
+						arrayElements[j] = set_Element(obj[prop], parent_El);
+						j++;
+						stopBool = true;
 					}
 					
 				}
 			}
+			
 		};
-
-		set_Element(dom_object, recipient_Element);
+		oneElement = set_Element(dom_object, recipient_Element);
+		if(oneElement === undefined ){
+			return arrayElements;
+		}else{
+			return oneElement
+		}
 	};
 
 	/**
