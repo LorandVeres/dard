@@ -892,17 +892,22 @@ $.constructor.prototype.snipetHandler = (function() {
 		walk_Content = function(content_obj, parent_El){
 			if(content_obj.keyIn(e_content)){
 				for (let prop in content_obj.e_content){
-					set_Element(content_obj.e_content[prop], parent_El);
+					set_Element(content_obj.e_content[prop], parent_El);console.log(content_obj.e_content[prop]);
 				};
+			}
+			if (!content_obj.keyIn(e_content)){
+				for (let prop in content_obj){
+					content_obj[prop].keyIn('e_type') && set_Element(content_obj[prop], parent_El);
+				}
 			}
 		};
 
 		insert_Element = function(el, parent_El){
-			if(arg.length === 3 && !inserted){
+			if(isSet(el_Position) && !inserted){
 				if(parent_El.insertAdjacentElement(el_Position, el)){
 					inserted = true;
 				}
-			}else if(arg.length === 2 || inserted){
+			}else if(!isSet(el_Position) || inserted ){
 				parent_El.appendChild(el);
 			}
 		};
