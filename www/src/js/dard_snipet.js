@@ -41,9 +41,32 @@
 		
 		
 		
-		//snb.append( $('<iframe>').addattrlist( { width:'100%', height:'100%', src:"https://dard.dard/modules", contenteditable:"true"} ) ); //, sandbox:'allow-scripts allow-same-origin'} ) );
-	}
 	
+	/**
+	 * It is the dard JSON HTML mode
+	 * This will stay here for a while for illustrative purposes only
+	 */
+	
+	$n.attrDisplaySnipet = {
+		e_name: 'div',
+		e_type: 1,
+		e_attr: { class: 'dsn-button-like-box' },
+		e_content: {
+			0: {
+				e_name: 'span',
+				e_type: 1,
+				e_attr: { class:'dsn-el-property', "data-dsn-txt-id": "0" },
+				e_content: ''
+			},
+			1: {
+				e_name: 'span',
+				e_type: 1,
+				e_attr: { class:'dsn-el-property-del'},
+				e_content: "×"
+			}
+		}
+		
+	};
 	
 	
 	//
