@@ -856,7 +856,7 @@ $.constructor.prototype.snipetHandler = (function() {
 
 	/**
 	*  Insert an HTML node in the document from a snipets object or JSON snipet string
-	*
+	*   @Need to be implemented a js event hook as for the text 
 	*  @param snipet {
 	*           obj: {},    //  snipet object
 	*           recipient: element, // The recipient or adjacent element [ HTMLElement object ]
@@ -872,6 +872,7 @@ $.constructor.prototype.snipetHandler = (function() {
 	*           position: 'afterend'
 	*           },
 	*       contentArray 
+	*       };
 	*   );
 	*  
 	*
