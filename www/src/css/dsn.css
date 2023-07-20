@@ -4,6 +4,9 @@
  * 
  * =============================
  */
+ [contenteditable] {
+	outline: 0px solid transparent;
+  }
  .dsn-page{
 	position : absolute;
 	top: 0;
@@ -57,6 +60,11 @@
     overflow-y: scroll;
 }
 
+.dsn-body .dsn-el-current {
+	outline: 2px solid #3b97e3 !important;
+	outline-offset: 2px;
+	}
+
 .dsn-node-tree{
 	height: 2rem;
     width: 100%;
@@ -87,20 +95,22 @@
 .dsn-side-menu textarea,
 .dsn-side-menu select{
 	display: block;
-    border: 1px solid #373737;
+    /*border: 1px solid #373737;*/
+    border: 0;
     background-color: #1c1c1c;
     color: #989898;
     padding: 3px;
     height: 1.5rem;
-    border-radius: 2px;
     box-sizing: border-box;
 }
+
 .dsn-side-menu input[type=color] {
 	appearance: none;
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	background: none;
-	border: 1px solid #373737;
+	border: 0;
+	/*border: 1px solid #373737;*/
 	cursor: pointer;
 	height: 1.5rem;
 	padding: 0;
@@ -127,8 +137,9 @@
 .dsn-side-menu input[type=text]:focus,
 .dsn-side-menu textarea:focus,
 .dsn-side-menu select:focus{
-	border: 1px solid #575757;
-	outline:none
+	/*border: 1px solid #575757;*/
+	border: 0;
+	outline:none;
 }
 
 .dsn-side-menu input[type=button] {
@@ -194,6 +205,22 @@
 	
 }
 
+.dsn-dark-field input[type=text],
+.dsn-dark-field input[type=number],
+.dsn-dark-field textarea,
+.dsn-dark-field select { 
+	background-color: #171616;
+	border: 1px solid #000000;
+}
+
+.dsn-dark-field input[type=text]:focus,
+.dsn-dark-field input[type=number]:focus,
+.dsn-dark-field textarea:focus,
+.dsn-dark-field select:focus { 
+	background-color: #171616;
+	border: 1px solid #000000;
+}
+
 .dsn-element-properties {
 	width: 100%;
     margin: 0;
@@ -226,7 +253,7 @@
 .dsn-button-like-box {
 	border: 1px solid #333333;
 	margin-left: 0.6rem;
-	margin-bottom: 0.5rem;
+	margin-bottom: .2rem;
 	height: 1.6rem;
 	border-radius: 3px;
 	width: fit-content;
@@ -275,6 +302,12 @@
 	padding: 4% 2%;
 }
 
+.dsn-dark-box{
+	background-color: #131010;
+	width: 100%;
+	max-height: auto !important;
+}
+
 .dsn-slider {
 	-webkit-appearance: none;
 	display: block;
@@ -316,3 +349,35 @@
 	cursor: pointer;
 	border: none;
 }
+
+.dsn-attr {
+	margin-bottom: 10px;
+}
+
+.dsn-attr label {
+	display: block;
+	margin-left: 5%;
+	width: 28%;
+	text-indent: .5rem;
+	float: left;
+}
+
+.dsn-attr input[type=text] {
+	display: block;
+	margin-left: 2%;
+	width: 60%;
+	background-color: #171616;
+	border: 1px solid #000000;
+	float: left;
+}
+
+.dsn-attr input[type=text]:focus{
+	background-color: #171616;
+	border: 1px solid #000000;
+}
+
+
+/*
+.dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(47, 157, 248, 0.2); }
+.dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background-color: rgba(47, 157, 248, 0.2); }
+*/
