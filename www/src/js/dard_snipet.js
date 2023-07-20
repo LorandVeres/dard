@@ -255,6 +255,133 @@
 		
 		showObj.snipet.obj = $n.attrDisplaySnipet;
 		
+		/**
+		*   Creating the attributes and checking their existence
+		*   We won't over write the same attribute multiple times
+		*/
+		customAttr = function(){
+			let name, value, i, checks;
+			showObj.snipet.recipient = document.getElementById("dsn_6");
+			showObj.datatype = "attribute";
+			
+			checks = function(a, v) {
+				let state = false;
+				
+				showObj.datavalue = a;
+				
+				if( ! eattr.hasOwnProperty(a)){
+					if( !empty(a) && !empty( v ) ) { 
+						el.setAttribute(a, v);
+						eattr[a] = v;
+						showObj.arr = [ a + '=' + v]; // inserting the text in the snipet
+						showAttr.call(showObj);
+						state = true
+					}else if ( !empty(a) && empty(v) ){
+						el.setAttribute(a, "");
+						eattr[a] = "";
+						showObj.arr = [ a ]; // inserting the text in the snipet
+						showAttr.call(showObj);
+						state = false;
+					}
+				}else if (eattr.hasOwnProperty(a)){
+					if ( empty(eattr[a]) && !empty(a) ) {
+						if(!empty( v )){
+							el.setAttribute(a, v);
+							eattr[a] = v;
+							showObj.arr = [ a + '=' + v]; // inserting the text in the snipet
+							showAttr.call(showObj);
+							state = true;
+						}else{
+							state = false;
+						}
+					}
+				}
+				
+				return state;
+			};
+			
+			/** 
+			*  We can create an empty attribute, 
+			*  Clear the input fields once a atttribute/name pair has been added 
+			*
+			*/
+			if(this.d === 'attr-name'){
+				i = this.i + 1; 
+				fields[i].e instanceof HTMLElement && (value = fields[i].e.value) ; 
+				if (!empty(this.v) ) {
+					fields[this.i].e.placeholder = "name here" ;
+					if( checks(this.v, value ) ){
+						fields[i].e.value = "";
+						fields[this.i].e.value = "";
+					}
+				} 
+			}
+			/**
+			*   We can't create just one attribute value without a name
+			*   Clear the input fields once a atttribute/name pair has been added
+			*/
+			if(this.d === "attr-value"){
+				i = this.i - 1;
+				fields[i].e instanceof HTMLElement && (name = fields[i].e.value) ;
+				if( !empty(this.v) ) {
+					if(checks(name, this.v )) {
+						fields[i].e.value = "";
+						fields[this.i].e.value = "";
+						fields[i].e.placeholder = "name here";
+					}else{
+						fields[i].e.placeholder = "Attribute Name Required";
+					}
+				}
+			}
+		}
+		
+		/**
+		*   Sorting the results for handling respective of type of data
+		*/
+		
+		handleType = function(){
+			let classname = this.v 
+			if (! reseting ){
+				switch(this.d){
+					case 'class':
+						showObj.snipet.recipient = document.getElementById("dsn_5");
+						showObj.datatype = "class";
+						showObj.datavalue = classname;
+						showObj.arr = [ classname ];
+						!empty(this.v) && showClass.call(showObj);
+						fields[this.i].e.value = "";
+						listClasses.push(this.v)
+						break;
+					case 'attr-name':
+						customAttr.call(this);
+						break;
+					case 'attr-value':
+						customAttr.call(this);
+						break;
+					default:
+						el.setAttribute(this.d, this.v);
+						eattr[this.d] = this.v;
+				}
+			}
+		};
+		
+		getFields = function(){
+			for(let i =0; i < cont.length; i++){
+				fields.push( { e:cont[i].children[1], d:cont[i].getAttribute('data-type') } );
+			}
+		}
+		
+		self.listen = function() {
+			fields.length === 0 && getFields() ;
+			if (!bool) {
+				for(let i =0; i < fields.length; i++){
+					fields[i].e.addEventListener('change', function(){
+						handleType.call( { d:fields[i].d, i:i, v:fields[i].e.value} );
+					});
+				}
+				bool = true;
+			}
+		};
 		return self;
 	};
 //let new_snipet = snipet_creator();
