@@ -41,6 +41,39 @@
 		
 		
 		
+		
+	/**
+	 * Initializig $d and the work enviroment
+	 */
+	$d.init = function(){
+		// init el if not set
+		!el && ( el = $( snb.firstElementChild )); 
+		!ep && ( ep = $( el.parentElement ));
+		
+		// Adjusting the snipet body container width
+		// Total menu width = scrollWidth + left margin included
+		let mw =  parseInt(smn.scrollWidth + parseInt(window.getComputedStyle(smn).marginLeft.replace((/px/gi), "")));
+		snb && (snb.style.width = parseInt( window.screen.width - mw) + 'px');
+		
+		$('head').append($('<style>', $n.style.reset + $n.style.general + $n.style.classes + $n.style.hover + $n.style.active ));
+
+
+		// event listener on all elements of the snipet
+		$(snb).walkChild( $d.snipetListener );
+		
+		if( !isSet(attributes) ) attributes = new $d.attr();
+		attributes.listen();
+		
+		// Setting up the event listeners on node links navigation
+		$d.menuListener.call(['dsn_105', $d.elDroped ]);
+		$d.menuListener.call(['dsn_104', $d.goToFirstKid ]);
+		$d.menuListener.call(['dsn_103', $d.goToParent ]);
+		$d.menuListener.call(['dsn_102', $d.goToYoungerBrother ]);
+		$d.menuListener.call(['dsn_101', $d.goToOlderBrother ]);
+		copy = new $d.copyEl();
+		$d.listen.call(weListen);
+		
+	};
 	
 	/**
 	 * It is the dard JSON HTML mode
