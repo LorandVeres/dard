@@ -125,6 +125,38 @@
 			});
 		}
 	};
+	
+	/**
+	 *  Don't think this will be used. maybe will be removed
+	 *  
+	 */
+	
+	$d.pushListen = function(a, b, c){
+		weListen.push({0:a, 1:b, 2:c});
+	};
+	
+	/**
+	*************************************
+	* Changing the current element
+	* @returns the new element
+	*/
+	 $d.change = function(){
+		// remove the active class from current element
+	
+		el.classList.contains("dsn-active") && el.classList.toggle('dsn-active');
+		
+		el = this;
+		ep = el.parentElement; 
+		// Add the active class on the new element
+		el.classList.toggle('dsn-active'); 
+		if( !isSet( attributes )){
+			attributes = new $d.attr();
+		}
+			attributes.resetEl();
+		
+		return el;
+	};
+	
 
 //let new_snipet = snipet_creator();
 
