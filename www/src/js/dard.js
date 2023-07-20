@@ -582,26 +582,24 @@ var $ = function () {
 			return this;
 		};
 
-		/** UNTESTED
-		*  It may have an unexpected behavior yet
-		*****************************************
+		/** 
+		*  Apply a callback function on every child element node
+		*
 		*
 		* @param first is a callback functions, apply the array or object on childNodes
 		* @param second an array or iterate object
 		*/
 
-		el.constructor.prototype.walk_Child = function() {
+		el.constructor.prototype.walkChild = function() {
 			let arg = varyArgs(arguments),
 				callback = arg[0],
-				el = this.childNodes,
-				k = 0;
+				el = this.children;
 				for (let i = 0, j = el.length; i < j; i++) {
-					if (el[i]) {
-						if (arg.length === 1 && isFunc(arg[1]))
-							callback(el[i]);
-						// This behavior has to be checked
+					if (el[i] && isFunc(callback)) {
+						if (arg.length === 1)
+							callback.call(el[i]);
 						if (arg.length === 2 && (isObj(arg[1] || isArray(arg[1])))) {
-							callback(el[i], arg[1]);
+							callback.call(el[i], arg[1]);
 						}
 					}
 				}
