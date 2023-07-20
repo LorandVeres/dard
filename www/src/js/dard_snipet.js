@@ -311,6 +311,44 @@
 		}
 		
 		/**
+		* Delete the classes from the menu shown while swaping elemnts focus
+		* and populate the current element ones
+		*/
+		resetClasses = function() {
+			let classmenu, sel = { };
+				
+			classmenu = document.getElementById("dsn_5");
+			listClasses.splice(0, listClasses.length-1);
+			
+			sel.rm = function (){
+				//listClasses.splice(0, listClasses.length-1);
+				while(classmenu.firstElementChild){
+					if(classmenu.firstElementChild.children[1])
+						classmenu.firstElementChild.children[1].removeEventListener('click', removeClass );
+					classmenu.removeChild(classmenu.firstElementChild);
+				}
+			};
+			
+			sel.add = function () {
+				let l ='';
+				showObj.snipet.recipient = document.getElementById("dsn_5");
+				el.hasAttribute('class') && ( l = el.getAttribute('class'));
+				!empty(l) && ( listClasses = l.split(' '));console.log(listClasses);
+				arrayRemove(listClasses, "dsn-active");
+				for(let i = 0; i < listClasses.length; i++){
+					showObj.snipet.recipient = document.getElementById("dsn_5");
+					showObj.datatype = "class";
+					showObj.datavalue = listClasses[i];
+					showObj.arr = [ listClasses[i] ];
+					if (listClasses[i] !== "dsn-hover" || listClasses[i] !== "dsn-active" )
+						showClass.call(showObj);
+				}
+				
+			};
+			return sel;
+		};
+		
+		/**
 		* Delete the attributes from the menu shown while swaping elemnts focus
 		* and populate the current element ones
 		*/
