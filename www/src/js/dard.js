@@ -767,7 +767,9 @@ $.constructor.prototype.snipetHandler = (function() {
 		let block = {},
 		    build_Block,
 		    get_Attributes,
-		    walk_Siblings;
+		    walk_Siblings,
+		    stopBool = false,
+		    childsWalk = arguments[1];
 
 		get_Attributes = function(e) {
 			let attr = {},
@@ -818,8 +820,18 @@ $.constructor.prototype.snipetHandler = (function() {
 		};
 
 		if( isSet(el)){
-			if (el.nodeType === 1) {
-				block = build_Block(el);
+			if( !isSet(arguments[1]) ){
+				if (el.nodeType === 1 && !stopBool)  {
+					block = build_Block(el);
+				}
+			}else if( isSet(childsWalk && !stopBool) ) {
+				let nextEl = el.firstElementChild, j = 0;
+				while(nextEl){
+					block[j] = build_Block(nextEl);
+					j++;
+					nextEl = nextEl.nextElementSibling;
+				}
+				stopBool = true;
 			}
 		}
 
