@@ -9,18 +9,18 @@
 		<!-- Element actions nav -->
 		
 		<div class="dsn-node-tree">
-			<button id="s-n-l-insert" class="left dsn-node-link" title="Insert element">&lt;&and;&gt;</button>
-			<button id="s-n-l-sibling-up" class="left dsn-node-link" title="Next sibling up">&#8648;</button>
-			<button id="s-n-l-sibling-down" class="left dsn-node-link" title="Next sibling down">&#8650;</button>
-			<button id="s-n-l-parent-el" class="left dsn-node-link" title="Parent element">[::]</button>
-			<button id="s-n-l-child-el" class="left dsn-node-link" title="First child">&gt;::</button>
-			<button id="s-n-l-parent-el" class="left dsn-node-link" title="Delete"><img src="images/icons/g/16/l/delete.png"></button>
-			<button id="s-n-l-child-el" class="left dsn-node-link" title="Copy"><img src="images/icons/g/16/l/copy.png"></button>
+			<button id="dsn_100" class="left dsn-node-link" title="Insert element">&lt;&and;&gt;</button>
+			<button id="dsn_101" class="left dsn-node-link" title="Next sibling up">&#8648;</button>
+			<button id="dsn_102" class="left dsn-node-link" title="Next sibling down">&#8650;</button>
+			<button id="dsn_103" class="left dsn-node-link" title="Parent element">[::]</button>
+			<button id="dsn_104" class="left dsn-node-link" title="First child">&gt;::</button>
+			<button id="dsn_105" class="left dsn-node-link" title="Delete"><img src="images/icons/g/16/l/delete.png"></button>
+			<button id="dsn_106" class="left dsn-node-link" title="Copy"><img src="images/icons/g/16/l/copy.png"></button>
 		</div>
 		
 		<!-- Element setings and styling collapsible -->
 		
-		<div id="" class="span-100 b-space-15">
+		<div id="dsn_4" class="span-100 b-space-15">
 		
 			<!-- Element name and index -->
 		
