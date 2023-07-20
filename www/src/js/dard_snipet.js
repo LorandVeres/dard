@@ -623,7 +623,13 @@
 //$.snipetHandler.gett($('form'));
 //console.log($.snipetHandler.gett($('.overlay-snipet')).e_content);
 if($('.dsn-body')){
-	let new_snipet = snipet_creator(),
-		p = $('<p>', 'Just write in');
+	//let new_snipet = new snipet_creator();
 	$.collapse();
+	//console.log(new_snipet.el());
 }
+
+let asd = {recipient:$('.dsn-body')};
+asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
+console.log(asd);
+let bbg = $.snipetHandler.sett.call(asd);
+console.log(bbg);
