@@ -1,22 +1,45 @@
-function snipet_creator(){
-	let self = {},
-		current_el,
+/**
+ * DARD SNIPET CREATOR
+ *
+ * @author Lorand Veres lorand.mast@gmail.com
+ * 
+ * @copyright Lorand Veres lorand.mast@gmail.com
+ * @license MIT
+ *
+ *
+ *  This is just a two-three days work, to have a basic start on the idea and direction
+ *     of structures.
+ *
+ */
+
+ let snipet_creator = (function (){
+	let $d = {},
+		snb = $('.dsn-body'), //snipet container
+		smn = $('.dsn-side-menu'), // side menu
+		el, // current element
+		esb = [], // element siblings if any
+		ep, // element parentElement
+		$n = { }, // dsn snipet objects
+		weListen = [], // an array objects  { 0:element, 1:event, 2:function };
+		$de,
 		html_blocks = [ 'form', 'section', 'cards', 'list'], // type of implemented blocks
+		copy, // the new copy function
 		snipet_box, // the snipet container
-		init, // function
-		show_select; // function
-	
-	init = function(){
-		let snb = $('.dsn-body'),
-			smn = $('.dsn-side-menu'),
-			sw = window.screen.width,
-			// Total menu width = scrollWidth + left margin included
-			mw =  parseInt(smn.scrollWidth + parseInt(window.getComputedStyle(smn).marginLeft.replace((/px/gi), "")));
-		// Adjusting overlay-snipet-body width
-		snb && (snb.style.width = parseInt(sw - mw) + 'px');
-		// Including our snipet box container and setting current_el to snipet_box
-		isSet(snipet_box) && snb.insertAdjacentElement('afterbegin', snipet_box);
-		!isSet(current_el) && (current_el = snipet_box);
+		show_select, // function
+		attributes; // function
+		
+		// Inline styling structure
+		$n.style = {
+			reset : "\n",
+			ui : "\n",
+			dsn : "\n",
+			general : ".dsn-body div{ max-height:max-content; background: #ececec; margin:1.5%;overflow:auto;} .dsn-body p{ padding:10px; line-height:1.5rem}\n",
+			classes : "\n",
+			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(47, 157, 248, 0.2); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n",
+			active : ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background: rgba(47, 157, 248, 0.2); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n"
+		};
+		
+		
 		
 		//snb.append( $('<iframe>').addattrlist( { width:'100%', height:'100%', src:"https://dard.dard/modules", contenteditable:"true"} ) ); //, sandbox:'allow-scripts allow-same-origin'} ) );
 	}
