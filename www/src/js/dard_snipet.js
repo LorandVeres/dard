@@ -68,18 +68,31 @@
 		
 	};
 	
-	
-	//
-	// testing area
-	//
-	//console.log(html_blocks);
-	//$.overlay({el:$("body"), elclass:"overlay-snipet", headerclass:"overlay-header"});
-	//console.log(location.href.split("=")[2]);
-	
-	// Initializig the work enviroment
-	init();
-	return self;
-}
+	/**
+	 *  Seting up the event listener on the snipet 
+	 * 
+	 */
+	$d.snipetListener = function(){
+		
+		this.addEventListener('mouseover', function(e){
+			e.stopPropagation();
+			this.classList.toggle('dsn-hover');
+		});
+		
+		this.addEventListener('mouseout', function(e){
+			e.stopPropagation();
+			this.classList.toggle('dsn-hover');
+		});
+		
+		this.addEventListener('click', function(e){
+			e.stopPropagation();
+			$d.change.call(this);
+		});
+		
+		if( this.childElementCount > 0) {
+			$(this).walkChild( $d.snipetListener ) ;
+		}
+	};
 
 
 //let new_snipet = snipet_creator();
