@@ -256,6 +256,33 @@
 		showObj.snipet.obj = $n.attrDisplaySnipet;
 		
 		/**
+		* Show the classes in the menu
+		*/
+		showClass = function() {
+			let menu,// $.snipetHandler.sett.call(this.snipet, this.arr),
+				link, arr = this.arr;
+			if( this.arr[0] !== "dsn-active" && this.arr[0] !== "dsn-hover" ){
+				menu = $.snipetHandler.sett.call(this.snipet, this.arr),
+				el.classList.add(this.arr[0]);
+				link = menu.children[1];
+				link.setAttribute( "data-type", this.datatype);
+				link.setAttribute( "data-value", this.datavalue);
+				link.addEventListener('click', function (){ removeClass.call(link, arr[0]) ;});
+			}
+		};
+		
+		/**
+		* Delete the classes using the menu button
+		*/
+		removeClass = function() {
+			let att = this.getAttribute("data-value");
+			this.removeEventListener("click", removeClass);
+			el.removeAttribute(att);
+			el.classList.remove(arguments[0]);
+			this.parentElement.parentElement.removeChild(this.parentElement);
+		}
+		
+		/**
 		*   Creating the attributes and checking their existence
 		*   We won't over write the same attribute multiple times
 		*/
