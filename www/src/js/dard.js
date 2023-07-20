@@ -372,8 +372,9 @@ var $ = function () {
 		*
 		*/
 
-		el.constructor.prototype.remove = function(e) {
-			this.removeChild(e);
+		el.constructor.prototype.rm = function(e) {
+			if(e.parentElement === this )
+				this.removeChild(e);
 			return this;
 		};
 
