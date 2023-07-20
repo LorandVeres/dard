@@ -93,7 +93,38 @@
 			$(this).walkChild( $d.snipetListener ) ;
 		}
 	};
-
+	
+	/**
+	 *  @Unfinnished Idea yet
+	 *  Add event listeners on the weListen array like format [ { 0:element, 1:event, 2:function }]
+	 *  Can add liteners to HTMLElements $d.listen.call(element, 'eventName', callback)
+	 * 
+	 */
+	
+	$d.listen = function(){
+		let warn0 = 'oops the element with id ' + this[0] + ' is not found in menuListener',
+			warn1 = 'oops the callback is not a function in menuListener for element ' + this[0] ;
+		
+		// Add event listeners on the weListen array like format [ { 0:element, 1:event, 2:function }]
+		if(isArray(this)){
+			for(let i = 0; i < this.length; i++ ){
+				if( this[i][0] && isFunc(this[i][2]) ) { 
+					this[i][0].addEventListener(this[i][1], function(e){
+						this[i][2].call(this[i][0]);
+					});
+				}
+				( !this[i][0] && console.log(warn0) ) && ( !isFunc( this[i][2] ) && console.log(warn1) ) ;
+			}
+		}
+		
+		// Add liteners to HTMLElements $d.listen.call(element, 'eventName', callback)
+		if(this instanceof HTMLElement){ console.log(arguments);
+			this.addEventListener(arguments[0], function(e){
+				isFunc(arguments[1]) ? arguments[1].call(this) : console.warn(warn1);
+				//arguments[1].call(this)
+			});
+		}
+	};
 
 //let new_snipet = snipet_creator();
 
