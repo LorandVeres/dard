@@ -256,6 +256,34 @@
 		showObj.snipet.obj = $n.attrDisplaySnipet;
 		
 		/**
+		* Creating a deleting menu block for the atributes
+		* @Param {obj, arr, datatype, datavalue}
+		*/
+		
+		showAttr = function( ) {
+			let menu = $.snipetHandler.sett.call(this.snipet, this.arr),
+				link;
+			
+			link = menu.children[1];
+			link.setAttribute( "data-type", this.datatype);
+			link.setAttribute( "data-value", this.datavalue);
+			link.addEventListener('click', function( ){ removeAttr.call(link) ;});
+			
+		};
+		
+		/**
+		* Removing the attributes using the menu button
+		*/
+		
+		removeAttr = function() {
+			let att = this.getAttribute("data-value");
+			this.removeEventListener("click", removeAttr);
+			el.removeAttribute(att);
+			eattr[att] && delete eattr[att];
+			this.parentElement.parentElement.removeChild(this.parentElement);
+		};
+		
+		/**
 		* Show the classes in the menu
 		*/
 		showClass = function() {
