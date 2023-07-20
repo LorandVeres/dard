@@ -223,6 +223,40 @@
 		return el;
 	};
 		
+	/** 
+	*************************************
+	*   Dealing with element attributes
+	*
+	*   @Need to be implemented a better sorting for showing the attributes (The fixed ones like id title, name etc)
+	*           they have to ocupy their space in the general settings
+	*   
+	*
+	*/
+	$d.attr = function(){
+		let self = {},
+			showObj = { snipet:{} }, // the object passed to showAttr {obj, arr, datatype, datavalue, callback}
+			bool = false, // true once we have the listeners set up
+			reseting = false, // used to pause the attributes change while reseting eattr
+			eattr = {}, // All current element attributes including set by the editor
+			cont = document.getElementsByClassName('dsn-attr'), // = $('.dsn-attr')
+			fields = [], // array of obj for attributes sorting{ element, data-type }
+			listClasses = [],
+			listAttr = {},
+			getFields, // function
+			handleType, // function
+			customAttr, // function
+			showAttr, // function
+			removeAttr, //function
+			showClass, //function
+			removeClass, // function
+			resetClasses, // function
+			resetAttributes; //function
+		
+		
+		showObj.snipet.obj = $n.attrDisplaySnipet;
+		
+		return self;
+	};
 //let new_snipet = snipet_creator();
 
 
