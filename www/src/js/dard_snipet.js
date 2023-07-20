@@ -311,6 +311,47 @@
 		}
 		
 		/**
+		* Delete the attributes from the menu shown while swaping elemnts focus
+		* and populate the current element ones
+		*/
+		resetAttributes = function() {
+			let attrmenu = $("#dsn_6"),
+				sel = {};
+			
+			sel.rm = function (){
+				while(attrmenu.firstElementChild){
+					if(attrmenu.firstElementChild.children[1])
+					attrmenu.firstElementChild.children[1].removeEventListener('click', removeAttr);
+					attrmenu.removeChild(attrmenu.firstElementChild);
+				}
+			};
+			
+			sel.add = function () {
+				let l = {}, val;
+				showObj.snipet.recipient = attrmenu;
+				
+				if(el.hasAttributes()) {
+					for (const attr of el.attributes) {
+						l[attr.name] = attr.value;
+					}
+				}console.log(l);
+				for( let prop in l ){
+					if(prop !== "class"){
+						showObj.snipet.recipient = attrmenu;
+						showObj.datatype = prop;
+						val = l[prop];l.hasOwnProperty(prop) && console.log(l[prop]);
+						showObj.datavalue = prop;
+						showObj.arr = [ val ];
+						l.hasOwnProperty(prop) && showAttr.call(showObj);
+					}
+				}
+				
+			};
+			return sel;
+			
+		};
+			
+		/**
 		*   Creating the attributes and checking their existence
 		*   We won't over write the same attribute multiple times
 		*/
