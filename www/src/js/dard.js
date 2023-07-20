@@ -761,6 +761,11 @@ $.constructor.prototype.snipetHandler = (function() {
 	*  @param el A DOM element
 	*
 	*  @return object
+	*
+	*  @Use $.snipetHandler.gett($('body').firstElementChild); for one HTMLElement and all its childElements
+	*
+	*       $.snipetHandler.gett($('body'), true); to get a return of array like object of elements from body
+	*           return Object { 0:div, 1:div }
 	*/
 
 	self.gett = function(el)  {
