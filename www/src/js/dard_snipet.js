@@ -157,6 +157,62 @@
 		return el;
 	};
 	
+	/** Menu Items
+	****************************************
+	*/
+	
+	 /** Move to the first element child */
+	 
+	$d.goToFirstKid = function(){ if(el.firstElementChild) $d.change.call(el.firstElementChild); };
+	
+	/** Move to parent element. Stops before exiting the snipet container */
+	
+	$d.goToParent = function(){ if(el.parentElement && !el.parentElement.classList.contains("dsn-body") ) $d.change.call(el.parentElement); };
+	
+	/** Move to the younger sibling DOWN :) */
+	
+	$d.goToYoungerBrother = function( ){ if(el.nextElementSibling) $d.change.call(el.nextElementSibling); };
+	
+	/** Move to the older sibling UP :) */
+	
+	$d.goToOlderBrother = function(){ if(el.previousElementSibling) $d.change.call(el.previousElementSibling); };
+	
+	/**
+	*************************************
+	* Removing the current element
+	* Set the curent element to the first child of snipet container
+	* @returns the new element
+	*/
+	$d.elDroped = function(){
+		if(confirm('Would you, Realy want to  delete this element ?') == true ){
+			el && ep.removeChild(el);
+			el = $( snb.firstElementChild );
+			ep = el.parentElement;
+			return el;
+		}
+	};
+	
+	/**
+	 *  The first primitive copy function 
+	 *  
+	 */
+	 
+	
+	/**
+	 *  Seting up the event listeners on the menu items 
+	 *  
+	 */
+	 
+	$d.menuListener = function(){
+		let callable =this[1],
+			warn0 = 'oops the element with id ' + this[0] + ' is not found in menuListener',
+			warn1 = 'oops the callback is not a function in menuListener' ;
+			e = document.getElementById(this[0]);
+		e ? e.addEventListener("click", function(e){
+			e.stopPropagation();
+			!isFunc( callable ) ? console.warn( warn1 ) : callable() ;
+		}) : console.warn( warn0 ) ;
+	};
 
 //let new_snipet = snipet_creator();
 
