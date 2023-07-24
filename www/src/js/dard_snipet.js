@@ -358,10 +358,10 @@
 		
 		return self;
 	};
-	
+
 	/**
 	 *  Seting up the event listeners on the menu items 
-	 *  
+	 *  @todo it is good for the moment, it's an ugly way of doing it. Will need replaced
 	 */
 	 
 	$d.menuListener = function(){
