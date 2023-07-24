@@ -273,6 +273,12 @@ function camelCase(str) {
 	.replace(/ /g, '');
 }
 
+// Capitalize the first letter
+function capitalize(s){
+	if ( typeof s !== 'string') return '';
+	return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 /*
 ********************************************************************************
 *===============================================================================
