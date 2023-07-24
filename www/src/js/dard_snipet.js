@@ -76,11 +76,11 @@
 	};
 	
 	/**
-	 * It is the dard JSON HTML mode
+	 * This is the dard JSON HTML data structure
 	 * This will stay here for a while for illustrative purposes only
 	 */
 	
-	$n.attrDisplaySnipet = {
+	$n.customAttribute = {
 		e_name: 'div',
 		e_type: 1,
 		e_attr: { class: 'dsn-button-like-box' },
