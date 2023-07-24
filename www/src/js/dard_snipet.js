@@ -103,26 +103,62 @@
 	
 	/**
 	 *  Seting up the event listener on the snipet 
-	 * 
+	 *  this will remain global inside the snipet.js 
+	 *  to be accessible at addition and removal of elemnts
+	 *
+	 *  @Use 
+	 *  Example for a full snipet block of html
+	 *
+	 *  let asd = {recipient:$('.dsn-body')};
+	 *  asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
+	 *  let bbg = $.snipetHandler.sett.call(asd);
+	 *  $d.snipetListener.call(bbg);
+	 *
 	 */
+		
+	function snipetMoveover(e){
+		e.stopPropagation();
+		this.classList.toggle('dsn-hover');
+	}
+	
+	function snipetMoveout(e){
+		e.stopPropagation();
+		this.classList.toggle('dsn-hover');
+	}
+	
+	function snipetClickable(e){
+		e.stopPropagation();
+		$d.change.call(this);
+	}
+	
+	// accessible for one element
+	
+	function removeSnipetEvent() {
+		this.removeEventListener('mouseover', snipetMoveover);
+		this.removeEventListener('mouseout', snipetMoveout);
+		this.removeEventListener('click', snipetClickable);
+	}
+	// accessible for one element
+	
+	function addSnipetEvent() {
+		this.addEventListener('mouseover', snipetMoveover);
+		this.addEventListener('mouseout', snipetMoveout);
+		this.addEventListener('click', snipetClickable);
+	}
+	
+	// accessible for one element and recursively all it's child elements
+
 	$d.snipetListener = function(){
 		
-		this.addEventListener('mouseover', function(e){
-			e.stopPropagation();
-			this.classList.toggle('dsn-hover');
-		});
+		if(this instanceof HTMLElement) {
+			addSnipetEvent.call(this);
+		}else if(isObj(this)) {
+			for( prop in this){
+				$d.snipetListener.call(this[prop]);
+			}
+		}
 		
-		this.addEventListener('mouseout', function(e){
-			e.stopPropagation();
-			this.classList.toggle('dsn-hover');
-		});
-		
-		this.addEventListener('click', function(e){
-			e.stopPropagation();
-			$d.change.call(this);
-		});
-		
-		if( this.childElementCount > 0) {
+		if( this.childElementCount > 0 ) {
 			$(this).walkChild( $d.snipetListener ) ;
 		}
 	};
