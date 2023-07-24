@@ -193,7 +193,8 @@
 	 *  @Unfinnished Idea yet
 	 *  Add event listeners on the weListen array like format [ { 0:element, 1:event, 2:function }]
 	 *  Can add liteners to HTMLElements $d.listen.call(element, 'eventName', callback)
-	 * 
+	 *  
+	 *  @Need a good review or deleted
 	 */
 	
 	$d.listen = function(){
@@ -222,13 +223,34 @@
 	};
 	
 	/**
-	 *  Don't think this will be used. maybe will be removed
-	 *  
+	 *  Sets and get value of input elements based on id
+	 *  Has in instance in init function 
+	 *  @Use $i.get('id'), $i.set('id', 'new_value')
 	 */
-	
-	$d.pushListen = function(a, b, c){
-		weListen.push({0:a, 1:b, 2:c});
+	function input(){
+		let ext ={};
+		// get the value of an input element
+		ext.get = function (id){
+			let e;
+			isStr(id) && ( e = document.getElementById(id) );
+			if ( e instanceof HTMLElement ) {
+				return e.value ;
+			}
+		}
+		// set the value of in input element
+		ext.set = function(id, val){
+			let e = document.getElementById(id);
+			isStr(id) && e instanceof HTMLElement && ( e.value = val );
+		}
+		return ext;
 	};
+	
+	function forms(){
+		let f;
+		
+		
+		
+	}
 	
 	/**
 	*************************************
