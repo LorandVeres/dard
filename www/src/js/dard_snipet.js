@@ -263,6 +263,7 @@
 		el.classList.contains("dsn-active") && el.classList.toggle('dsn-active');
 		
 		el = this;
+		elName = el.nodeName.toLowerCase();
 		ep = el.parentElement; 
 		// Add the active class on the new element
 		el.classList.toggle('dsn-active'); 
@@ -270,6 +271,19 @@
 			attributes = new $d.attr();
 		}
 			attributes.resetEl();
+			
+		function myindex(el){
+			let i = 0, e =el;
+			while(e.previousElementSibling){
+				e = e.previousElementSibling;
+			i++
+			};
+			return i+1;
+		}
+		$i.set('dsn_90', elName);
+		$i.set('dsn_91', myindex(el));
+		$i.set('dsn_92', ep.children.length - 1);
+		$i.set('dsn_93', el.children.length);
 		
 		return el;
 	};
