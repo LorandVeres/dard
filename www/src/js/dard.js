@@ -1180,3 +1180,92 @@ $.constructor.prototype.collapse = function() {
 	}
 	
 }
+
+/** tabs
+*  Tabs made easy
+*************************************************
+* 
+*
+* Parameters
+* @obj {
+*
+*       @tab :  A class name OR an array of id's
+*       @content : Class name for content OR an array of id's
+*       @active : Class name for active buttons 
+*       @event : Type of event to attache for the tab button
+*       @default [ optional ] The content to be displayed at start. Default to the first element on list. Or FLASE won't show anything
+* }
+*
+* @NOTE The number of elements returned by obj.tab and obj.content has to be equal
+*       
+*       
+* @FIX_NEED None
+*
+* @return Void
+*
+* @Use $.tabs( { tab: 'classname',  content: 'otherclassname', active:'active', event:'click' } );
+* @use $.tabs( { tab:['dsn_110', 'dsn_107', 'dsn_108'],  content:["dsn_4", "dsn_7", "dsn_6"], active:'active', event:'click' } );
+*/
+
+$.constructor.prototype.tabs = function() {
+	let obj = arguments[0],
+		defaultContent, tab = [], content = [];
+		
+	function grabEl(){
+		let grabed = [];
+		( isStr(this) && this.test(/^\.{1}[a-z0-9\-\_\s]+$/i) ) && ( grabed = document.getElementsByClassName(this) );
+		if(isArray(this)){
+			for ( let i = 0; i < this.length; i++) {
+				grabed[i] = document.getElementById(this[i]);
+			}
+		}
+		return grabed;
+	}
+	
+	function showDefault() {
+		let stopBool = true;
+		if( isSet(obj.default)) {
+			if( !isBool(obj.default)) {
+				defaultContent = grabEl.call(obj.default)[0];
+			}
+			if( isBool(obj.default) && obj.default === false ) {
+				stopBool = false;
+			}
+		}else{ 
+			defaultContent = content[0];
+		}
+		hideContent.call(content);
+		stopBool ? defaultContent.style.display = "block" : defaultContent.style.display = "none";
+	}
+	
+	function hideContent() {
+		for (let i = 0; i < this.length; i++){
+			this[i].style.display = 'none';
+		}
+	}
+	
+	function removeClass(name) {
+		for (let i = 0; i < this.length; i++){
+			this[i].className = this[i].className.replace(" " + name, "");
+		}
+	}
+	
+	function actOn(){
+		for (let i = 0; i < tab.length; i++){
+			tab[i].addEventListener(obj.event, function() {
+				removeClass.call(tab, obj.active);
+				hideContent.call(content);
+				tab[i].classList.toggle(obj.active);
+				content[i].style.display = "block";
+			});
+		}
+	}
+	
+	isSet(obj.tab) && ( tab = grabEl.call(obj.tab) );
+	isSet(obj.content) && ( content = grabEl.call(obj.content) );
+	
+	hideContent.call(content);
+	showDefault();
+	actOn();
+
+}
