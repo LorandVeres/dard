@@ -472,11 +472,142 @@
 		}
 		
 		/**
-		* Delete the classes from the menu shown while swaping elemnts focus
-		* and populate the current element ones
-		*/
-		resetClasses = function() {
-			let classmenu, sel = { };
+		 *  Required attributes fields in setings menu like href, name etc
+		 *  Expected attributes as above less common 
+		 *  However Id and title will stay permanent for all elements
+		 *
+		 */
+		function requiredAttr() {
+			let ext = {}, parent ; // External access, called from outside
+				parent = document.getElementById("dsn_97");
+			
+			// Generete required attributes array, including the id and title
+			function bond() {
+				at.rq = []; at.rq = [ 'id', 'title']; // an initial value set, as we have checks against it's lenght
+				if(isSet(elStruct[elName])) {
+					at.rq = arrayMerge( at.rq , elStruct[elName].reqAttr, elStruct[elName].exAttr );
+				}
+			}
+			
+			// Set the attributes for the snipet included in the settings menu
+			function fieldsAttr(i) {
+				this.children[1].setAttribute( "id", 'dsn_a_' + i);
+				this.children[0].setAttribute( "for", 'dsn_a_' + i);
+				this.setAttribute( "data-type", 'attribute');
+				this.setAttribute( "data-value", at.rq[i]);
+			}
+			
+			// from hard code text color a class should be implemented
+			function currentElAttr() {
+				let j = arguments[0], attr = at.rq[j], field = arguments[1];
+				j == 0 && ( attr = 'id');
+				j == 1 && ( attr = 'title');
+				at.all[attr] !== undefined ? field.previousElementSibling.style.color = "#0a9c05" : null;
+				return at.all[attr];
+			}
+			
+			// add the attribute, and change color in menu
+			function setAttr(attr, val, s){
+				el.setAttribute( attr, val);
+				s.previousElementSibling.style.color = "#0a9c05";
+			}
+			
+			// delete the attribute, and change color in menu
+			function remAttr (attr, s) {
+				el.removeAttribute(attr);
+				s.previousElementSibling.style.color = "#b9b9b9";
+			}
+			
+			// Callback in the event listener, Add or delete attributes. No empty attributes option
+			function listen(){
+				let attr, val = this.value, er = this.getAttribute('id');
+				if(this.parentElement) {
+					attr = this.parentElement.getAttribute('data-value');
+					!empty(val) ? setAttr( attr, val, this) : remAttr(attr, this);
+				}
+			}
+			
+			// Adjusting the parent element max height in the menu
+			function parentMaxHeight () {
+				let parent;
+				if(this.parentElement) {
+					parent = this.parentElement;
+					if( parent.classList.contains('collapse-content') && parent.style.maxHeight ){
+						parent.style.maxHeight = parent.scrollHeight + 'px';
+					}
+				}
+			}
+			
+			// listener for id and title field one time set up
+			function onelistener(){
+				if(!bool1){ // bool initial is false
+					parent.children[0].children[1].addEventListener('change', listen);
+					parent.children[1].children[1].addEventListener('change', listen);
+					bool1=true;
+				}
+			}
+			
+			// append the attribute fields in the element settings menu section {
+			ext.add = function() {
+				let snipet, field, attr;
+				snipet = {
+					obj: $n.expectedAttribute,
+					recipient: parent,
+					position: 'beforeend'
+				};
+				onelistener(); // for id and title fields
+				bond();
+				if( at.rq.length > 2) {
+					for( i = 0; i < at.rq.length; i++){
+						i < 2 ? field = parent.children[i]  : field = $.snipetHandler.sett.call(snipet, [ capitalize(at.rq[i])+' :' ] ) ;
+						if( i > 1) {
+							field.children[1].addEventListener('change', listen);
+							fieldsAttr.call(field, i);
+						}
+						attr = currentElAttr(i, field.children[1]);
+						attr !== undefined && ( field.children[1].value = attr );
+					}
+					parentMaxHeight.call(parent);
+				}else {
+					// changing the color for label text and add id and title attribute 
+					for( i = 0; i < 2; i++){
+						field = parent.children[i];
+						parent.children[i].children[1];
+						attr = currentElAttr(i, field.children[1]);
+						attr !== undefined && ( field.children[1].value = attr );
+					}
+				}
+			}
+			
+			ext.rem = function(){
+				let field;
+				if( at.rq.length > 2){
+					for( i = 0; i < at.rq.length; i++){
+						if( parent.children[i] ) {
+							field = parent.children[i].children[1];
+							field.removeEventListener('change', listen) && console.log('event removed');
+							if(i > 1 && parent.children[i]) {
+								while(parent.children.length > 2){
+									parent.removeChild(parent.children[i]);
+								}
+							}
+							field.value = "";
+							field.previousElementSibling.style.color = "#b9b9b9";
+						}
+					}
+				}else{
+					// changing the color for label text 
+					for( i = 0; i < 2; i++){
+						field = parent.children[i].children[1];
+						field.value = "";
+						field.previousElementSibling.style.color = "#b9b9b9";
+					}
+				}
+				parentMaxHeight.call(parent);
+			}
+			
+			return ext;
+		}
 				
 			classmenu = document.getElementById("dsn_5");
 			listClasses.splice(0, listClasses.length-1);
