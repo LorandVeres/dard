@@ -329,7 +329,7 @@
 	 */
 	 
 	$d.copyEl = function(){
-		let copy, self = {}, newEl = {}, copyButton, pasteButton;
+		let copy, self = {}, newEl = {}, copyButton, pasteButton, e;
 		
 		self.save = function(){
 			el.classList.contains("dsn-active") && el.classList.toggle('dsn-active');
@@ -351,7 +351,9 @@
 			newEl.position = "beforeend";   //  default in to the current element at the end
 			newEl.recipient = el; // default the recipient is the curently selected element 
 			newEl.contentArray = [];
-			$.snipetHandler.sett.call(newEl);
+			e = $.snipetHandler.sett.call(newEl );
+			$d.snipetListener.call( e );
+			$d.change.call(e);
 		});
 		
 		return self;
