@@ -102,6 +102,32 @@
 	};
 	
 	/**
+	 * This is the dard JSON HTML data structure
+	 * This will stay here for a while
+	 *
+	 */
+	
+	$n.expectedAttribute = {
+		e_name: 'div',
+		e_type: 1,
+		e_attr: { class:"section group dsn-attr", "data-type":"", "data-value":"" },
+		e_content: {
+			0: {
+				e_name: 'label',
+				e_type: 1,
+				e_attr: { for:"", "data-dsn-txt-id": "0" },
+				e_content: ''
+			},
+			1: {
+				e_name: 'input',
+				e_type: 1,
+				e_attr: { type:"text" , placeholder:""},
+			}
+		}
+	}
+	
+
+	/**
 	 *  Seting up the event listener on the snipet 
 	 *  this will remain global inside the snipet.js 
 	 *  to be accessible at addition and removal of elemnts
