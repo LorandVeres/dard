@@ -16,14 +16,52 @@
 	background-color: #ffffff;
 }
 
-.dsn-page .dsn-cl-btn {
+.dsn-page .dsn-ctl-btn {
 	float: right;
-	margin: 7px 20px 7px 0;
-	width: 16px;
-	height: 16px;
+	margin: 3px 25px 3px 0;
+	width: 24px;
+	height: 24px;
 	outline: none;
 	border: none;
+	border-radius: 3px;
 	background-color: rgba(0,0,0, 0);
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.dsn-ctl-btn:hover{
+	background-color: rgb(36, 36, 36);
+}
+
+#dsn_107 {
+	background-image: url('../../images/icons/g/16/l/menu-grid.png');
+}
+#dsn_107:hover {
+	background-image: url('../../images/icons/g/16/m/menu-grid.png');
+}
+
+#dsn_108 {
+	background-image: url('../../images/icons/g/16/l/settings.png');
+}
+#dsn_108:hover {
+	background-image: url('../../images/icons/g/16/m/settings.png');
+}
+
+#dsn_109 {
+	background-image: url('../../images/icons/g/16/l/reload.png');
+}
+#dsn_109:hover {
+	background-image: url('../../images/icons/g/16/m/reload.png');
+}
+#dsn_110 {
+	background-image: url('../../images/icons/g/16/l/edit.png');
+}
+#dsn_110:hover {
+	background-image: url('../../images/icons/g/16/m/edit.png');
+}
+.dsn-ctl-btn.active{
+	background-color: rgb(56, 56, 56);
+	opacity: 0.7;
 }
 
 .dsn-page .dsn-header{
@@ -45,7 +83,7 @@
 	min-width: 280px;
 	margin-left: 0;
 	overflow-y: scroll;
-	background-color: rgba(0, 0, 0, 1);
+	background-color: rgb(40, 37, 37);
 	color: #b9b9b9;
 	float: right;
 }

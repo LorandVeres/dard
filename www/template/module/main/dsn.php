@@ -1,8 +1,10 @@
 <?php include_once '../module/main/modules.Class.php'; ?>
 <div id="dsn_1" class="dsn-page">
 	<div id="dsn_2" class="dsn-header">
-		<button class="dsn-cl-btn"><img src="images/icons/g/16/m/menu-grid.png" alt="side menu"></button>
-		<button class="dsn-cl-btn"><img src="images/icons/g/16/l/menu-grid.png" alt="side menu"></button>
+		<button id="dsn_107" class="dsn-ctl-btn"></button>
+		<button id="dsn_108" class="dsn-ctl-btn"></button>
+		<button id="dsn_109" class="dsn-ctl-btn"></button>
+		<button id="dsn_110" class="dsn-ctl-btn"></button>
 	</div>
 	<div id="dsn_3" class="dsn-side-menu">
 		
@@ -29,19 +31,19 @@
 				<div class="collapse-content dsn-element-properties">
 					<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-tag-name">Current element :</label></div>
-						<div class="col-f span-50"><input type="text" id="dsn-el-tag-name" name="dsn-el-tag-name" class="span-70" disabled></div>
+						<div class="col-f span-50"><input type="text" id="dsn_90" name="dsn-el-tag-name" class="span-70" disabled></div>
 					</div>
 					<div class="section group b-space-10 dsn-dark-field">
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-index">Index :</label></div>
-						<div class="col-f span-50"><input type="text" id="dsn-el-index" name="dsn-el-index" class="span-20" disabled></div>
+						<div class="col-f span-50"><input type="text" id="dsn_91" name="dsn-el-index" class="span-20" disabled></div>
 					</div>
 					<div class="section group b-space-10 dsn-dark-field">
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-siblings">Siblings :</label></div>
-						<div class="col-f span-50"><input type="text" id="dsn-el-siblings" name="dsn-el-siblings" class="span-20" disabled></div>
+						<div class="col-f span-50"><input type="text" id="dsn_92" name="dsn-el-siblings" class="span-20" disabled></div>
 					</div>
 					<div class="section group b-space-25 dsn-dark-field">
 						<div class="col-f span-50"><label for="dsn-el-child-nodes">Children :</label></div>
-						<div class="col-f span-50"><input type="text" id="dsn-el-child-nodes" name="dsn-el-child-nodes" class="span-20" disabled></div>
+						<div class="col-f span-50"><input type="text" id="dsn_93" name="dsn-el-child-nodes" class="span-20" disabled></div>
 					</div>
 				</div>
 			</section>
@@ -56,32 +58,25 @@
 					
 					<div id="dsn-class-properties" class="space-15">
 						<p>Class list :</p>
-						<div id="dsn_5" class="dsn-dark-box b-space-10 pad-5">
+						<div id="dsn_98" class="dsn-dark-box b-space-20">
 							
 						</div>
 						<div class="section group dsn-attr" data-type="class" data-value="">
 							<label for="dsn-el-add-class">Class :</label>
-							<input type="text" placeholder="Enter class name here">
+							<input id="dsn_96" type="text" placeholder="Enter class name here" data-type="class" data-value="">
 						</div>
 					</div>
 					
 					<!-- Atributes list -->
-					
-					<div class="section group dsn-attr" data-type="id" data-value="">
-						<label for="dsn-el-add-class">Id :</label>
-						<input type="text" placeholder="id here">
-					</div>
-					<div class="section group dsn-attr" data-type="title" data-value="">
-						<label for="dsn-el-add-class">Title :</label>
-						<input type="text" placeholder="title here">
-					</div>
-					<div class="section group dsn-attr" data-type="name" data-value="">
-						<label for="dsn-el-add-class">Name :</label>
-						<input type="text" placeholder="name here">
-					</div>
-					<div class="section group dsn-attr" data-type="value" data-value="">
-						<label for="dsn-el-add-class">Value :</label>
-						<input type="text" placeholder="value here">
+					<div id="dsn_97" class="span-100" style="overflow:auto;">
+						<div class="section group dsn-attr" data-type="attribute" data-value="id">
+							<label for="dsn_a_0">Id :</label>
+							<input id="dsn_a_0" type="text" placeholder="id here" data-type="attribute" data-value="title">
+						</div>
+						<div class="section group dsn-attr" data-type="attribute" data-value="title">
+							<label for="dsn_a_1">Title :</label>
+							<input id="dsn_a_1" type="text" placeholder="title here" data-type="attribute" data-value="title">
+						</div>
 					</div>
 					
 					<!-- Custom attributes -->
@@ -90,16 +85,16 @@
 						<button class="collapse dsn-naked-collapse-button">Custom attributes</button>
 						<div class="collapse-content dsn-element-properties">
 							<p class="b-space-10 left-5">Attributes list :</p>
-							<div id="dsn_6" class="dsn-dark-box b-space-10 pad-5">
+							<div id="dsn_99" class="dsn-dark-box b-space-20">
 								
 							</div>
 							<div class="section group dsn-attr" data-type="attr-name" data-value="">
 								<label for="dsn-el-add-class">Attr Name :</label>
-								<input type="text" placeholder="name here">
+								<input id="dsn_95" type="text" placeholder="name here" data-type="attr-name" data-value="">
 							</div>
 							<div class="section group dsn-attr b-space-15" data-type="attr-value" data-value="">
 								<label for="dsn-el-add-class">Attr Value :</label>
-								<input type="text" placeholder="value here">
+								<input id="dsn_94" type="text" placeholder="value here" data-type="attr-value" data-value="">
 							</div>
 						</div>
 					</section>
