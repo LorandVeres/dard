@@ -388,40 +388,26 @@
 	*************************************
 	*   Dealing with element attributes
 	*
-	*   @Need to be implemented a better sorting for showing the attributes (The fixed ones like id title, name etc)
-	*           they have to ocupy their space in the general settings
-	*   
-	*
 	*/
 	$d.attr = function(){
 		let self = {},
-			showObj = { snipet:{} }, // the object passed to showAttr {obj, arr, datatype, datavalue, callback}
-			bool = false, // true once we have the listeners set up
-			reseting = false, // used to pause the attributes change while reseting eattr
-			eattr = {}, // All current element attributes including set by the editor
-			cont = document.getElementsByClassName('dsn-attr'), // = $('.dsn-attr')
-			fields = [], // array of obj for attributes sorting{ element, data-type }
-			listClasses = [],
-			listAttr = {},
-			getFields, // function
-			handleType, // function
-			customAttr, // function
-			showAttr, // function
-			removeAttr, //function
-			showClass, //function
-			removeClass, // function
-			resetClasses, // function
-			resetAttributes; //function
+			showObj = { snipet:{ } }, // the object passed to showAttr {obj, arr, datatype, datavalue, callback}
+			bool = false, bool1 = false, // Do not touch! true once we have the listeners set up
+			reseting = false, // used to pause the attributes change while reseting listAttr
+			at = { ar:[], rq:[], cl:[], cu:{}, all:{ } };
 		
 		
-		showObj.snipet.obj = $n.attrDisplaySnipet;
+		showObj.snipet.obj = $n.customAttribute;
 		
 		/**
 		* Creating a deleting menu block for the atributes
 		* @Param {obj, arr, datatype, datavalue}
+		*
+		* @Note this function despite the name is for custom attributes used
+		*       The name it may be chanched in future.
 		*/
 		
-		showAttr = function( ) {
+		function showAttr( ) {
 			let menu = $.snipetHandler.sett.call(this.snipet, this.arr),
 				link;
 			
@@ -433,37 +419,39 @@
 		};
 		
 		/**
-		* Removing the attributes using the menu button
+		* Removing custom attributes using the menu button
+		*
+		* @Note this function despite the name is for custom attributes used
+		*       The name it may be chanched in future.
 		*/
 		
-		removeAttr = function() {
+		function removeAttr() {
 			let att = this.getAttribute("data-value");
 			this.removeEventListener("click", removeAttr);
 			el.removeAttribute(att);
-			eattr[att] && delete eattr[att];
+			at.all[att] && delete at.all[att];
 			this.parentElement.parentElement.removeChild(this.parentElement);
 		};
 		
 		/**
 		* Show the classes in the menu
 		*/
-		showClass = function() {
-			let menu,// $.snipetHandler.sett.call(this.snipet, this.arr),
-				link, arr = this.arr;
-			if( this.arr[0] !== "dsn-active" && this.arr[0] !== "dsn-hover" ){
-				menu = $.snipetHandler.sett.call(this.snipet, this.arr),
+		function showClass() {
+			let menu = $.snipetHandler.sett.call(this.snipet, this.arr),
+				link, 
+				arr = this.arr;
+				
 				el.classList.add(this.arr[0]);
 				link = menu.children[1];
 				link.setAttribute( "data-type", this.datatype);
 				link.setAttribute( "data-value", this.datavalue);
 				link.addEventListener('click', function (){ removeClass.call(link, arr[0]) ;});
-			}
 		};
 		
 		/**
 		* Delete the classes using the menu button
 		*/
-		removeClass = function() {
+		function removeClass() {
 			let att = this.getAttribute("data-value");
 			this.removeEventListener("click", removeClass);
 			el.removeAttribute(att);
@@ -608,32 +596,41 @@
 			
 			return ext;
 		}
+		
+		/**
+		* Delete the classes from the settings menu shown while swaping elements focus
+		* and populate with the new current element classes
+		*/
+		function resetClasses() {
+			let parent, sel = { };
 				
-			classmenu = document.getElementById("dsn_5");
-			listClasses.splice(0, listClasses.length-1);
+			parent = document.getElementById("dsn_98");
+			at.cl.splice( 0, at.cl.length - 1 );
 			
 			sel.rm = function (){
-				//listClasses.splice(0, listClasses.length-1);
-				while(classmenu.firstElementChild){
-					if(classmenu.firstElementChild.children[1])
-						classmenu.firstElementChild.children[1].removeEventListener('click', removeClass );
-					classmenu.removeChild(classmenu.firstElementChild);
+				let box ;
+				while(parent.firstElementChild){
+					box = parent.firstElementChild;
+					if(box.children[1]) {
+						box.children[1].removeEventListener('click', removeClass );
+						parent.removeChild(box);
+					}
 				}
 			};
 			
 			sel.add = function () {
 				let l ='';
-				showObj.snipet.recipient = document.getElementById("dsn_5");
+				showObj.snipet.recipient = document.getElementById("dsn_98");
 				el.hasAttribute('class') && ( l = el.getAttribute('class'));
-				!empty(l) && ( listClasses = l.split(' '));console.log(listClasses);
-				arrayRemove(listClasses, "dsn-active");
-				for(let i = 0; i < listClasses.length; i++){
-					showObj.snipet.recipient = document.getElementById("dsn_5");
+				!empty(l) && ( at.cl = l.split(' '));
+				arrayRemove(at.cl, "dsn-active");
+				arrayRemove(at.cl, "dsn-hover");
+				for(let i = 0; i < at.cl.length; i++){
+					showObj.snipet.recipient = document.getElementById("dsn_98");
 					showObj.datatype = "class";
-					showObj.datavalue = listClasses[i];
-					showObj.arr = [ listClasses[i] ];
-					if (listClasses[i] !== "dsn-hover" || listClasses[i] !== "dsn-active" )
-						showClass.call(showObj);
+					showObj.datavalue = at.cl[i];
+					showObj.arr = [ at.cl[i] ];
+					showClass.call(showObj);
 				}
 				
 			};
@@ -641,38 +638,44 @@
 		};
 		
 		/**
-		* Delete the attributes from the menu shown while swaping elemnts focus
+		* Delete the attributes from the menu shown while swaping elements focus
 		* and populate the current element ones
 		*/
-		resetAttributes = function() {
-			let attrmenu = $("#dsn_6"),
+		function resetAttributes() {
+			let parent = document.getElementById("dsn_99"),
 				sel = {};
+				//at.rq = [];
+			
+			function buildCustomAttribute() {
+				let value = arguments[0], prop = arguments[1];
+				showObj.snipet.recipient = parent;
+				showObj.datatype = "attribute";
+				showObj.datavalue = prop;
+				showObj.arr = [ prop + "=" + value ];
+				showAttr.call(showObj);
+			}
 			
 			sel.rm = function (){
-				while(attrmenu.firstElementChild){
-					if(attrmenu.firstElementChild.children[1])
-					attrmenu.firstElementChild.children[1].removeEventListener('click', removeAttr);
-					attrmenu.removeChild(attrmenu.firstElementChild);
+				let box;
+				while(parent.firstElementChild){
+					box = parent.firstElementChild;
+					if(box.children[1]){
+						box.children[1].removeEventListener('click', removeAttr);
+						parent.removeChild(box);
+					}
 				}
 			};
 			
 			sel.add = function () {
-				let l = {}, val;
-				showObj.snipet.recipient = attrmenu;
-				
+				showObj.snipet.recipient = parent;
 				if(el.hasAttributes()) {
 					for (const attr of el.attributes) {
-						l[attr.name] = attr.value;
+						at.all[attr.name] = attr.value;
 					}
-				}console.log(l);
-				for( let prop in l ){
-					if(prop !== "class"){
-						showObj.snipet.recipient = attrmenu;
-						showObj.datatype = prop;
-						val = l[prop];l.hasOwnProperty(prop) && console.log(l[prop]);
-						showObj.datavalue = prop;
-						showObj.arr = [ val ];
-						l.hasOwnProperty(prop) && showAttr.call(showObj);
+				}
+				for( let prop in at.all ){
+					if(at.all.keyIn(prop) && prop !== "class"){
+						( at.rq.indexOf(prop) < 0 ) && buildCustomAttribute(at.all[prop], prop);
 					}
 				}
 				
@@ -680,40 +683,62 @@
 			return sel;
 			
 		};
-			
+		
 		/**
-		*   Creating the attributes and checking their existence
+		*   Creating the attributes and checking their existence on the element
 		*   We won't over write the same attribute multiple times
+		*   @todo As it is at this time it is a bit hard to understand
+		*         It may be rewriten
 		*/
-		customAttr = function(){
-			let name, value, i, checks;
-			showObj.snipet.recipient = document.getElementById("dsn_6");
+		function customAttr(){
+			let name, value, i, parent, fields = arguments[0];
+			parent = document.getElementById("dsn_99");
+			showObj.snipet.recipient = parent;
 			showObj.datatype = "attribute";
 			
-			checks = function(a, v) {
+			// Delete the duplicate menu entry after a value has been asigned to the attribute
+			// Compare argument against the data-value from menu 
+			function cleanMenuEntry(arg){
+				let box;
+				box = parent.firstElementChild;
+				if(box) {
+					do {
+						if(box.children[1].getAttribute("data-value") === arg){
+							box.removeEventListener('click', handleType);
+							box.parentElement.removeChild(box);
+							return;
+						}
+						box.nextElementSibling && ( box = box.nextElementSibling );
+					}while(box.nextElementSibling);
+				}
+			}
+			
+			function checks(a, v) {
 				let state = false;
 				
 				showObj.datavalue = a;
 				
-				if( ! eattr.hasOwnProperty(a)){
+				if( ! at.all.hasOwnProperty(a)){
 					if( !empty(a) && !empty( v ) ) { 
-						el.setAttribute(a, v);
-						eattr[a] = v;
+						el.setAttribute(a, v);//cleanMenuEntry(a)
+						at.all[a] = v;
 						showObj.arr = [ a + '=' + v]; // inserting the text in the snipet
 						showAttr.call(showObj);
 						state = true
 					}else if ( !empty(a) && empty(v) ){
 						el.setAttribute(a, "");
-						eattr[a] = "";
-						showObj.arr = [ a ]; // inserting the text in the snipet
+						at.all[a] = "";
+						showObj.arr = [ a + "= " ]; // inserting the text in the snipet
 						showAttr.call(showObj);
 						state = false;
 					}
-				}else if (eattr.hasOwnProperty(a)){
-					if ( empty(eattr[a]) && !empty(a) ) {
+				}else if (at.all.hasOwnProperty(a)){
+					if ( empty(at.all[a]) && !empty(a) ) {
 						if(!empty( v )){
+							cleanMenuEntry(a);
+							// Update need to delete attributes with no value after update
 							el.setAttribute(a, v);
-							eattr[a] = v;
+							at.all[a] = v;
 							showObj.arr = [ a + '=' + v]; // inserting the text in the snipet
 							showAttr.call(showObj);
 							state = true;
@@ -737,9 +762,9 @@
 				if (!empty(this.v) ) {
 					fields[this.i].e.placeholder = "name here" ;
 					if( checks(this.v, value ) ){
-						fields[i].e.value = "";
-						fields[this.i].e.value = "";
-					}
+						fields[i].e.value = "";console.log(fields[i].e);
+						fields[this.i-1].e.value = "";
+					}console.log(this.e);
 				} 
 			}
 			/**
@@ -747,8 +772,8 @@
 			*   Clear the input fields once a atttribute/name pair has been added
 			*/
 			if(this.d === "attr-value"){
-				i = this.i - 1;
-				fields[i].e instanceof HTMLElement && (name = fields[i].e.value) ;
+				i = this.i - 1;console.log(fields);
+				name = fields[i].e.value
 				if( !empty(this.v) ) {
 					if(checks(name, this.v )) {
 						fields[i].e.value = "";
@@ -765,44 +790,53 @@
 		*   Sorting the results for handling respective of type of data
 		*/
 		
-		handleType = function(){
-			let classname = this.v 
+		function handleType(){
+			let classname = this.v;
 			if (! reseting ){
 				switch(this.d){
 					case 'class':
-						showObj.snipet.recipient = document.getElementById("dsn_5");
+						showObj.snipet.recipient = document.getElementById("dsn_98");
 						showObj.datatype = "class";
 						showObj.datavalue = classname;
 						showObj.arr = [ classname ];
 						!empty(this.v) && showClass.call(showObj);
-						fields[this.i].e.value = "";
-						listClasses.push(this.v)
+						this.e.value = "";
+						at.cl.push(this.v)
 						break;
 					case 'attr-name':
-						customAttr.call(this);
+						customAttr.call(this, arguments[0]);
 						break;
 					case 'attr-value':
-						customAttr.call(this);
+						customAttr.call(this, arguments[0]);
 						break;
 					default:
-						el.setAttribute(this.d, this.v);
-						eattr[this.d] = this.v;
+						el.setAttribute(this.d, this.v) && ( at.all[this.d] = this.v );
 				}
 			}
 		};
 		
-		getFields = function(){
-			for(let i =0; i < cont.length; i++){
-				fields.push( { e:cont[i].children[1], d:cont[i].getAttribute('data-type') } );
+		function getFields(){
+			let fields =[], ids = [ 'dsn_96', 'dsn_95', 'dsn_94'], cont=[];
+			for(let i =0; i < ids.length; i++) {
+				cont[i] = document.getElementById(ids[i]);
 			}
+			for(let i =0; i < cont.length; i++){
+				fields.push( { e:cont[i], d:cont[i].getAttribute('data-type') } );
+			}
+			return fields;
 		}
 		
+		/**
+		 *  It sets the event listeners at this time for class input and the 2 input fields
+		 *  for custom attributes
+		 */
 		self.listen = function() {
-			fields.length === 0 && getFields() ;
+			let fields = getFields() ;
 			if (!bool) {
 				for(let i =0; i < fields.length; i++){
 					fields[i].e.addEventListener('change', function(){
-						handleType.call( { d:fields[i].d, i:i, v:fields[i].e.value} );
+						// { d: data-type, i: index, e: element, v: element.value}
+						handleType.call( { d:fields[i].d, i:i, e:fields[i].e, v:fields[i].e.value}, fields );
 					});
 				}
 				bool = true;
@@ -810,26 +844,22 @@
 		};
 		
 		self.resetEl = function() {
-			let att, val, i, rc, ra;
+			let att, val, i, rc, ra, rq;
 			reseting = true ; // reseting start 
-			eattr = {};
+			at.all = {};
 			rc = new resetClasses(); // reset classes
-			ra = new resetAttributes();
+			ra = new resetAttributes(); // reset attributes
+			rq = new requiredAttr();
 			rc.rm();
 			ra.rm();
+			rq.rem();
 			// reseting the attributes obj
 			att = el.getAttributeNames();
 			for(i = 0; i < att.length; i++){
-				eattr[att[i]] = el.getAttribute(att[i]);
+				at.all[att[i]] = el.getAttribute(att[i]);
 			}
 			
-			// clearing all fields values
-			{   
-				for(i=0; i < fields.length; i++){
-					fields[i].e.value = "";
-				}
-				//fields.splice(0, (fields.length));
-			}
+			rq.add();
 			rc.add();
 			ra.add();
 			reseting = false; // reseting done .
