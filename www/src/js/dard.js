@@ -78,6 +78,18 @@ function arrayRemove(arr, val){
     
     }
 }
+
+// Bond together multiple arrays, return one with all items in it
+// Or use array.concat(); However merge word ismore familiar with me
+function arrayMerge(){
+	let arr =[];
+	for(i = 0; i < arguments.length; i++){
+		arguments[i].forEach( function(item, index){ arr.push(item)});
+	}
+	return arr;
+}
+
+
 /*******************************************************************************
 *===============================================================================
 *
