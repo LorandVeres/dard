@@ -7,8 +7,7 @@
  * @license MIT
  *
  *
- *  This is just a two-three days work, to have a basic start on the idea and direction
- *     of structures.
+ * 
  *
  */
 
@@ -17,17 +16,16 @@
 		snb = $('.dsn-body'), //snipet container
 		smn = $('.dsn-side-menu'), // side menu
 		el, // current element
+		elName, // current element name to lowercase
 		esb = [], // element siblings if any
 		ep, // element parentElement
 		$n = { }, // dsn snipet objects
 		weListen = [], // an array objects  { 0:element, 1:event, 2:function };
-		$de,
+		elStruct = { }, // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
 		html_blocks = [ 'form', 'section', 'cards', 'list'], // type of implemented blocks
 		copy, // the new copy function
-		snipet_box, // the snipet container
-		show_select, // function
-		attributes; // function
-		
+		attributes, // function
+		$i;
 		// Inline styling structure
 		$n.style = {
 			reset : "\n",
@@ -35,11 +33,11 @@
 			dsn : "\n",
 			general : ".dsn-body div{ max-height:max-content; background: #ececec; margin:1.5%;overflow:auto;} .dsn-body p{ padding:10px; line-height:1.5rem}\n",
 			classes : "\n",
-			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(47, 157, 248, 0.2); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n",
-			active : ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background: rgba(47, 157, 248, 0.2); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n"
+			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(47, 157, 248, 0.1); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n",
+			active : ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background: rgba(47, 157, 248, 0.1); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n"
 		};
 		
-		
+		elStruct.input = {  id:'0', reqAttr:['type', 'hidden'], exAttr:[ 'name', 'value', 'placeholder', 'required'] }
 		
 		
 	/**
@@ -55,11 +53,14 @@
 		let mw =  parseInt(smn.scrollWidth + parseInt(window.getComputedStyle(smn).marginLeft.replace((/px/gi), "")));
 		snb && (snb.style.width = parseInt( window.screen.width - mw) + 'px');
 		
-		$('head').append($('<style>', $n.style.reset + $n.style.general + $n.style.classes + $n.style.hover + $n.style.active ));
+		$('head').append($('<style>', $n.style.reset + $n.style.ui + $n.style.dsn + $n.style.general + $n.style.classes + $n.style.hover + $n.style.active ));
 
 
 		// event listener on all elements of the snipet
 		$(snb).walkChild( $d.snipetListener );
+		//snipetListen.add.call($(snb));
+		// Using a tab sytem for side menu
+		$.tabs( { tab:['dsn_110', 'dsn_107', 'dsn_108'],  content:["dsn_4", "dsn_7", "dsn_6"], active:'active', event:'click' } );
 		
 		if( !isSet(attributes) ) attributes = new $d.attr();
 		attributes.listen();
@@ -70,9 +71,12 @@
 		$d.menuListener.call(['dsn_103', $d.goToParent ]);
 		$d.menuListener.call(['dsn_102', $d.goToYoungerBrother ]);
 		$d.menuListener.call(['dsn_101', $d.goToOlderBrother ]);
-		copy = new $d.copyEl();
-		$d.listen.call(weListen);
+		//copy = new 
+		$d.copyEl();
+		forms(); $i = new input();
+		//$d.listen.call(weListen);
 		
+	
 	};
 	
 	/**
