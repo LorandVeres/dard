@@ -867,13 +867,24 @@
 		
 		return self;
 	};
-	$d.cl = function(){
-	
-	};
 	
 	//console.log(location.href.split("=")[2]);
 	// Initializig the work enviroment
+	
+		
 	$d.init();
+	
+	// Multiplying a few elements in the body for testing 
+	let asd = {recipient:$('.dsn-body')};
+	asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
+	let bbg = $.snipetHandler.sett.call(asd);
+	$d.snipetListener.call(bbg);
+	
+	
+	
+	
+	
+	
 	return $d;
 }());
 
