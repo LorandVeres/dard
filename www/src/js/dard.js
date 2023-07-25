@@ -1009,6 +1009,7 @@ $.constructor.prototype.snipetHandler = (function() {
 		};
 
 		set_Element = function(obj, parent_El){
+			! isSet(obj) && console.warn( 'Dard warn: snipetHandler.sett first parameter is not an object');
 			if(isSet(obj.e_type) && (obj.e_type === 1 || obj.e_type === 3)){
 				if(obj.e_type === 1){
 					const element = document.createElement(obj.e_name);
