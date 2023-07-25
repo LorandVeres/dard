@@ -774,6 +774,45 @@ $.constructor.prototype.send_json = function() {
 	});
 }
 
+/** get_json
+ *  get an object to server via ajax in json format
+ **************************************************
+ *  Almost identical like send_json but no meta and data propety . we don't send any data
+ *  A short hand for ajax and give clarity in code about how we comunicate with the server
+ *
+ * The parameters object
+ * @obj = {
+ *
+ *      @url : url: 'funnypage?parameter=value', // Mandatory parameter, the page url the data to be sent
+ *      @callback: function // [ optional ] Function to handle the response from server
+        @log : [ optional ] for debuging use helpfull
+ *  };
+ *
+ * @Use
+ *  $.get_json({
+ *      url:'modules?a=add_module',
+ *      callback: function(){ console.log(arguments[0]);}
+ *  });
+ */
+ 
+$.constructor.prototype.get_json = function() {
+	let obj = {};
+	obj = arguments[0];
+	$.ajax({
+		type : 'GET',
+		url : obj.meta.url,
+		response : function(r) {
+			obj.keyIn('log') && console.log(r); // for debuging
+			if(obj.keyIn('callback')){
+				if(isFunc( obj.callback)){
+					obj.callback(r);
+				}
+			}
+		},
+		error : 'Could not load anything via get_json' + obj.meta.url + ' '
+	});
+}
+
 /** SnipetHandler
 *  Dynamic and asynchronous HTML snipet handling
 *************************************************
