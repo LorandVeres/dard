@@ -729,12 +729,14 @@ $.constructor.prototype.ajax = function(obj) {
 /** send_json
  *  Send an object to server via ajax in json format
  **************************************************
+ *  Give clarity in code about how we comunicate with the server
+ *  Extra meta parameter compared to ajax function
  *  The parameters object
  * @obj = {
  *
  *      @data : $.snipetHandler.gett($('form')),  // A valid object or a function what will return any object
+ *      @url : url: 'funnypage?parameter=value', // Mandatory parameter, the page url the data to be sent
  *      @meta : {
- *          url: 'funnypage?parameter=value', // Mandatory parameter, the page url the data to be sent
  *          other: 'any type of data', // [ optionals ] Optional parameters to help sorting on server side. Pameter names at your choice
  *          other1: 'any type of data' // [ optionals ] Optional parameters to help sorting on server side. Pameter names at your choice
  *      }
@@ -743,21 +745,23 @@ $.constructor.prototype.ajax = function(obj) {
  *
  * @Use
  *  $.send_json({
- *      data: $.snipetHandler.gett($('form')),
- *      meta: {
- *          url:'modules?a=add_module'
- *      },
+ *      data: $.snipetHandler.gett($('form')), //any valid js object
+ *      url:'modules?a=add_module',
+ *      meta: { random:'any funny data you wish' },   [ optional ]
  *      callback: function(){ console.log(arguments[0]);}
+ *      @log : [ optional ] for debuging use helpfull
  *  });
  */
 
 $.constructor.prototype.send_json = function() {
-	let obj = {};
+	let obj = {}, sending = {};
 	obj = arguments[0];
+	!isSet(obj.meta) ? sending = { data:obj.data } : sending = { meta:obj.meta, data:obj.data };
 	$.ajax({
 		type : 'POST',
 		url : obj.meta.url,
 		response : function(r) {
+			obj.keyIn('log') && console.log(r); // for debuging
 			if(obj.keyIn('callback')){
 				if(isFunc( obj.callback)){
 					obj.callback(r);
@@ -765,7 +769,7 @@ $.constructor.prototype.send_json = function() {
 			}
 		},
 		json : true,
-		send : { meta:obj.meta, data:obj.data },
+		send : sending,
 		error : 'An error ocured sending data to  ' + obj.meta.url + ' '
 	});
 }
