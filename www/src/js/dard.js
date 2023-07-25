@@ -1067,37 +1067,41 @@ $.constructor.prototype.snipetHandler = (function() {
 	*       el: $.overlay(),
 	*       pos: 'afterend'
 	*   });
-	*   To store it, yet needs some work to be done 
+	*   To store it 
 	*  $.snipetHandler.get_http({ 
 	*       url: 'modules?a=add_module'
 	*       name: snipet_name
+	*       fn: functionName  // this will handle the storage new snipet
+	*       log: true  // [ optional ] useful for debuging, will log to console the server response
 	*   })
 	*
 	*  @return void
 	*/
 	
 	self.get_http = function () {
-		let obj = {};
+		let obj = {}, parent;
 		obj = arguments[0];
 		$.ajax({
 			type : 'GET',
 			url : obj.url,
 			response : function(r) {
 				let snipet = {};
+				isSet(obj.log) && console.log(r);
 				snipet.form = JSON.parse(r);
 				if (obj.keyIn('el')){
-					obj.keyIn('pos')  ? self.sett(snipet.form , obj.el, obj.pos) : self.sett(snipet.form , obj.el);
+					obj.keyIn('pos')  ? self.sett.call( { 'obj':snipet.form , recipient:obj.el, position:obj.pos}) : self.sett.call({ 'obj':snipet.form , recipient:obj.el} );
 				}
-				// Here some extra work should be made
-				if(obj.keyIn('name')){
-					//snipets[ obj.name ] = snipet.form;
-					Object.defineProperty(snipets, obj.name, {value: snipet.form});
+				// All good and works, tested. Store the snipet
+				// declaring the external storing should be as simple as: function(name, snipet){ desiredObject[name] = snipet }
+				if(obj.keyIn('name') && isFunc(obj.fn)){
+					obj.fn(obj.name, snipet.form);
 				}
 			},
 			json : false,
 			send : null,
 			error : "Could not get the snipet from " + obj.url + " "
 		});
+		
 	};
 
 	return self;
