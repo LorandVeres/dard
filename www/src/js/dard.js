@@ -800,16 +800,18 @@ $.constructor.prototype.get_json = function() {
 	obj = arguments[0];
 	$.ajax({
 		type : 'GET',
-		url : obj.meta.url,
+		url : obj.url,
 		response : function(r) {
+			let newobj;
+			newobj = JSON.parse(r);
 			obj.keyIn('log') && console.log(r); // for debuging
 			if(obj.keyIn('callback')){
 				if(isFunc( obj.callback)){
-					obj.callback(r);
+					obj.callback(newobj);
 				}
 			}
 		},
-		error : 'Could not load anything via get_json' + obj.meta.url + ' '
+		error : 'Could not load anything via get_json' + obj.url + ' '
 	});
 }
 
