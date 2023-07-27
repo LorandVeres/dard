@@ -76,6 +76,7 @@
 		forms(); $i = new input();
 		//$d.listen.call(weListen);
 		
+		$d.tagsLayout();
 	
 	};
 	
@@ -872,12 +873,134 @@
 		return self;
 	};
 	
-	//console.log(location.href.split("=")[2]);
-	// Initializig the work enviroment
+	$d.tagsLayout =function() {
+		self = {};
+		// Setting the position in the toggle for new tags and snipets added
+		function setPosition(){
+			let pos;
+			$(this.parentElement).walkChild(
+				function(){
+					if(this.nodeName.toLowerCase() ==="button")
+						this.classList.contains('active') && this.classList.toggle("active");
+				}
+			);
+			pos = this.getAttribute('data-pos')
+			$i.get('dsn-205').value = pos;
+			settings.layoutPosition = pos;
+			this.classList.add('active');
+		}
+		
+		// seting up event listener for position buttons in layout
+		function positionListen (){
+			let e = $('#dsn-204');
+			e.walkChild( function(){
+				if(this.nodeName.toLowerCase() ==="button") {
+					this.addEventListener('click', setPosition);
+					this.getAttribute('data-pos') === settings.layoutPosition && this.classList.add('active');
+				}
+			});
+			
+		}
+		
+		// Get and store snipets from the server
+		function get_Store_Snipet(snipetName){
+			function homeSnipet(name, snipet_obj){
+				snipets[ name ]  = snipet_obj;
+			}
+			$.snipetHandler.get_http(
+				{
+					url: 'snipet?a=get-snipet-by-name&name=' + snipetName,
+					name: snipetName,
+					fn: homeSnipet
+					//el:$('#dsn_5')
+				}
+			);
+		}
+		
+		// Get and insert snipet on the active element
+		function get_Insert_Snipet(snipetName){
+			$.snipetHandler.get_http(
+				{
+					url: 'snipet?a=get-snipet-by-name&name=' + snipetName,
+					el: el,
+					pos: settings.layoutPosition
+				}
+			);
+		}
+		
+		// Setting up elStruct with elements and attributes
+		function getHttpTags(){
+			function homeTags(name, snipet_obj){
+				let elname;
+				for ( let i = 0; i < snipet_obj.length; i++) {
+					elname = snipet_obj[i]['name'];
+					elStruct[ elname]  = {};
+					elStruct[ elname ].id = snipet_obj[i]['id'] ;
+					
+					!empty( snipet_obj[i]['exp'] ) && ( elStruct[ elname ].exAttr = snipet_obj[i]['exp'].split(",") );
+					!empty( snipet_obj[i]['req'] ) && ( elStruct[elname].reqAttr = snipet_obj[i]['req'].split(",") );
+					elStruct[elname].goup = snipet_obj[i]['tgroup'] ;
+				}
+			}
+			$.snipetHandler.get_http(
+				{
+					url: 'snipet?a=get-tags',
+					name: 'o',
+					fn: homeTags
+				}
+			);
+			
+		}
+		
+		// Geting dummy text from server, Setting up $n.dummy{ X-small:[], small:[], large:[], X-large:[], XX-large:[] }
+		function getHttpDummyText() {
+			
+			function homeDummy( dummy_obj) {
+				let dum, newobj = dummy_obj;
+				for ( let i = 0; i < newobj.length; i++) {
+					dum = newobj[i]['type'];
+					if( !$n.dummy.keyIn(newobj[i].type)) {
+						$n.dummy[dum]  = [];
+						$n.dummy[dum].push(newobj[i].id = newobj[i].text );
+					} else{ 
+						$n.dummy[dum].push(newobj[i].id = newobj[i].text);
+					}
+				}
+			}
+			$.get_json({
+				url: 'snipet?a=get_dummy_text',
+				callback : homeDummy,
+			});
+		}
+		
+		function makeElement() {
+			let e = {}, ev = $("#dsn-200").value, r = $("#dsn-201").value, d = $("#dsn-202").value, t, temp;
+			for( let i = 0; i < r; i++) {
+				isSet(d) && (d !== "") && ( t = $n.dummy[d][ Math.floor(Math.random() * 5) ] );
+				( isSet(d) && !empty(d) ) ? temp = $('<'+ ev +'>', t) : temp = $('<'+ ev +'>') ;
+				e.e_type = 1; e.e_attr =""; e.e_name = ev; e.e_content = t;
+				temp = $.snipetHandler.sett.call( { obj:e, recipient:el, position:settings.layoutPosition } );
+				temp && $d.snipetListener.call(temp);
+			}
+		}
+				
+		
+		self.init = function() {
+			positionListen();
+			//get_Store_Snipet('add_module');
+			getHttpDummyText();
+			getHttpTags();
+			//insertTag();
+			$('#dsn-203').addEventListener('click', makeElement );
+		}
+		return self.init(); 
+	};
+	
+	$d.loadDsn =function() {
+		
+	}
 	
 		
-	$d.init();
-	
 	// Multiplying a few elements in the body for testing 
 	let asd = {recipient:$('.dsn-body')};
 	asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
@@ -888,7 +1011,7 @@
 	
 	
 	
-	
+	$d.init();
 	return $d;
 }());
 
