@@ -83,7 +83,7 @@ function arrayRemove(arr, val){
 // Or use array.concat(); However merge word ismore familiar with me
 function arrayMerge(){
 	let arr =[], a;
-	for(i = 0; i < arguments.length; i++){ isArray
+	for(i = 0; i < arguments.length; i++){
 		a = arguments[i];
 		isArray(a) && a.forEach( function(item, index){ arr.push(item)});
 	}
