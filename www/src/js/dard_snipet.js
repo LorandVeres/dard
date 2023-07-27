@@ -49,13 +49,10 @@
 	 */
 	$d.init = function(){
 		// init el if not set
-		!el && ( el = $( snb.firstElementChild )); 
-		!ep && ( ep = $( el.parentElement ));
+		window.onload && !isSet( el ) && $d.change.call($('.dsn-body').firstElementChild);
 		
 		// Adjusting the snipet body container width
-		// Total menu width = scrollWidth + left margin included
-		let mw =  parseInt(smn.scrollWidth + parseInt(window.getComputedStyle(smn).marginLeft.replace((/px/gi), "")));
-		snb && (snb.style.width = parseInt( window.screen.width - mw) + 'px');
+		screenEnviro();
 		
 		$('head').append($('<style>', $n.style.reset + $n.style.ui + $n.style.dsn + $n.style.general + $n.style.classes + $n.style.hover + $n.style.active ));
 
@@ -83,6 +80,82 @@
 		$d.tagsLayout();
 	
 	};
+	
+	// Adjusting the work enviroment width:  Mobile, tablet, monitor, full screen view or a custom width
+	// Total menu width = scrollWidth + left margin included
+	function screenEnviro() {
+		let menuWidth =  parseInt(smn.scrollWidth + parseInt(window.getComputedStyle(smn).marginLeft.replace((/px/gi), ""))),
+			mobileWidth = 360,
+			tabletWidth = 820,
+			monitorWidth = parseInt( window.screen.width - menuWidth),
+			nowWidth,
+			color;
+			
+		nowWidth = monitorWidth + 'px';
+		
+		function checkSideMenu() {
+			let vis = s = window.getComputedStyle(snb, null).getPropertyValue("display");
+			vis === 'none' && ( snb.style.display = 'block' );
+		}
+		
+		function setProperties(arg){
+			let marg = parseInt( (window.screen.width - menuWidth - arg) / 2 );
+			marg = '0 ' + marg + 'px';
+			nowWidth = arg + 'px';
+			!isSet(color) ? snb.css( { 'width':nowWidth, 'margin':marg } ) : snb.css( { 'width':nowWidth, 'margin':marg, 'background-color':color  } );
+			checkSideMenu();
+		}
+		
+		function selectMobile (){
+			setProperties(mobileWidth);
+			$('#dsn-304').value = "";
+		}
+		
+		function selectTablet (){
+			setProperties(tabletWidth);
+			$('#dsn-304').value = "";
+		}
+		
+		function selectMonitor (){
+			setProperties(monitorWidth);
+			$('#dsn-304').value = "";
+		}
+		
+		function  selectCustom() {
+			setProperties(this.value);
+		}
+		
+		function selectFullScreen (){
+			nowWidth = mobileWidth + 'px';
+			snb.css( { 'width':'100%' } );
+			smn.style.display = 'none';
+			$('#dsn-304').value = "";
+		}
+		
+		function watchColorPicker(event) {
+		let c = event.target.value;
+			snb.style.backgroundColor = c;
+			$('#dsn-305').value = c;
+			color = c;
+		}
+		
+		function watchColorField(event) {
+			let v = event.target.value;
+			$('#dsn-306').value = v;
+			snb.style.backgroundColor = v;
+			color = v;
+		}
+		
+		$('#dsn-301').addEventListener('click', selectMobile);
+		$('#dsn-302').addEventListener('click', selectTablet);
+		$('#dsn-303').addEventListener('click', selectMonitor);
+		$('#dsn-304').addEventListener('change', selectCustom);
+		$('#dsn-306').addEventListener('change', watchColorPicker);
+		//$('#dsn-306').addEventListener('input', watchColorPicker);
+		$('#dsn-305').addEventListener('change', watchColorField);
+		
+		snb && ( snb.style.width = nowWidth );
+	}
 	
 	/**
 	 * This is the dard JSON HTML data structure
