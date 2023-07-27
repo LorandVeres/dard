@@ -264,14 +264,15 @@
 	*/
 	 $d.change = function(){
 		// remove the active class from current element
-	
-		el.classList.contains("dsn-active") && el.classList.toggle('dsn-active');
+		if(el && el.classList.contains("dsn-active"))
+			el.classList.toggle('dsn-active');
+		
 		
 		el = this;
 		elName = el.nodeName.toLowerCase();
 		ep = el.parentElement; 
 		// Add the active class on the new element
-		el.classList.toggle('dsn-active'); 
+		el.classList ? el.classList.add('dsn-active') : el.setAttribute('class', 'dsn-active'); 
 		if( !isSet( attributes )){
 			attributes = new $d.attr();
 		}
