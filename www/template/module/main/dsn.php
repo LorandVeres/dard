@@ -6,7 +6,8 @@
 		<button id="dsn_109" class="dsn-ctl-btn"></button>
 		<button id="dsn_110" class="dsn-ctl-btn"></button>
 	</div>
-	<div id="dsn_3" class="dsn-side-menu">
+	<div class="section group span-100">
+		<div id="dsn_3" class="col-r dsn-side-menu">
 		
 		<!-- Element actions nav -->
 		
@@ -109,6 +110,27 @@
 			
 				<button class="collapse dns-collapse-button">Style</button>
 				<div class="collapse-content dsn-element-properties">
+					<div class="c-box b-space-15 t-space-5" style="min-height: 2rem;background-color:#282828;width:80%;border: 1px solid #232323;padding: 0.4rem 0;">
+						<div class="section group">
+							<div class="col-f span-48">
+							<span class="box indent left-5" style="line-height: 2rem;">Apply style</span>
+						
+							</div>
+							<div class="col-f span-48 left-4">
+								<button id="dsn_111" class="dsn-ctl-btn"></button>
+							</div>
+						</div>
+						<div class="section group">
+							<div class="col-f span-48">
+							<span class="box indent left-5" style="line-height: 2rem;">Make as class</span>
+						
+							</div>
+							<div class="col-f span-48 left-4">
+								<button id="dsn_111" class="dsn-ctl-btn"></button>
+							</div>
+						</div>
+					</div>
+					
 				
 						<!-- General styling -->
 				
@@ -555,23 +577,37 @@
 		<!-- SETTINGS -->
 		
 		<section id="dsn_6" class="span-100 b-space-15">
-			<button class="collapse dns-collapse-button">Element</button>
+			<button class="collapse dns-collapse-button">Snipet</button>
 			<div class="collapse-content dsn-element-properties">
 				<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
-					<div class="col-f span-50"><label class="indent left-5" for="dsn-el-tag-name">Current element :</label></div>
-					<div class="col-f span-50"><input type="text" id="dsn-el-tag-name" name="dsn-el-tag-name" class="span-70" disabled></div>
+					<div class="col-f span-40"><label class="indent left-5" for="dsn-el-tag-name">Name :</label></div>
+					<div class="col-f span-60"><input type="text" id="dsn-el-tag-name" name="dsn-el-tag-name" class="span-80" disabled></div>
 				</div>
 				<div class="section group b-space-10 dsn-dark-field">
-					<div class="col-f span-50"><label class="indent left-5" for="dsn-el-index">Repeated :</label></div>
-					<div class="col-f span-50"><input type="text" id="dsn-el-index" name="dsn-el-index" class="span-20" disabled></div>
+					<div class="col-f span-40"><label class="indent left-5" for="dsn-el-index">Type :</label></div>
+					<div class="col-f span-60"><input type="text" id="dsn-el-index" name="dsn-el-index" class="span-80" disabled></div>
 				</div>
 				<div class="section group b-space-10 dsn-dark-field">
-					<div class="col-f span-50"><label class="indent left-5" for="dsn-el-siblings">Save:</label></div>
-					<div class="col-f span-50"><input type="text" id="dsn-el-siblings" name="dsn-el-siblings" class="span-20" disabled></div>
+					<div class="col-f span-40"><label class="indent left-5" for="dsn-el-siblings">Status :</label></div>
+					<div class="col-f span-60"><input type="text" id="dsn-el-siblings" name="dsn-el-siblings" class="span-80" disabled></div>
 				</div>
 				<div class="section group b-space-25 dsn-dark-field">
-					<div class="col-f span-50"><label for="dsn-el-child-nodes">Children :</label></div>
-					<div class="col-f span-50"><input type="text" id="dsn-el-child-nodes" name="dsn-el-child-nodes" class="span-20" disabled></div>
+					<div class="col-f span-40"><label for="dsn-el-child-nodes">Module :</label></div>
+					<div class="col-f span-60"><input type="text" id="dsn-el-child-nodes" name="dsn-el-child-nodes" class="span-80" disabled></div>
+				</div>
+				<div class="section group span-80 dsn-vary-properties dsn-dark-field c-box">
+					<div class="span-100 t-space-10"><span class="box indent" style="line-height: 1.5rem;">Screen width</span></div>
+					<div class="section group span-100" style="height: 2.6rem;">
+						<span class="col span-1-of-4"><button id="dsn-303" title="monitor" class="dsn-enviro-btn dsn-monitor-btn "></button></span>
+						<span class="col span-1-of-4"><button id="dsn-302" title="tablet" class="dsn-tablet-btn dsn-enviro-btn"></button></span>
+						<span class="col span-1-of-4"><button id="dsn-301" title="phone" class="dsn-enviro-btn dsn-smartphone-btn "></button></span>
+						<span class="col span-1-of-4" style="margin: .5rem auto .5rem 1.6%"><input id="dsn-304" type="text" class="span-60" style="text-align:right" placeholder="px"></input></span>
+					</div>
+					<div class="span-100 t-space-10"><span class="box indent" style="line-height: 1.5rem;">Background color</span></div>
+					<div class="section group span-100 c-box b-space-10" style="border: 1px solid #111;">
+						<input id="dsn-305" class="span-6-of-7-f col-f" type="text" style="display:inline;border:none;" name="dsn-el-right" value="#c99a16">
+						<input id="dsn-306" class="span-1-of-7-f col-f" type="color" style="display:inline;border:none;" name="dsn-el-right" value="#c99a16">
+					</div>
 				</div>
 			</div>
 		</section>
@@ -583,25 +619,40 @@
 		
 			<!--  GENERAL ELEMENTS HTML tags and blocks ---->
 			
-			<button class="collapse dns-collapse-button">General Elements</button>
+			<button class="collapse dns-collapse-button">HTML Elements</button>
 			<div class="collapse-content dsn-element-properties">
 				<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
-					<div class="col-f span-50"><label class="indent left-5" for="dsn_200">Element Name :</label></div>
+					<div class="col-f span-50"><label class="indent left-5" for="dsn-200">Element Name :</label></div>
 					<div class="col-f span-50"><input type="text" id="dsn-200" name="dsn-el-tag-name" class="span-70"></div>
 				</div>
 				<div class="section group b-space-10 dsn-dark-field">
-					<div class="col-f span-50"><label class="indent left-5" for="dsn_201">Repeated :</label></div>
-					<div class="col-f span-50"><input type="text" id="dsn_201" name="dsn-el-index" class="span-20" value="1"></div>
+					<div class="col-f span-50"><label class="indent left-5" for="dsn-201">Repeated :</label></div>
+					<div class="col-f span-50"><input type="text" id="dsn-201" name="dsn-el-index" class="span-20" value="1"></div>
 				</div>
 				<div class="dsn-90-box c-box dsn-dark-field">
-					<label class="center" for="dsn_202" style="margin: 15px 32%;width:68%">Dummy text here</label>
-					<input type="text" id="dsn_202" name="dsn-el-index" class="span-100 c-box">
+					<label class="center" for="dsn-202" style="margin: 15px 32%;width:68%">Dummy text here</label>
+					<select id="dsn-202" class="span-60 c-box">
+						<option value=""></option>
+						<option value="X-small">X small</option>
+						<option value="small">small</option>
+						<option value="medium">medium</option>
+						<option value="large">large</option>
+						<option value="X-large">X large</option>
+						<option value="XX-large">XX large</option>
+					</select>
 				</div>
-				<div class="section group b-space-10 dsn-dark-field">
-					<div class="space-10 c-box span-100"><input type="button" id="dsn_203" value="SAVE" class="space-10 c-box span-50" style="margin:0 25%"></div>
+				<div class="section group t-space-10 dsn-dark-field">
+					<div class="t-space-10 c-box span-100"><input type="button" id="dsn-203" value="ADD" class="t-space-10 c-box span-50" style="margin:0 25%"></div>
+					<div class="span-100" style="height: 1rem;"></div>
 				</div>
 			</div>
-			
+			<div id="dsn-204" class="dsn-node-tree">
+				<button id="dsn-206" class="left dsn-node-link-25" title="After this" data-pos="afterend">after</button>
+				<button id="dsn-207" class="left dsn-node-link-25" title="Before this" data-pos="beforebegin">before</button>
+				<button id="dsn-208" class="left dsn-node-link-25" title="Inside at begin" data-pos="afterbegin">in at begin</button>
+				<button id="dsn-209" class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">in at end</button>
+				<input id="dsn-205" type="hidden" name="layout-position" value="afterend">
+			</div>
 			<!--  LAYOUT HTML tags and blocks ---->
 			
 			<button class="collapse dns-collapse-button">Layout</button>
@@ -620,14 +671,7 @@
 					</div>
 				</div>
 				
-				<div class="span-100 b-space-25">
-					<div class="dsn-node-tree b-space-25">
-						<button id="dsn_" class="left dsn-node-link-25" title="After this" data-pos="afterend">after</button>
-						<button id="dsn_" class="left dsn-node-link-25" title="Before this" data-pos="beforebegin">before</button>
-						<button id="dsn_" class="left dsn-node-link-25" title="Inside at begin" data-pos="afterbegin">in at begin</button>
-						<button id="dsn_" class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">in at end</button>
-						<input type="hidden" name="layout-position" value="afterend">
-					</div>
+				<div class="span-100 t-space-25 b-space-25">
 					<div class="section group span-100 b-space-5">
 						<div class="col-f span-48 b-space-5 dsn-layout">
 							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Header</button>
@@ -824,12 +868,171 @@
 					</div>
 				</div>
 			</div>
+			
+			
+			<button class="collapse dns-collapse-button">Table</button>
+			<div class="collapse-content dsn-element-properties">
+				<button class="collapse dsn-naked-collapse-button">Table templates</button>
+				<div class="collapse-content dsn-element-properties">
+					<div class="span-100 t-space-25 b-space-25">
+						<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
+							<div class="col-f span-50"><label class="indent left-5" for="dsn_200">Element Name :</label></div>
+							<div class="col-f span-50"><input type="text" id="dsn-200" name="dsn-el-tag-name" class="span-70" disabled></div>
+						</div>
+						<div class="section group b-space-10 dsn-dark-field">
+							<div class="col-f span-50"><label class="indent left-5" for="dsn_201">Index :</label></div>
+							<div class="col-f span-50"><input type="text" id="dsn_201" name="dsn-el-index" class="span-20" disabled></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="span-100 t-space-25 b-space-25">
+					<div class="section group span-100 t-space-25 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Header</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Section</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Main</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Aside</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Article</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Footer</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-25">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Div</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Nav</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<button class="collapse dns-collapse-button">Media</button>
+			<div class="collapse-content dsn-element-properties">
+				<button class="collapse dsn-naked-collapse-button">Media templates</button>
+				<div class="collapse-content dsn-element-properties">
+					<div class="span-100 t-space-25 b-space-25">
+						<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
+							<div class="col-f span-50"><label class="indent left-5" for="dsn_200">Element Name :</label></div>
+							<div class="col-f span-50"><input type="text" id="dsn-200" name="dsn-el-tag-name" class="span-70" disabled></div>
+						</div>
+						<div class="section group b-space-10 dsn-dark-field">
+							<div class="col-f span-50"><label class="indent left-5" for="dsn_201">Index :</label></div>
+							<div class="col-f span-50"><input type="text" id="dsn_201" name="dsn-el-index" class="span-20" disabled></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="span-100 t-space-25 b-space-25">
+					<div class="section group span-100 t-space-25 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Header</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Section</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Main</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Aside</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Article</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Footer</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-25">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Div</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Nav</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<button class="collapse dns-collapse-button">Code</button>
+			<div class="collapse-content dsn-element-properties">
+				<button class="collapse dsn-naked-collapse-button">Code templates</button>
+				<div class="collapse-content dsn-element-properties">
+					<div class="span-100 t-space-25 b-space-25">
+						<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
+							<div class="col-f span-50"><label class="indent left-5" for="dsn_200">Element Name :</label></div>
+							<div class="col-f span-50"><input type="text" id="dsn-200" name="dsn-el-tag-name" class="span-70" disabled></div>
+						</div>
+						<div class="section group b-space-10 dsn-dark-field">
+							<div class="col-f span-50"><label class="indent left-5" for="dsn_201">Index :</label></div>
+							<div class="col-f span-50"><input type="text" id="dsn_201" name="dsn-el-index" class="span-20" disabled></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="span-100 t-space-25 b-space-25">
+					<div class="section group span-100 t-space-25 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Header</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Section</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Main</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Aside</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-5">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Article</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Footer</button>
+						</div>
+					</div>
+					<div class="section group span-100 b-space-25">
+						<div class="col-f span-48 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Div</button>
+						</div>
+						<div class="col-f span-48 left-4 b-space-5 dsn-layout">
+							<button data-larq="" data-laex="" data-ltxt="" data-pos="">Nav</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</section>
 		
 		<!--  END OF HTML tags and blocks ---->
 		
-	</div>
-	<div id="dsn_5" class="dsn-body" contenteditable="true">
+		</div>
+		<div id="dsn_5" class="col-r dsn-body" contenteditable="true">
 		<div>
 			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
 			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
@@ -839,5 +1042,6 @@
 			<p> A <b>funny bunny with id</b> text for <i>test <span>little inside the fun</span></i></p>
 		</div>
 		<div><input id="test" type=""></div>
+		</div>
 	</div>
 </div>
