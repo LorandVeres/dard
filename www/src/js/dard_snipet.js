@@ -316,15 +316,21 @@
 	/**
 	*************************************
 	* Removing the current element
-	* Set the curent element to the first child of snipet container
+	* Set the curent element to the parent element, if not exist to the first child of snipet container
+	* Removing the event listeners too.
 	* @returns the new element
 	*/
 	$d.elDroped = function(){
 		if(confirm('Would you, Realy want to  delete this element ?') == true ){
-			el && ep.removeChild(el);
-			el = $( snb.firstElementChild );
-			ep = el.parentElement;
-			return el;
+			if( el ) {
+				el.removeEventListener('click', snipetClickable);
+				el.removeEventListener('click', snipetMoveout);
+				el.removeEventListener('click', snipetMoveover);
+				snb.firstElementChild && ep.removeChild(el);
+				!ep.classList.contains('dsn-body') ? 
+					$d.change.call($( ep )) : 
+					snb.firstElementChild && $d.change.call($( snb.firstElementChild ));
+			}
 		}
 	};
 	
