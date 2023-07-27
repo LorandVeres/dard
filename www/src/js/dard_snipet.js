@@ -13,18 +13,20 @@
 
  let snipet_creator = (function (){
 	let $d = {},
-		snb = $('.dsn-body'), //snipet container
+		snb = $('.dsn-body'), //snipet body ( container )
 		smn = $('.dsn-side-menu'), // side menu
 		el, // current element
 		elName, // current element name to lowercase
 		esb = [], // element siblings if any
 		ep, // element parentElement
-		$n = { }, // dsn snipet objects
+		$n = { dummy:{} }, // dsn snipet objects
+		settings = { }, // will store various settings
 		weListen = [], // an array objects  { 0:element, 1:event, 2:function };
 		elStruct = { }, // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
 		html_blocks = [ 'form', 'section', 'cards', 'list'], // type of implemented blocks
 		copy, // the new copy function
-		attributes, // function
+		snipets = {}, // the snipets on what we work
+		attributes, // function in $d.init
 		$i;
 		// Inline styling structure
 		$n.style = {
@@ -33,9 +35,11 @@
 			dsn : "\n",
 			general : ".dsn-body div{ max-height:max-content; background: #ececec; margin:1.5%;overflow:auto;} .dsn-body p{ padding:10px; line-height:1.5rem}\n",
 			classes : "\n",
-			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(47, 157, 248, 0.1); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n",
-			active : ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background: rgba(47, 157, 248, 0.1); box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .3) inset; }\n"
+			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 2px 2px rgba(2, 100, 180, .3) inset; }\n",
+			active : ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 2px 2px rgba(2, 100, 180, .3) inset; }\n"
 		};
+		// default settings 
+		settings.layoutPosition = "beforeend"; // used when iserting new tags or layouts
 		
 		elStruct.input = {  id:'0', reqAttr:['type', 'hidden'], exAttr:[ 'name', 'value', 'placeholder', 'required'] }
 		
@@ -360,7 +364,7 @@
 		pasteButton = document.getElementById("dsn_100");
 		pasteButton.addEventListener('click', function(){
 			newEl.obj = copy;
-			newEl.position = "beforeend";   //  default in to the current element at the end
+			newEl.position = settings.layoutPosition ;   //  default in to the current element at the end
 			newEl.recipient = el; // default the recipient is the curently selected element 
 			newEl.contentArray = [];
 			e = $.snipetHandler.sett.call(newEl );
