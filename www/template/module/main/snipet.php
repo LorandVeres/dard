@@ -1,22 +1,22 @@
 <?php
 include_once '../module/main/dsn_snipet.Class.php';
 
-$snipet = new dsn_snipet ($dard, $tag);
+//$snipet = new dsn_snipet ($dard, $tag);
 
 
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		
 		if($dard -> ajax ) {
-			
+			$snipet = new dsn_snipet ($dard, $tag);
 		}
 		break;
 	
 	case 'GET':
 		if($dard -> ajax ) {
-			$snipet -> call_action($dard, $tag);
+			$snipet = new dsn_snipet ($dard, $tag);
 		} else {
-			include_once 'template/module/main/dsn.php';var_dump($snipet);
+			include_once 'template/module/main/dsn.php';
 		}
 		
 		break;
