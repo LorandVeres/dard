@@ -204,7 +204,7 @@
 .collapse::after { content: '\25bc'; float: right;margin-right: 1rem; } /* unicode plus 002B triangle to right 25B6*/
 .collapse-active::after { content: "\00D7"; font-weight: bold; } /* unicode minus \2212 up triangle \25b2  */
 .collapse-content { transition: max-height 0.1s ease-out;max-height: 0;margin-top: 0;overflow: hidden; }
-.collapse-notransition { transition: none !important; max-height: 0;margin-top: 0;overflow: hidden; }
+.collapse-notransition { transition: all 0.3 !important; max-height: 0;margin-top: 0;overflow: hidden; }
 /** End of Dard js css **/
 
 /*
