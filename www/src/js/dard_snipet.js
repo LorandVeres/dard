@@ -45,6 +45,11 @@
 		};
 		// default settings 
 		settings.layoutPosition = "beforeend"; // used when iserting new tags or layouts
+		settings.project = "sandbox"; // we need a default project and that is sandbox
+		settings.maxId = 0; // max auto id generated
+		settings.maxClass = 0; // max auto class generated
+		settings.stash = {};
+		
 		
 		elStruct.input = {  id:'0', reqAttr:['type', 'hidden'], exAttr:[ 'name', 'value', 'placeholder', 'required'] }
 		
