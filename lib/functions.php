@@ -1,6 +1,25 @@
 <?php
 if (!defined('DARDSTATUS'))
 	exit();
+/**
+* 
+****************************
+*   Polifills
+****************************
+*/
+
+if (!function_exists('str_contains')) {
+    function str_contains($haystack, $needle) {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
+/**
+* 
+****************************
+*   End Of Polifills
+****************************
+*/
 
 function check_and_do($to_be_checked, $do) {
 	if ($to_be_checked) {
