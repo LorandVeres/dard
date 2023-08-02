@@ -770,18 +770,19 @@ $.constructor.prototype.send_json = function() {
 	!isSet(obj.meta) ? sending = { data:obj.data } : sending = { meta:obj.meta, data:obj.data };
 	$.ajax({
 		type : 'POST',
-		url : obj.meta.url,
+		url : obj.url,
 		response : function(r) {
-			obj.keyIn('log') && console.log(r); // for debuging
+			let newr = JSON.parse(r);
+			obj.keyIn('log') && console.log(newr); // for debuging
 			if(obj.keyIn('callback')){
 				if(isFunc( obj.callback)){
-					obj.callback(r);
+					obj.callback(newr);
 				}
 			}
 		},
 		json : true,
 		send : sending,
-		error : 'An error ocured sending data to  ' + obj.meta.url + ' '
+		error : 'An error ocured sending data to  ' + obj.url + ' '
 	});
 }
 
