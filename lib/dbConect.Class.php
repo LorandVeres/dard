@@ -90,10 +90,22 @@ class dbConect extends DardConfig{
 					
 					
 				} while($j && mysqli_next_result($link));
-			}elseif(mysqli_error($link) && $this->cf_debug_MYSQL === TRUE){
+			}elseif(mysqli_error($link)){
 			    $num = mysqli_errno($link);
                 $error = mysqli_error($link);
-			    $this->debug($num, $error, $query);
+			    if($this->cf_debug_MYSQL === TRUE){
+			        if( strpos( $error, "Duplicate entry", 0) !== false ) {
+                        $errarray = explode(" ", $error);
+			            $error = $errarray[0] . " " . $errarray[1] . " for : " . str_replace("'", "", $errarray[2]) ." ." ;
+			            mysqli_close($link);
+			            return $error;
+                    }else{
+                        $this->debug($num, $error, $query);
+                    }
+			    }elseif( stripos( mysqli_error($link), "Duplicate entry") ) {
+			        $return_format= 'string';
+			        $response = $error;
+			    }
             }
 		
 		
