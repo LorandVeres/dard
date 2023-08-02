@@ -183,6 +183,33 @@
 			//emptyFieldsValue();
 		}
 		
+		// Will lock or unlock the fields using the disabled attributes from the fields
+		// Fields are disabled by default to not accidentaly overwrite before saving
+		function fieldDisable() {
+			let bool;
+			let fields = [ "dsn-314", "dsn-315", "dsn-316", "dsn-317"], field;
+			for( let i =0; i < fields.length; i++) {
+				field = $('#' + fields[i]);
+				if(arguments.length > 0) {
+					bool = arguments[0];
+					!bool && field.hasAttribute('disabled') && field.removeAttribute('disabled');
+					bool && !field.hasAttribute('disabled') && field.setAttribute('disabled', '');
+				}else{
+					field.hasAttribute('disabled') ? field.removeAttribute('disabled') : field.setAttribute('disabled', '');
+				}
+			}
+		}
+		
+		// Fast way to clear the fields, 
+		function emptyFieldsValue() {
+			let fields = [ "dsn-314", "dsn-315", "dsn-316", "dsn-317"], field;
+			for( let i =0; i < fields.length; i++) {
+				field = $('#' + fields[i]);
+				!field.hasAttribute('disabled') && ( field.value = "" );
+			}
+		}
+		
+		function createNewProject(){
 		
 		/** Empty then
 		*   Populate the select option with data
