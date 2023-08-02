@@ -292,6 +292,22 @@ function capitalize(s){
 	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+// Removes potential underscore and dash characters
+// Return a string to lower case with spaces
+function camel2String (arg) {
+	if ( typeof arg !== 'string') return '';
+	return arg.replace(/([A-Z0-9])/g, " $1").replace(/([_\-])/g, "").toLowerCase();
+}
+
+// Split words merged with underscore and dash characters and removes underscore
+// Return the string with each word first letter uppercase
+function stringToTitle (arg) {
+	let newstr ='';
+	if ( typeof arg !== 'string') return '';
+	arg.replace(/([_])/g, " ").replace(/([\-])/g, " $1 ").trim().split(" ").forEach( (item)  =>  item !== "_"  && ( newstr += item.charAt(0).toUpperCase() + item.slice(1) + " " ) );
+	return newstr.trim();
+}
+
 /*
 ********************************************************************************
 *===============================================================================
