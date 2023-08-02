@@ -229,6 +229,59 @@
 		}
 		
 		
+		
+		function sendSnipet(func, urlarg, snipet, callback) {
+			//save the actual one has to be implemented
+			let info;
+						
+			if(isSet(snipet)) {
+				snipet.body = {};
+				snipet.project = settings.project;
+				snipet.name = $('#dsn-314').value;
+				snipet.type = $('#dsn-315').value;
+				snipet.status = $('#dsn-316').value;
+				info = "\nName : " + snipet.name + "\nType : " + snipet.type + "\nStatus : " +snipet.status;
+			}
+			
+			if(!empty(snipet.name) && !empty(snipet.type) && !empty(snipet.status)) {
+				isFunc(func) && func();
+				$.send_json({
+					url: 'snipet?a=' + urlarg,
+					data: snipet,
+					callback: callback
+				});
+			}else{
+				isSet(arguments[4]) && alert(arguments[4] + info);
+			}
+		}
+		
+		function createNewSnipet() {
+			let snipet = {},
+				alertText = "To create a new snipet the following fields can't be empty :" ;
+				
+			function createDummySnipet() {
+				let catchel;
+				clearWorkspace();
+				catchel = $('<p>', 'I am the catcher in the rye !');
+				$('.dsn-body').append(catchel);
+				snipet.body =  $.snipetHandler.gett($('.dsn-body'), true);
+				addSnipetEvent.call(catchel);
+			}
+			
+			function handleResponse(r){
+				let res = JSON.parse(r)
+				if(isObj(res) && isSet(res.lastId) ){
+					console.log('good inserted');
+					console.log(res.lastId);
+				}else if(isStr(res)){
+					console.log('bad is error string');
+				}
+				//console.log(arguments[0]);
+			}
+			
+			sendSnipet(createDummySnipet, 'add-snipet', snipet, handleResponse, alertText);
+		}
+		
 		/** Empty then
 		*   Populate the select option with data
 		*   @def [ optional ] object default first item {v: 'any', t: 'text to be inserted' }
@@ -255,6 +308,10 @@
 			});
 		}
 		
+		$('#dsn-307').addEventListener('click', function(){ fieldDisable()});
+		$('#dsn-308').addEventListener('click', emptyFieldsValue);
+		$('#dsn-311').addEventListener('click', createNewSnipet);
+		$('#dsn-313').addEventListener('click', clearWorkspace);
 		$('#dsn-322').addEventListener('click', createNewProject);
 		fillSelectFields('load-projects-name', '#dsn-319', {v:'sandbox',t:'sandbox'} );
 		fillSelectFields('load-snipet-type', '#dsn-315');
