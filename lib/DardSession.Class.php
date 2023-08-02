@@ -24,11 +24,11 @@ class DardSession extends dbConect{
 
     public function init_session() {
         if (!isset($_COOKIE['PHPSESSID'])) {
-            session_set_cookie_params($this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE);
+            session_set_cookie_params($this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE, 'SameSite=Strict' );
             session_start();
         } else {
             session_start();
-            setcookie('PHPSESSID', session_id(), time() + $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE);
+            setcookie('PHPSESSID', session_id(), time() + $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE, 'SameSite=None; Secure');
         }
     }
 
@@ -38,7 +38,7 @@ class DardSession extends dbConect{
         $_SESSION = array();
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), session_id(), time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
+            setcookie(session_name(), session_id(), time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"], 'SameSite=None; Secure');
         }
         session_destroy();
         session_commit();
@@ -62,11 +62,11 @@ class DardSession extends dbConect{
         $_SERVER['HTTPS'] = 'ON' ? $http = TRUE : $http = FALSE;
         $time = time() + $this -> utd_life;
         if (!isset($_COOKIE['d_utd'])) {
-            setcookie('d_utd', $this -> utd_str($la), $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http);
+            setcookie('d_utd', $this -> utd_str($la), $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http, 'SameSite=None; Secure');
         } else {
             $n = explode('|', $_COOKIE['d_utd']);
             $string = $n[0] . '|' . $la;
-            setcookie('d_utd', $string, $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http);
+            setcookie('d_utd', $string, $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http, 'SameSite=None; Secure');
         }
     }
 
