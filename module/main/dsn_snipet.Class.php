@@ -102,5 +102,23 @@ class dsn_snipet extends FormCleaner {
 		echo json_encode( $this -> prepare_db_enum_field_to_json($res['Type']) );
 	}
 	
+	private function add_project($dard) {
+		$obj = json_decode( file_get_contents('php://input') );
+		$data = $obj->data;
+		$res = $dard -> stmt($data->Name, array(), 'createSnipetProject', $data->Name);
+		echo json_encode( $res );
+	}
+
+	private function add_snipet($dard) {
+		$obj = json_decode( file_get_contents('php://input'), true );
+		$data = $obj['data'];
+		isset($data['css']) ? $css = "'".$data['css']."'" : $css = ",''";
+		$data['project'] === 'dsn' ? $table_name = "" : $table_name = '_'. $data['project'];
+		$params = array ( json_encode($data['body']), $data['name'], $data['type'], $data['status'], $data['css'] );
+		$res = $dard -> stmt( $table_name, $params, 'insertSnipet', $data);
+		echo json_encode( $res );
+	}
+	
+	
 }
 ?>
