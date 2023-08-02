@@ -210,6 +210,24 @@
 		}
 		
 		function createNewProject(){
+			let project = {};
+			project.Name = $('#dsn-320').value;
+			function handle (r) {
+				let res = JSON.parse(r);
+				if(isObj(res) && isSet(res.lastId)){
+					console.log('good inserted');
+					console.log(res.lastId);
+				}else if(isStr(res)){
+					console.log('bad is error string');
+				}
+			}
+			$.send_json({
+				data : project,
+				url: 'snipet?a=add-project',
+				callback: handle
+			});
+		}
+		
 		
 		/** Empty then
 		*   Populate the select option with data
@@ -237,6 +255,7 @@
 			});
 		}
 		
+		$('#dsn-322').addEventListener('click', createNewProject);
 		fillSelectFields('load-projects-name', '#dsn-319', {v:'sandbox',t:'sandbox'} );
 		fillSelectFields('load-snipet-type', '#dsn-315');
 		fillSelectFields('load-snipet-status', '#dsn-316');
