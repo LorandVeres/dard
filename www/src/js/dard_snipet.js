@@ -77,6 +77,9 @@
 		$d.menuListener.call(['dsn_103', $d.goToParent ]);
 		$d.menuListener.call(['dsn_102', $d.goToYoungerBrother ]);
 		$d.menuListener.call(['dsn_101', $d.goToOlderBrother ]);
+		
+		snipetSetings();
+		
 		//copy = new 
 		$d.copyEl();
 		forms(); $i = new input();
@@ -160,6 +163,26 @@
 		$('#dsn-305').addEventListener('change', watchColorField);
 		
 		snb && ( snb.style.width = nowWidth );
+	}
+	
+	/**
+	 * 
+	 */
+	function snipetSetings() {
+		
+		// Delete the snipet from working enviroment to create a clean slate
+		function clearWorkspace() {
+			function rem(){
+				removeSnipetEvent.call(this);
+				if( this.childElementCount > 0 )
+					$(this).walkChild(rem);
+			}
+			$('.dsn-body').walkChild(rem);
+			$('.dsn-body').empty();
+			//fieldDisable(false);
+			//emptyFieldsValue();
+		}
+		
 	}
 	
 	/**
