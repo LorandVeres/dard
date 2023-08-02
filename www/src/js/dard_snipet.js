@@ -1219,7 +1219,7 @@
 			}
 			$.snipetHandler.get_http(
 				{
-					url: 'snipet?a=get-tags',
+					url: 'snipet?a=load-tags',
 					name: 'o',
 					fn: homeTags
 				}
@@ -1243,7 +1243,7 @@
 				}
 			}
 			$.get_json({
-				url: 'snipet?a=get_dummy_text',
+				url: 'snipet?a=load_dummy_text',
 				callback : homeDummy,
 			});
 		}
