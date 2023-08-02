@@ -1129,28 +1129,52 @@
 		// Setting the position in the toggle for new tags and snipets added
 		function setPosition(){
 			let pos;
-			$(this.parentElement).walkChild(
-				function(){
-					if(this.nodeName.toLowerCase() ==="button")
-						this.classList.contains('active') && this.classList.toggle("active");
-				}
-			);
-			pos = this.getAttribute('data-pos')
-			$i.get('dsn-205').value = pos;
-			settings.layoutPosition = pos;
-			this.classList.add('active');
+			
+			function releaseActive() {
+				$(this).walkChild(
+					function(){
+						if(this.nodeName.toLowerCase() ==="button")
+							this.classList.contains('active') && this.classList.toggle("active");
+					}
+				);
+			}
+			
+			function setSettings() {
+				pos = this.getAttribute('data-pos')
+				$i.get('dsn-205').value = pos;
+				settings.layoutPosition = pos;
+				this.classList.add('active');
+			}
+			
+			function setActive() {
+				let other, me;
+				this.parentElement.getAttribute('id') === "dsn-204" ? other = $('#dsn-318') : other = $('#dsn-204');
+					releaseActive.call(other);
+					other.walkChild(
+						function(){
+							this.getAttribute("data-pos") === pos && this.classList.add('active') ;
+						}
+					);
+			}
+			
+			releaseActive.call(this.parentElement);
+			setSettings.call(this);
+			setActive.call(this);
 		}
 		
-		// seting up event listener for position buttons in layout
+		// seting up event listener for position buttons in layout and snipet
+		// This two places are joined to change the same position setings
+		// The buttons have been replicated for accessibility
 		function positionListen (){
-			let e = $('#dsn-204');
-			e.walkChild( function(){
-				if(this.nodeName.toLowerCase() ==="button") {
-					this.addEventListener('click', setPosition);
-					this.getAttribute('data-pos') === settings.layoutPosition && this.classList.add('active');
-				}
-			});
-			
+			let e = [ $('#dsn-204'), $('#dsn-318') ] ;
+			for(let i = 0 ; i < e.length; i++){
+				e[i].walkChild( function(){
+					if(this.nodeName.toLowerCase() ==="button") {
+						this.addEventListener('click', setPosition);
+						this.getAttribute('data-pos') === settings.layoutPosition && this.classList.add('active');
+					}
+				});
+			}
 		}
 		
 		// Get and store snipets from the server
