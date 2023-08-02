@@ -1133,46 +1133,84 @@ $.constructor.prototype.snipetHandler = (function() {
 * @obj {
 *
 *       @el : The parent element for the overlay
-*       @elclass : The class aplied to the overlay element
-*       @headerclass : the class aplied to the overlay header
+*       @elc : [ optional ]  The class aplied to the overlay main element
+*       @elb : [ optional ] The class aplied for the button styling
+*       @nobtn : [ optional ] no button diplayed
 * }
 *
 * @return The overlay HTMLElement
 *
-* @Use $.overlay({el:$("body"), elclass:"overlay-body", headerclass:"overlay-header"});
-* @use $.overlay(); // for a full body overlay
+* @Use $.overlay({el:$("body")); // For a full body overlay. styling can be changed from css file
+* @use $.overlay({el:$("any element")); // for a random element overlay
 */
 
 $.constructor.prototype.overlay = function() {
-	// Giving a default full modal without parameters
-	let obj = {};
-	arguments.length === 1 ? obj = arguments[0] : obj = { el:$('body'), elclass:"overlay-body", headerclass:"overlay-header" };
+	let obj = {}, bodyname = false;
+	arguments.length === 1 ? obj = arguments[0] : obj = { el:$('body'), elc:"overlay-body" };
+	
 	// Init the main variables
-	let overlay = $("<div>").addclass(obj.elclass), // the main overlay body
-	    closeBtn = $("<button>").addclass("overlay-cl-btn").ihtml("&times;"), // creates the closing button
-	    oheader = $("<div>").addclass(obj.headerclass), // creates an overlay header
-	    body = obj.el, // assign the parent element
-	    closeme; // function
+	let overlay = $("<div>"), // the main overlay body
+	    closeBtn = $("<button>").ihtml("&times;"), 
+	    body = obj.el;
+	    
+	obj.el.nodeName.toLowerCase() === 'body' && ( bodyname = true );
+	if (bodyname && !isSet(obj.elc)) {
+		bodyname =true;
+		overlay.addclass("overlay-body");
+		!isSet(obj.elb) && closeBtn.addclass("overlay-cl-btn");
+	}
+	
+	isSet(obj.elc) && overlay.addclass(obj.elc);
+	isSet(obj.elb) && closeBtn.addclass(obj.elb);
+	
 	// Appending the elments to each other
-	overlay.append(oheader.append(closeBtn));
-	body.append(overlay);
+	body.append(overlay.append(closeBtn));
 	// defining the closing function
-	closeme = function() {
-		let child = $(".overlay-cl-btn");
-		body.remove(overlay);
-		closeBtn.removeEventListener("click", closeme, true);
-		if(obj.elclass === "overlay-body"){
+	function closeme() {
+		let bool = false;
+		obj.el.nodeName.toLowerCase() === 'body' && (bool = true);
+		body.removeChild(overlay);
+		closeBtn.removeEventListener("click", closeme, false);
+		if(bodyname){
 			body.css({overflow : "auto"});
 			body.scroll = "yes";
 		}
 	};
 	// Full body overlay properties
-	if(obj.elclass === "overlay-body"){
+	if(bodyname){
 		body.css({overflow : "hidden"});
 		body.scroll = "no";
+		
 	}
-	// Attaching the event handler to the closing button
-	closeBtn.addEventListener("click", closeme, false);
+	
+	// fall back styling 
+	if(!isSet(obj.elc) && !bodyname) {
+		// if there is no class defined
+		overlay.style.position = 'absolute';
+		overlay.style.width = body.scrollWidth + 'px';
+		overlay.style.height = body.scrollHeight +'px';
+		overlay.style.top = '0';
+		overlay.style.left = '0';
+		overlay.style.zIndex = '1000';
+	}
+	if(!isSet(obj.elb) && !bodyname) {
+		closeBtn.css({
+			'float': 'right;',
+			'padding': '1.2rem;',
+			'outline': 'none;',
+			'border': 'none;',
+			'color': '#ffffff;',
+			'font-size': '2rem;',
+			'line-height': '2rem;',
+			'opacity': '0.6;',
+			'background-color': 'rgba(0,0,0, 0);'
+		});
+	}
+	
+	overlay.style.margin !== '0px' && ( overlay.style.margin = '0px' );
+	overlay.style.backgroundColor === body.style.backgroundColor && ( overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)' );
+	
+	!isSet(obj.nobtn) ? closeBtn.addEventListener("click", closeme, false) : overlay.removeChild(closeBtn);
 	// Return the overlay body to have a reference to attache elements to
 	return overlay;
 }
