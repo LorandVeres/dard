@@ -165,6 +165,26 @@ class FormCleaner {
 			$tag -> print_doc($wrap);
 		}
 	}
+	
+	// Will return an aray ready to be sent via ajax for select box options
+	protected function prepare_db_enum_field_to_json($arg){
+		$i = 0;
+		$result = array();
+		$arg = str_replace("'", "", str_replace("enum(", "", str_replace(")", "" ,$arg  )));
+		foreach ( explode( ',', $arg ) as $value ){
+			$result[$i] = array ( 'name' => $value );
+			$i++;
+		}
+		return $result;
+	}
+	
+	// Checks if posted data is in the enum field type in table;
+	protected function filter_post_vs_db_enum($post, $table, $column, $dard){
+		$query = "SHOW COLUMNS FROM `. $table .` LIKE '". $column ."';";
+		$enum =  $dard ->selectDB('', $query, TRUE, 'array');
+		$$enum = str_replace("'", "", str_replace("enum(", "", str_replace(")", "" , $enum  )));
+		return in_array( $post, explode( ',', $enum ));
+	}
 
 	//=============================================
 	//
