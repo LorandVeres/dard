@@ -183,7 +183,7 @@ class dbConect extends DardConfig{
 	
 	private function packRows($response, $selector){
 		
-        $result;
+        $result = '';
 		switch ($selector) {
 			case 'string':
 				$result = $this->selectStringExpected($response);
