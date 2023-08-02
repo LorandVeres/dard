@@ -9,6 +9,9 @@
 /*  COLUMN SETUP  */ 
 .col { display: block;float:left;margin: 0 0 0 1.6%; }
 .col-f { display: block;float: left;margin: 0; } /* .col-full */
+.col-rs { display: block;float: left;margin: 0; } /* .col-responsive */
+.col-rs-1 { display: block;float: left;margin: 0; } /* .col-responsive */
+.col-rs-2 { display: block;float: left;margin: 0; } /* .col-responsive */
 .col-r { display: block;float: right;margin: 0 1.6% 0 0; } /* .col-right */
 .col:first-child { margin-left: 0; }
 .col-r:first-child { margin-right: 0; }
@@ -174,6 +177,21 @@
 .right-9 { margin-right: 9%; }
 .right-10 { margin-right: 10%; }
 .right-15 { margin-right: 15%; }
+@media only screen and (max-width: 600px) {
+	.col-rs, .col-rs-2 {
+	  width: 100%;
+	  margin-left: 0;
+	  margin-right: 0;
+	}
+  }
+  
+  @media only screen and (max-width: 850px) {
+	.col-rs, .col-rs-1 {
+	  width: 100%;
+	  margin-left: 0;
+	  margin-right: 0;
+	}
+  }
 
 /** FADE IN  AND FADE OUT **/
 /***************************/
