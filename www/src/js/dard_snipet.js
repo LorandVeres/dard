@@ -802,8 +802,9 @@
 				bond();
 				if( at.rq.length > 2) {
 					for( i = 0; i < at.rq.length; i++){
-						i < 2 ? field = parent.children[i]  : field = $.snipetHandler.sett.call(snipet, [ capitalize(at.rq[i])+' :' ] ) ;
+						i < 2 && ( field = parent.children[i] );
 						if( i > 1) {
+							field = $.snipetHandler.sett.call(snipet, [ capitalize(at.rq[i])+' :' ] ) ;
 							field.children[1].addEventListener('change', listen);
 							fieldsAttr.call(field, i);
 						}
