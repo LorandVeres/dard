@@ -436,7 +436,7 @@ var $ = function () {
 			if (arguments.length === 2) {
 				this.setAttribute(arg[0], arg[1]);
 			}else if (arguments.length === 1) {
-				this.createAttribute(arg[0]);
+				this.setAttributeNode(document.createAttribute( arg[0] ) );
 			}
 			return this;
 		};
@@ -452,15 +452,10 @@ var $ = function () {
 				attr_Obj = arguments[0];
 			for (let prop in attr_Obj){
 				if(attr_Obj.hasOwnProperty(prop)){
-					if(!empty(attr_Obj[prop])){
-						attr = document.createAttribute(prop);
-						if(!empty(attr_Obj[prop])){
-							attr.value = attr_Obj[prop];
-							this.setAttributeNode(attr);
-						}else{
-							this.createAttribute(prop);
-						}
-					}
+					attr = document.createAttribute(prop);
+					if(!empty(attr_Obj[prop]))
+						attr.value = attr_Obj[prop];
+					this.setAttributeNode(attr);
 				}
 			}
 			return this;
