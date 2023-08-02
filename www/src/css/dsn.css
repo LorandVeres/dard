@@ -16,9 +16,9 @@
 	background-color: #160a26;
 }
 
-.dsn-page .dsn-ctl-btn {
+.dsn-ctl-btn {
 	float: right;
-	margin: 3px 25px 3px 0;
+	margin: 0;
 	width: 24px;
 	height: 24px;
 	outline: none;
@@ -29,10 +29,9 @@
 	background-repeat: no-repeat;
 }
 
-.dsn-enviro-btn {
+
+.dsn-enviro-btn, .dsn-snipet-btn {
 	float: right;
-	margin: 0 25px 0 0;
-	width: 2.6rem;
 	height: 2.6rem;
 	outline: none;
 	border: none;
@@ -41,14 +40,25 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 }
+.dsn-enviro-btn{
+	margin: 0 25px 0 0;
+	width: 2.6rem;
+}
+.dsn-snipet-btn {
+	margin: .2rem 2.5% 0 0;
+	width: 11.44%;
+}
 
 .dsn-ctl-btn:hover, .dsn-enviro-btn:hover{
 	background-color: rgb(36, 36, 36);
 }
-.dsn-enviro-btn:hover, .dsn-enviro-btn.active {
+.dsn-enviro-btn:hover, .dsn-enviro-btn.active, .dsn-snipet-btn.active  {
 	background-color: rgb(36, 36, 36);
 }
-
+.dsn-ctl-btn.active, .dsn-snipet-btn:hover{
+	background-color: rgb(56, 56, 56);
+	opacity: 0.7;
+}
 #dsn_107 {
 	background-image: url('../../images/icons/g/16/l/menu-grid.png');
 }
@@ -93,10 +103,59 @@
 .dsn-monitor-btn:hover {
 	background-image: url('../../images/icons/g/24/m/monitor.png');
 }
-
-.dsn-ctl-btn.active{
-	background-color: rgb(56, 56, 56);
-	opacity: 0.7;
+#dsn-307 {
+	background-image: url('../../images/icons/g/24/l/unlocked.png');
+}
+#dsn-307:hover {
+	background-image: url('../../images/icons/g/24/m/unlocked.png');
+}
+#dsn-308 {
+	background-image: url('../../images/icons/g/24/l/eraser.png');
+}
+#dsn-308:hover {
+	background-image: url('../../images/icons/g/24/m/eraser.png');
+}
+#dsn-309 {
+	background-image: url('../../images/icons/g/24/l/download.png');
+}
+#dsn-309:hover {
+	background-image: url('../../images/icons/g/24/m/download.png');
+}
+#dsn-310 {
+	background-image: url('../../images/icons/g/24/l/upload.png');
+}
+#dsn-310:hover {
+	background-image: url('../../images/icons/g/24/m/upload.png');
+}
+#dsn-311 {
+	background-image: url('../../images/icons/g/24/l/add.png');
+}
+#dsn-311:hover {
+	background-image: url('../../images/icons/g/24/m/add.png');
+}
+#dsn-312 {
+	background-image: url('../../images/icons/g/24/l/build.png');
+}
+#dsn-312:hover {
+	background-image: url('../../images/icons/g/24/m/build.png');
+}
+#dsn-313 {
+	background-image: url('../../images/icons/g/24/l/blank-square.png');
+}
+#dsn-313:hover {
+	background-image: url('../../images/icons/g/24/m/blank-square.png');
+}
+#dsn-321 {
+	background-image: url('../../images/icons/g/24/l/add.png');
+}
+#dsn-321:hover {
+	background-image: url('../../images/icons/g/24/m/add.png');
+}
+#dsn-322 {
+	background-image: url('../../images/icons/g/24/l/add.png');
+}
+#dsn-322:hover {
+	background-image: url('../../images/icons/g/24/m/add.png');
 }
 
 .dsn-page .dsn-header{
@@ -105,6 +164,10 @@
     background-color: #181818;
     position: fixed;
     top: 0;
+}
+
+.dsn-header .dsn-ctl-btn{
+	margin:3px 25px 3px 0;
 }
 
 .dsn-side-menu{
@@ -502,3 +565,4 @@
 .dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(47, 157, 248, 0.2); }
 .dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background-color: rgba(47, 157, 248, 0.2); }
 */
+

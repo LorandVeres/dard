@@ -579,21 +579,36 @@
 		<section id="dsn_6" class="span-100 b-space-15">
 			<button class="collapse dns-collapse-button">Snipet</button>
 			<div class="collapse-content dsn-element-properties">
-				<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
+				<div class="section group b-space-15 dsn-dark-field">
+					<button id="dsn-307" class="dsn-snipet-btn"></button>
+					<button id="dsn-308" class="dsn-snipet-btn"></button>
+					<button id="dsn-309" class="dsn-snipet-btn"></button>
+					<button id="dsn-310" class="dsn-snipet-btn"></button>
+					<button id="dsn-311" class="dsn-snipet-btn"></button>
+					<button id="dsn-312" class="dsn-snipet-btn"></button>
+					<button id="dsn-313" class="dsn-snipet-btn"></button>
+				</div>
+				<div class="section group b-space-10 dsn-dark-field"> 
 					<div class="col-f span-40"><label class="indent left-5" for="dsn-el-tag-name">Name :</label></div>
-					<div class="col-f span-60"><input type="text" id="dsn-el-tag-name" name="dsn-el-tag-name" class="span-80" disabled></div>
+					<div class="col-f span-60"><input type="text" id="dsn-314" class="span-80" disabled></div>
 				</div>
 				<div class="section group b-space-10 dsn-dark-field">
 					<div class="col-f span-40"><label class="indent left-5" for="dsn-el-index">Type :</label></div>
-					<div class="col-f span-60"><input type="text" id="dsn-el-index" name="dsn-el-index" class="span-80" disabled></div>
+					<div class="col-f span-60">
+						<select id="dsn-315" class="span-80" disabled>
+						</select>
+					</div>
 				</div>
 				<div class="section group b-space-10 dsn-dark-field">
 					<div class="col-f span-40"><label class="indent left-5" for="dsn-el-siblings">Status :</label></div>
-					<div class="col-f span-60"><input type="text" id="dsn-el-siblings" name="dsn-el-siblings" class="span-80" disabled></div>
+					<div class="col-f span-60">
+						<select id="dsn-316" class="span-80" disabled>
+						</select>
+					</div>
 				</div>
 				<div class="section group b-space-25 dsn-dark-field">
 					<div class="col-f span-40"><label for="dsn-el-child-nodes">Module :</label></div>
-					<div class="col-f span-60"><input type="text" id="dsn-el-child-nodes" name="dsn-el-child-nodes" class="span-80" disabled></div>
+					<div class="col-f span-60"><input type="text" id="dsn-317" class="span-80" disabled></div>
 				</div>
 				<div class="section group span-80 dsn-vary-properties dsn-dark-field c-box">
 					<div class="span-100 t-space-10"><span class="box indent" style="line-height: 1.5rem;">Screen width</span></div>
@@ -608,6 +623,37 @@
 						<input id="dsn-305" class="span-6-of-7-f col-f" type="text" style="display:inline;border:none;" name="dsn-el-right" value="#c99a16">
 						<input id="dsn-306" class="span-1-of-7-f col-f" type="color" style="display:inline;border:none;" name="dsn-el-right" value="#c99a16">
 					</div>
+				</div>
+				<div id="dsn-318" class="dsn-node-tree">
+					<button class="left dsn-node-link-25" title="After this" data-pos="afterend">after</button>
+					<button class="left dsn-node-link-25" title="Before this" data-pos="beforebegin">before</button>
+					<button class="left dsn-node-link-25" title="Inside at begin" data-pos="afterbegin">in at begin</button>
+					<button class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">in at end</button>
+				</div>
+			</div>
+			<button class="collapse dns-collapse-button">Project</button>
+			<div class="collapse-content dsn-element-properties">
+				<div class="section group span-90 c-box dsn-dark-field t-space-15">
+					<div class="section group span-80 col-f">
+						<span class="col-f span-40" style="line-height: 1.5rem;">Set project</span>
+						<select id="dsn-319" class="col-f span-60">
+							<option value=""></option>
+						</select>
+					</div>
+					<div class="col-f span-20">
+						<button id="dsn-321" class="dsn-ctl-btn" style="margin: 0;"></button>
+					</div>
+				</div>
+				<div class="section group span-90 c-box dsn-dark-field dsn-vary-properties space-15 pad-15">
+					<div class="section group span-80 col-f">
+						<span class="col-f span-40" style="line-height: 1.5rem;">New project</span>
+						<input id="dsn-320" type="text" class="col-f span-60">
+					</div>
+					<div class="col-f span-20">
+						<button id="dsn-322" class="dsn-ctl-btn" style="margin: 0;"></button>
+					</div>
+					
+						
 				</div>
 			</div>
 		</section>
