@@ -5,7 +5,12 @@
  * 
  * @copyright Lorand Veres lorand.mast@gmail.com
  * @license MIT
- *
+ * 
+ * @ToDo 
+ *      @snipet
+ *              get snipet by name
+ *              get snipet colection
+ *              save snipet
  *
  * 
  *
