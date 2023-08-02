@@ -114,7 +114,21 @@ class dbConect extends DardConfig{
 		
 	}
 	
-	
+	public function stmt($table, $arg, $stmt, $data ) {
+		$bool = true; 
+		$argtext = '';
+		$query = '';
+		!empty($table) ? $argtext = "'".$table . "'," : $argtext ='';
+		foreach ( $arg as $key => $val) {
+			!$bool ? $arg[$key] = ", '". $val ."'" : $arg[$key] = "'". $val ."'";
+			$bool = false;
+			$argtext .= $arg[$key];
+		}
+		if(count($arg) === 0 ) 
+			$argtext = str_replace(",", "", $argtext );
+		$query = "CALL " . $stmt . "(" . $argtext . ");";
+		return $this -> selectDB($data, $query, TRUE, 'array');
+	}
 	
 	
 	private function prepareQuery($link, $query, $arg){
