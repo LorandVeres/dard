@@ -509,7 +509,7 @@ var $ = function () {
 		*/
 
 		el.constructor.prototype.addclass = function(newclass) {
-			if (this && isStr(newclass)) {
+			if (this && isStr(newclass) && !empty(newclass)) {
 				this.classList.add(newclass);
 			}
 			return this;
