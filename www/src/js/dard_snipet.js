@@ -183,6 +183,36 @@
 			//emptyFieldsValue();
 		}
 		
+		
+		/** Empty then
+		*   Populate the select option with data
+		*   @def [ optional ] object default first item {v: 'any', t: 'text to be inserted' }
+		*/
+		function fillSelectFields(urlarg, id ) {
+			let s = $(id), arg;
+			s.empty();
+			isSet(arguments[2] ) && ( arg = arguments[2]);
+			
+			function setSelect(r){
+				let p, o;
+				for( let i = 0; i < r.length; i++) {
+					p = r[i];
+					o = $('<option>', p.name).addattr('value', p.name);
+					if(isSet(arg) && p.name === arg.v)
+						o.addattr('selected');
+					s.append(o);
+				}
+			}
+			
+			$.get_json({
+				url: 'snipet?a=' + urlarg,
+				callback: setSelect
+			});
+		}
+		
+		fillSelectFields('load-projects-name', '#dsn-319', {v:'sandbox',t:'sandbox'} );
+		fillSelectFields('load-snipet-type', '#dsn-315');
+		fillSelectFields('load-snipet-status', '#dsn-316');
 	}
 	
 	/**
