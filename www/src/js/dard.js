@@ -937,7 +937,8 @@ $.constructor.prototype.snipetHandler = (function() {
 	*           recipient: element, // The recipient or adjacent element [ HTMLElement object ]
 	*           position: 'afterend' // [ optional ] one of ( afterbegin, beforeend, beforebegin, afterend )
 	*           },
-	*  @param contentArray // [ optional ] The array for the content. 
+	*  @param contentArray // [ optional ] The array for the content. Handy for large snipets, with miss match text to be included
+	*  @param contentText // [ optional ] The text for the content. Handy in loops, with a liniar array
 	*
 	*  @Use
 	*  snipetHandler.sett.call(
@@ -965,13 +966,15 @@ $.constructor.prototype.snipetHandler = (function() {
 			recipient_Element = this.recipient, // Recipient or reference element
 			el_Position, // The element position when adjacent element is used
 			contentArray = [], // Array elements to be inserted in the obj.e_content based on data-dsn-id attribute value 
+			contentText = '', // String to be inserted in the obj.e_content based on data-dsn-id attribute value. Good for small snipets in loop 
 			inserted = false, // Once adjacent element is set it will became true, used as a switch variable
 			arrayElements = {},
 			oneElement,
 			j = 0,
 			stopBool = false;
 			isSet( this.position ) && ( el_Position = this.position ) ;
-			arg.length > 0 && ( contentArray = arg[0] );
+			arg.length > 0 && ( isArray(arg[0]) && ( contentArray = arg[0] ) );
+			arg.length > 0 && ( isStr(arg[0]) && ( contentText = arg[0] ) );
 			
 		const e_attr = 'e_attr',
 			e_content = 'e_content';
@@ -1031,8 +1034,11 @@ $.constructor.prototype.snipetHandler = (function() {
 						set_Attributes(obj.e_attr, element);
 					if(obj.keyIn(e_content)){
 						if(isStr(obj.e_content)){
-							if((obj.e_content === "" || obj.e_attr.hasOwnProperty('data-dsn-txt-id')) && isSet( contentArray ))
-								set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
+							if( obj.e_content === "" || ( obj.e_attr.keyIn('data-dsn-txt-id') || obj.e_attr.keyIn('data-dsntext') ) ) {
+								isSet( contentArray ) && set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
+								isSet( contentText ) && set_TextNode( contentText , element ); // simple for small snipets in loop
+							}
+								//set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
 							if(obj.e_content !== "")
 								set_TextNode(obj.e_content, element);
 						}
