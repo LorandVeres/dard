@@ -1319,7 +1319,7 @@ $.constructor.prototype.collapse = function() {
 */
 
 $.constructor.prototype.tabs = function() {
-	let obj = arguments[0],
+	let obj = arguments[0], defaultTab,
 		defaultContent, tab = [], content = [];
 		
 	function grabEl(){
@@ -1341,17 +1341,19 @@ $.constructor.prototype.tabs = function() {
 	function showDefault() {
 		let stopBool = true;
 		if( isSet(obj.default)) {
-			if( !isBool(obj.default)) {
-				defaultContent = grabEl.call(obj.default)[0];
+			if( !isBool(obj.default) && isNum(obj.default)) {
+				defaultContent = content[obj.default];
+				defaultTab = tab[obj.default];
 			}
 			if( isBool(obj.default) && obj.default === false ) {
 				stopBool = false;
 			}
 		}else{ 
 			defaultContent = content[0];
+			defaultTab = tab[0];
 		}
 		hideContent.call(content);
-		stopBool ? defaultContent.style.display = "block" : defaultContent.style.display = "none";
+		stopBool ? ( ( defaultContent.style.display = "block" ) && defaultTab.classList.toggle(obj.active) ) : defaultContent.style.display = "none";
 	}
 	
 	function hideContent() {
