@@ -1000,7 +1000,7 @@ $.constructor.prototype.snipetHandler = (function() {
 		walk_Content = function(content_obj, parent_El){
 			if(content_obj.keyIn(e_content)){
 				for (let prop in content_obj.e_content){
-					set_Element(content_obj.e_content[prop], parent_El);console.log(content_obj.e_content[prop]);
+					set_Element(content_obj.e_content[prop], parent_El);
 				};
 			}
 			if (!content_obj.keyIn(e_content)){
@@ -1026,7 +1026,11 @@ $.constructor.prototype.snipetHandler = (function() {
 		};
 
 		set_Element = function(obj, parent_El){
-			! isSet(obj) && console.warn( 'Dard warn: snipetHandler.sett first parameter is not an object');
+			if ( !isSet(obj) || !isSet(parent_El) ) {
+				! isSet(obj) && console.warn( 'Dard warn: snipetHandler.sett first parameter is not an object');
+				! isSet(parent_El) && console.warn( 'Dard warn: snipetHandler.sett second (or recipient) parameter is not an object');
+				return;
+			} 
 			if(isSet(obj.e_type) && (obj.e_type === 1 || obj.e_type === 3)){
 				if(obj.e_type === 1){
 					const element = document.createElement(obj.e_name);
