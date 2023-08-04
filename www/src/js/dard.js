@@ -1384,8 +1384,13 @@ $.constructor.prototype.tabs = function() {
 	isSet(obj.tab) && ( tab = grabEl.call(obj.tab) );
 	isSet(obj.content) && ( content = grabEl.call(obj.content) );
 	
-	hideContent.call(content);
-	showDefault();
-	actOn();
-
+	if( content.length > 0 && content.length == tab.length) {
+		hideContent.call(content);
+		showDefault();
+		actOn();
+	}else {
+		console.warn('Dard warn: $.tabs content 0 or tabs and content not equal in length');
+		return;
+	}
+	
 }
