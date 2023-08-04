@@ -842,7 +842,7 @@ $.constructor.prototype.snipetHandler = (function() {
 		snipet_JSON = {},
 		snipets = {};
 
-	/**
+	/** $.snipetHandler.gett
 	*  Creating an snipet object from an existing HTMLdom element from the document
 	*
 	*  @param el A DOM element
@@ -930,7 +930,7 @@ $.constructor.prototype.snipetHandler = (function() {
 		return block;
 	}
 
-	/**
+	/** $.snipetHandler.sett
 	*  Insert an HTML node in the document from a snipets object or JSON snipet string
 	*   @Need to be implemented a js event hook as for the text 
 	*  @param snipet {
@@ -1072,7 +1072,7 @@ $.constructor.prototype.snipetHandler = (function() {
 		}
 	};
 
-	/**
+	/** $.snipetHandler.get_http
 	*  Get via ajax a snipet from server, and store it or insert in a HTMLElement
 	*
 	*  @param object {
