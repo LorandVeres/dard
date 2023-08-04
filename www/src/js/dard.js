@@ -646,6 +646,30 @@ var $ = function () {
 				}
 			return this;
 		};
+		
+		/** stepup 
+		 * 
+		 * @param {*} num the number of steping upwards on the parents from nested elements
+		 * @param {*} func [ optional ] function to apply on that parent element
+		 *
+		 * @returns this if function is provided, otherwise the parent.parent-nth element
+		 *
+		 * @Use $('#dsn-317').stepup(2).style.visibility = "hidden";
+		 *      $('#dsn-317').stepup( 2, function(){ this.style.visibility = "visible" } );
+		 */
+		el.constructor.prototype.stepup = function(num) {
+			let p = this.parentElement, func;
+			for(let i = 1; i < num; i++) {
+				p = p.parentElement;
+			}
+			if( isSet(arguments[1]) ) {
+				func = arguments[1];
+				(isNum(num) && isFunc(func) ) && func.call(p);
+				return this;
+			}else {
+				return p;
+			}
+		}
 
 		return el;
 	}
