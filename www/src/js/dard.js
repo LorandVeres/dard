@@ -796,11 +796,16 @@ $.constructor.prototype.send_json = function() {
 		type : 'POST',
 		url : obj.url,
 		response : function(r) {
-			let newr = JSON.parse(r);
-			obj.keyIn('log') && console.log(newr); // for debuging
-			if(obj.keyIn('callback')){
-				if(isFunc( obj.callback)){
-					obj.callback(newr);
+			let newr;
+			if( ! (JSON.parse(JSON.stringify(r))) ){
+				console.warn('Dard warn: Received invalid JSON data from: ' + obj.url);
+			} else {
+				newr = JSON.parse(r);
+				obj.keyIn('log') && console.log(newr); // for debuging
+				if(obj.keyIn('callback')){
+					if(isFunc( obj.callback)){
+						obj.callback(newr);
+					}
 				}
 			}
 		},
@@ -839,11 +844,15 @@ $.constructor.prototype.get_json = function() {
 		url : obj.url,
 		response : function(r) {
 			let newobj;
-			newobj = JSON.parse(r);
-			obj.keyIn('log') && console.log(r); // for debuging
-			if(obj.keyIn('callback')){
-				if(isFunc( obj.callback)){
-					obj.callback(newobj);
+			if( ! (JSON.parse(JSON.stringify(r))) ){
+				console.warn('Dard warn: Received invalid JSON data from: ' + obj.url);
+			} else {
+				newobj = JSON.parse(r);
+				obj.keyIn('log') && console.log(r); // for debuging
+				if(obj.keyIn('callback')){
+					if(isFunc( obj.callback)){
+						obj.callback(newobj);
+					}
 				}
 			}
 		},
@@ -1135,14 +1144,18 @@ $.constructor.prototype.snipetHandler = (function() {
 			response : function(r) {
 				let snipet = {};
 				isSet(obj.log) && console.log(r);
-				snipet.form = JSON.parse(r);
-				if (obj.keyIn('el')){
-					obj.keyIn('pos')  ? self.sett.call( { 'obj':snipet.form , recipient:obj.el, position:obj.pos}) : self.sett.call({ 'obj':snipet.form , recipient:obj.el} );
-				}
-				// All good and works, tested. Store the snipet
-				// declaring the external storing should be as simple as: function(name, snipet){ desiredObject[name] = snipet }
-				if(obj.keyIn('name') && isFunc(obj.fn)){
-					obj.fn(obj.name, snipet.form);
+				if( ! (JSON.parse(JSON.stringify(r))) ){
+					console.warn('Dard warn: Received invalid JSON data from: ' + obj.url);
+				} else {
+					snipet = JSON.parse(r);
+					if (obj.keyIn('el')){
+						obj.keyIn('pos')  ? self.sett.call( { 'obj':snipet , recipient:obj.el, position:obj.pos}) : self.sett.call({ 'obj':snipet , recipient:obj.el} );
+					}
+					// All good and works, tested. Store the snipet
+					// declaring the external storing should be as simple as: function(name, snipet){ desiredObject[name] = snipet }
+					if(obj.keyIn('name') && isFunc(obj.fn)){
+						obj.fn(obj.name, snipet.form);
+					}
 				}
 			},
 			json : false,
