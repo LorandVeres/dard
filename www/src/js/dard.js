@@ -1304,7 +1304,8 @@ $.constructor.prototype.collapse = function() {
 *       @content : Class name for content OR an array of id's
 *       @active : Class name for active buttons 
 *       @event : Type of event to attache for the tab button
-*       @default [ optional ] The content to be displayed at start. Default to the first element on list. Or FLASE won't show anything
+*       @default: [ optional ] The index of content to be displayed at start. Default to the first element on list. Or FLASE won't show anything
+*       @func: [ optional ] additional function to activate upon click on the tab
 * }
 *
 * @NOTE The number of elements returned by obj.tab and obj.content has to be equal
@@ -1314,8 +1315,8 @@ $.constructor.prototype.collapse = function() {
 *
 * @return Void
 *
-* @Use $.tabs( { tab: 'classname',  content: 'otherclassname', active:'active', event:'click' } );
-* @use $.tabs( { tab:['dsn_110', 'dsn_107', 'dsn_108'],  content:["dsn_4", "dsn_7", "dsn_6"], active:'active', event:'click' } );
+* @Use $.tabs( { tab: 'classname',  content: 'otherclassname', active:'active', event:'click' , default:2} );
+* @use $.tabs( { tab:['dsn_110', 'dsn_107', 'dsn_108'],  content:["dsn_4", "dsn_7", "dsn_6"], active:'active', event:'click', default:0 } );
 */
 
 $.constructor.prototype.tabs = function() {
@@ -1375,6 +1376,7 @@ $.constructor.prototype.tabs = function() {
 				hideContent.call(content);
 				tab[i].classList.toggle(obj.active);
 				content[i].style.display = "block";
+				isSet(obj.callback) && isFunc(obj.callback) ? obj.callback.call(this) : null;
 			});
 		}
 	}
