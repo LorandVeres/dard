@@ -1323,9 +1323,14 @@ $.constructor.prototype.tabs = function() {
 		defaultContent, tab = [], content = [];
 		
 	function grabEl(){
-		let grabed = [];
-		( isStr(this) && this.test(/^\.{1}[a-z0-9\-\_\s]+$/i) ) && ( grabed = document.getElementsByClassName(this) );
-		if(isArray(this)){
+		let grabed = [], str, classREgx = /^[a-zA-Z]{1}[a-z0-9\-\_\s]+$/i; 
+		
+		if( !isArray(this) && this instanceof String) {
+			str = this.toString();
+			if(classREgx.test(str)) {
+				 ( str === obj.content || str === obj.tab ) && ( grabed = document.getElementsByClassName(str) )
+			} 
+		} else if(isArray(this)){
 			for ( let i = 0; i < this.length; i++) {
 				grabed[i] = document.getElementById(this[i]);
 			}
