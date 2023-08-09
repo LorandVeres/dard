@@ -119,6 +119,23 @@ class dsn_snipet extends FormCleaner {
 		echo json_encode( $res );
 	}
 	
+	private function get_project_data($dard) {
+		$obj = json_decode( file_get_contents('php://input'), true );
+		$data = $obj['data'];
+		$_SESSION['snippet-project'] = $data['name']; // temporary, will need checked for invalid  characters
+		$res = $dard -> stmt('', array($data['name']), 'getProject', $data['name']);
+		echo json_encode( $res );
+	}
+	
+	private function save_snippet($dard) {
+		$obj = json_decode( file_get_contents('php://input'));
+		$data = $obj->data;
+		isset($data->css) ? $css = "'".$data->css."'" : $css = ",''";
+		$data->project === 'dsn' ? $table_name = "" : $table_name = '_'. $data->project;
+		$params = array ( json_encode($data->body), $data->name, $data->type, $data->status, $data->css, $data->id );
+		$res = $dard -> stmt( $table_name, $params, 'saveSnippet', $data);
+		echo json_encode( $res );
+	}
 	
 }
 ?>
