@@ -130,6 +130,13 @@ class dbConect extends DardConfig{
 		return $this -> selectDB($data, $query, TRUE, 'array');
 	}
 	
+	// stmt small, no params just the function name. Good to select all fields
+	// or statements with no parameters
+	public function stmts ($arg){
+		$query = "CALL " . $arg . "();";
+		return $this -> selectDB('', $query, TRUE, 'array');
+	}
+	
 	
 	private function prepareQuery($link, $query, $arg){
 			
