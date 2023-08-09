@@ -171,13 +171,13 @@ class GetMyPage extends DardSession {
 	}
 
 	private function check_user_priv() {
-		$query = "SET @pagepriv = (SELECT HEX(`user_priv`) FROM `page` WHERE `id` = $this->current_page_id);";
+		$query = "SET @pagepriv = (SELECT `user_privi` FROM `page` WHERE `id` = $this->current_page_id);";
 		$user_id = '';
 		if(!$_SESSION['user_loged']){
-			$query .= "SET @userpriv = (SELECT HEX (`priv_flag`) FROM `user_group` WHERE `id` = 2);";
+			$query .= "SET @userpriv = (SELECT `priv_flag` FROM `u_group` WHERE `id` = 2);";
 		}elseif(isset($_SESSION['user_id'])){
 			$user_id = $_SESSION['user_id'];
-			$query .= "SET @userpriv = (SELECT HEX (`u_group`) FROM `user` WHERE `id` = $user_id );";
+			$query .= "SET @userpriv = (SELECT `u_groupi` FROM `user` WHERE `id` = $user_id );";
 		}else{
 			$this -> get_error_page('500');
 		}
