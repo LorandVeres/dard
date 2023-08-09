@@ -476,6 +476,23 @@ var $ = function () {
 			}
 			return this;
 		};
+		
+		/**
+		*  Toggle an attribute. If the attribute does not exit it will create one with the first param in list
+		*  @Param attr // the attribute name
+		*  @param item1 // first posible value 
+		*  @param item2 // second posible value
+		*  @Use .attrtoggle( 'href', 'good-page', 'bad-page' );
+		*/
+		
+		el.constructor.prototype.attrtoggle = function(attr, item1, item2) {
+			let att;
+			this.hasAttribute(attr) && ( att = this.getAttribute(attr) ) && this.removeAttribute(attr);
+			attr = document.createAttribute(attr);
+			att === item1 ? attr.value = item2 : attr.value = item1;
+			this.setAttributeNode(attr);
+			return this;
+		};
 
 		/**
 		*  Adds or change the value of an element, or if a callback is pased it
