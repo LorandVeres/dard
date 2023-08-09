@@ -62,7 +62,9 @@ class dsn_snipet extends FormCleaner {
 		}
 	}
 	
-	private function get_snipet_by_name($dard){
+	// This will return just the body of the snippet
+	// Use get_snipet_by_name for all snipet properties and body
+	private function get_snipet($dard){
 		if( isset( $dard -> url_arguments['name']) ) {
 			$name = str_replace('-', '_', $dard -> url_arguments['name'] );
 			$query = "SELECT `body` FROM `snipets` WHERE `name` = '$name';";
@@ -70,6 +72,17 @@ class dsn_snipet extends FormCleaner {
 		}else{
 			echo json_encode('no name parameter set up');
 		}
+	}
+	
+	// If snippet exist will return all snippet properties and body
+	private function get_snippet_by_name($dard){
+		$obj = json_decode( file_get_contents('php://input') );
+		$data = $obj->data;
+		$data->project === 'dsn' ? $table_name = "dsn" : $table_name = 'dsn_'. $data->project;
+		$query = "SELECT * FROM `". $table_name ."` WHERE `name` = '$data->name';";
+		$res = $dard ->selectDB($data, $query, TRUE, 'array');
+		$res['body'] = json_decode($res['body']);
+		echo json_encode($res);
 	}
 	
 	private function load_tags($dard) {
