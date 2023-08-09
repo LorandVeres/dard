@@ -150,5 +150,20 @@ class dsn_snipet extends FormCleaner {
 		echo json_encode( $res );
 	}
 	
+	private function responsive ($dard, $tag) {
+		if ( $_SERVER['REQUEST_METHOD']  === 'POST'){
+			$obj = json_decode( file_get_contents('php://input'), true);
+			$data = $obj['data'];
+			$body = json_encode($data['body']);
+			$query = "UPDATE `dsn` SET `body`='". $body . "' WHERE `name` = 'responsive-stash';";
+			$res = $dard ->selectDB($body, $query, TRUE, 'array');
+			echo json_encode($res);//var_dump($body);
+		} else {
+			$query = "SELECT `body` FROM `dsn` WHERE `name` = 'responsive-stash';";
+			$res = $dard ->selectDB('', $query, TRUE, 'array') ;
+			$body = json_decode($res['body'], true);
+			$tag -> print_doc($this -> snipet_json_to_html( $body, $tag), 2);
+		}
+	}
 }
 ?>
