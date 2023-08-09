@@ -35,7 +35,7 @@ class modules extends FormCleaner {
 	 */
 	public function print_modules_combo_boxes($dard, $tag) {
 		$modules_all = $this -> select_all_modules($dard);
-		$box = $tag -> tag('div', 'class="section group max_row_9 center_box"', '');
+		$box = $tag -> tag('div', 'class="section group max_row_9 c-box"', '');
 		for ($i = 0; $i < count($modules_all); $i++) {
 			$module_id = $modules_all[$i]["id"];
 			$col = $tag -> tag('div', 'class="module_comp_box"', '');
@@ -112,7 +112,7 @@ class modules extends FormCleaner {
 				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15;";
 				echo trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0");
 			}else{
-				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15 AND `name` = 'add_module';";
+				$query = "SELECT `body` FROM `snipets` WHERE `page_id` = 15 AND `name` = 'add_module';";
 				$snipet = json_decode(trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0"), TRUE);
 				$tag -> print_doc($this -> snipet_json_to_html($snipet, $tag), 4);
 			}
