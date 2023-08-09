@@ -1078,9 +1078,10 @@ $.constructor.prototype.snipetHandler = (function() {
 		};
 
 		set_Element = function(obj, parent_El){
-			if ( !isSet(obj) || !isSet(parent_El) ) {
-				! isSet(obj) && console.warn( 'Dard warn: snipetHandler.sett first parameter is not an object');
-				! isSet(parent_El) && console.warn( 'Dard warn: snipetHandler.sett second (or recipient) parameter is not an object');
+			if ( (!isSet(obj) || obj === null ) || !isObj(obj) || !isSet(parent_El) ) {
+				! isSet(obj) && console.warn( 'Dard warn: snipetHandler.sett first parameter is not an object... exiting');
+				! isSet(parent_El) && console.warn( 'Dard warn: snipetHandler.sett second (or recipient) parameter is not an object... exiting');
+				obj === null && console.warn( 'Dard warn: snipetHandler.sett first parameter is null... exiting');
 				return;
 			} 
 			if(isSet(obj.e_type) && (obj.e_type === 1 || obj.e_type === 3)){
@@ -1111,7 +1112,27 @@ $.constructor.prototype.snipetHandler = (function() {
 				// Dealing with Array like object 
 				for( let prop in obj){
 					if(isObj(obj[prop]) && obj[prop].hasOwnProperty('e_type')){
-						arrayElements[j] = set_Element(obj[prop], parent_El);
+						// Setting the corect order for array like object with position
+						if (isSet(el_Position)) {
+							if( el_Position === 'afterend' && inserted  && j > 0) {
+								inserted = false;
+								arrayElements[j] = set_Element(obj[prop], arrayElements[j-1]);
+							} else if( el_Position === 'afterbegin' && inserted  && j > 0) {
+								el_Position = 'afterend';
+								inserted = false;
+								arrayElements[j] = set_Element(obj[prop], arrayElements[j-1]);
+								el_Position = 'afterbegin';
+							} else if( el_Position === 'beforebegin' && inserted  && j > 0) {
+								el_Position = 'afterend';
+								inserted = false;
+								arrayElements[j] = set_Element(obj[prop], arrayElements[j-1]);
+								//el_Position = 'beforebegin';
+							}else { 
+								arrayElements[j] = set_Element(obj[prop], parent_El);
+							}
+						}else {
+							arrayElements[j] = set_Element(obj[prop], parent_El);
+						}
 						j++;
 						stopBool = true;
 					}
