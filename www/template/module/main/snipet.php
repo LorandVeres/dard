@@ -16,7 +16,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		if($dard -> ajax ) {
 			$snipet = new dsn_snipet ($dard, $tag);
 		} else {
-			include_once 'template/module/main/dsn.php';
+			if(isset($dard -> url_arguments['a']) ){
+				$dard -> url_arguments['a'] !== 'responsive' ? include_once 'template/module/main/dsn.php' : $snipet = new dsn_snipet ($dard, $tag);
+			}else{
+				include_once 'template/module/main/dsn.php';
+			}
 		}
 		
 		break;
