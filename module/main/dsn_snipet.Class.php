@@ -9,18 +9,21 @@ class dsn_snipet extends FormCleaner {
 	use snipetHandler;
 	public $modules;
 	private $posible_actions = array(
-		'add_snipet',
+		'add_snippet',
 		'add_project',
-		'update_snipet',
+		'update_snippet',
 		'get_snipet',
-		'delete_snipet',
+		'get_project_data',
+		'save_snippet',
+		'delete_snippet',
 		'snipets',
-		'get_snipet_by_name',
+		'get_snippet_by_name',
 		'load_dummy_text',
 		'load_projects_name',
-		'load_snipet_type',
-		'load_snipet_status',
-		'load_tags'
+		'load_snippet_type',
+		'load_snippet_status',
+		'load_tags',
+		'responsive'
 		);
 	private $action;
 
@@ -103,13 +106,13 @@ class dsn_snipet extends FormCleaner {
 		echo json_encode($res);
 	}
 	
-	private function load_snipet_type($dard) {
+	private function load_snippet_type($dard) {
 		$query = "SHOW COLUMNS FROM `snipets` LIKE 'type';";
 		$res = $dard ->selectDB('', $query, TRUE, 'array');
 		echo json_encode( $this -> prepare_db_enum_field_to_json($res['Type']) );
 	}
 	
-	private function load_snipet_status($dard) {
+	private function load_snippet_status($dard) {
 		$query = "SHOW COLUMNS FROM `snipets` LIKE 'status';";
 		$res = $dard ->selectDB('', $query, TRUE, 'array');
 		echo json_encode( $this -> prepare_db_enum_field_to_json($res['Type']) );
@@ -122,7 +125,7 @@ class dsn_snipet extends FormCleaner {
 		echo json_encode( $res );
 	}
 
-	private function add_snipet($dard) {
+	private function add_snippet($dard) {
 		$obj = json_decode( file_get_contents('php://input'), true );
 		$data = $obj['data'];
 		isset($data['css']) ? $css = "'".$data['css']."'" : $css = ",''";
