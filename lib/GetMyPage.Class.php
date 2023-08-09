@@ -188,10 +188,28 @@ class GetMyPage extends DardSession {
 		}
 	}
 
+	private function set_snippet_page_head_properties() {
+		// temporary patch 
+		if ( $this -> top_page_name === 'snippet' && isset($_SESSION['snippet-project'] ) ) {
+			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
+				$this -> link_tags[] = array(
+					"rel"=>"stylesheet",
+					"type"=>"text/css",
+					"sizes"=>NULL,
+					"title"=>NULL,
+					"href"=>"/src/css/dsn/". $_SESSION['snipet-project'] .".css",
+					"media"=>NULL );
+				$this -> all_js_scripts = array();
+				array_push( $this -> all_js_scripts, array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body") );
+			}
+		}
+	}
+	
 	private function set_page_head_properties($result) {
 		count($result) >= 1 ? $this -> meta_tags = $result[0] : '';
 		count($result) >= 2 ? $this -> link_tags = $result[1] : '';
 		count($result) >= 3 ? $this -> all_js_scripts = $result[2] : '';
+		$this -> set_snippet_page_head_properties();
 	}
 	
 	private function set_js_script_tags() {
