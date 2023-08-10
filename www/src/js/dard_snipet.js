@@ -852,20 +852,22 @@
 	/**
 	*************************************
 	* Removing the current element
-	* Set the curent element to the parent element, if not exist to the first child of snipet container
+	* Set the curent element to the parent element, if not exist try the first child of the snipet container
 	* Removing the event listeners too.
 	* @returns the new element
 	*/
 	$d.elDroped = function(){
-		if(confirm('Would you, Realy want to  delete this element ?') == true ){
+		let nextel;
+		if(confirm('Would you, Realy want to delete this element ?') == true ){
 			if( el ) {
-				el.removeEventListener('click', snipetClickable);
-				el.removeEventListener('click', snipetMoveout);
-				el.removeEventListener('click', snipetMoveover);
-				snb.firstElementChild && ep.removeChild(el);
-				!ep.classList.contains('dsn-body') ? 
-					$d.change.call($( ep )) : 
-					snb.firstElementChild && $d.change.call($( snb.firstElementChild ));
+				$d.listenerRemover.call(el);
+				el.parentElement.removeChild(el);
+				if(!ep.classList.contains('dsn-body') ) {
+					nextel = ep;
+				}else {
+					snb.firstElementChild ? nextel = snb.firstElementChild : nextel = undefined;
+				} 
+				nextel !== undefined ? $d.change.call(nextel) : el = undefined;
 			}
 		}
 	};
