@@ -197,7 +197,7 @@ class GetMyPage extends DardSession {
 					"type"=>"text/css",
 					"sizes"=>NULL,
 					"title"=>NULL,
-					"href"=>"/src/css/dsn/". $_SESSION['snipet-project'] .".css",
+					"href"=>"/src/css/dsn/". $_SESSION['snippet-project'] .".css",
 					"media"=>NULL );
 				$this -> all_js_scripts = array();
 				array_push( $this -> all_js_scripts, array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body") );
