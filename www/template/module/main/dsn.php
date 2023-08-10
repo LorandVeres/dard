@@ -1,10 +1,18 @@
 <?php include_once '../module/main/modules.Class.php'; ?>
 <div id="dsn_1" class="dsn-page">
 	<div id="dsn_2" class="dsn-header">
-		<button id="dsn_107" class="dsn-ctl-btn"></button>
-		<button id="dsn_108" class="dsn-ctl-btn"></button>
-		<button id="dsn_109" class="dsn-ctl-btn"></button>
-		<button id="dsn_110" class="dsn-ctl-btn"></button>
+		<div class="span-20 col-f">
+			<span class="dsn-project">Project:</span><span id="dsn-project-title">Sandbox</span>
+		</div>
+		<div class="col-f span-60">
+			<div id="dsn-notifications"><p id="dsn-notifications-text">Welcome to the fun</p><p id="dsn-snipet-name"></p></div>
+		</div>
+		<div class="span-20 col-f">
+			<button id="dsn_107" class="dsn-ctl-btn"></button>
+			<button id="dsn_108" class="dsn-ctl-btn"></button>
+			<button id="dsn_109" class="dsn-ctl-btn"></button>
+			<button id="dsn_110" class="dsn-ctl-btn"></button>
+		</div>
 	</div>
 	<div class="section group span-100">
 		<div id="dsn_3" class="col-r dsn-side-menu">
@@ -579,14 +587,41 @@
 		<section id="dsn_6" class="span-100 b-space-15">
 			<button class="collapse dns-collapse-button">Snipet</button>
 			<div class="collapse-content dsn-element-properties">
-				<div class="section group b-space-15 dsn-dark-field">
-					<button id="dsn-307" class="dsn-snipet-btn"></button>
-					<button id="dsn-308" class="dsn-snipet-btn"></button>
-					<button id="dsn-309" class="dsn-snipet-btn"></button>
-					<button id="dsn-310" class="dsn-snipet-btn"></button>
-					<button id="dsn-311" class="dsn-snipet-btn"></button>
-					<button id="dsn-312" class="dsn-snipet-btn"></button>
-					<button id="dsn-313" class="dsn-snipet-btn"></button>
+				<div class="section group span-100">
+					<button id="dsn-326" class="dsn-snipet-tab col-f span-1-of-3-f">Snippet</button>
+					<button id="dsn-327" class="dsn-snipet-tab col-f span-1-of-3-f">Download</button>
+					<button id="dsn-328" class="dsn-snipet-tab col-f span-1-of-3-f">Stash</button>
+				</div>
+				
+				<!-- Snipet settings -->
+				
+				<div class="dsn-snipet-tab-content">
+					<div class="section group b-space-15 dsn-dark-field">
+						<button id="dsn-307" title="Unlock fields" class="dsn-307 dsn-snipet-btn"></button>
+						<button id="dsn-308" title="Empty fields" class="dsn-308 dsn-snipet-btn"></button>
+						<button id="dsn-310" title="Save" class="dsn-snipet-btn"></button>
+						<button id="dsn-311" title="Add new" class="dsn-snipet-btn"></button>
+						<button id="dsn-313" title="Clear screen" class="dsn-snipet-btn"></button>
+					</div>
+				</div>
+				<div class="dsn-snipet-tab-content">
+					<div class="section group b-space-15 dsn-dark-field">
+						<button id="dsn-324" title="Unlock fields" class="dsn-307 dsn-snipet-btn"></button>
+						<button id="dsn-325" title="Empty fields" class="dsn-308 dsn-snipet-btn"></button>
+						<button id="dsn-309" title="Download" class="dsn-snipet-btn"></button>
+						<button id="dsn-323" title="Apply extension" class="dsn-snipet-btn"></button>
+						<button id="dsn-312" title="Edit this" class="dsn-snipet-btn"></button>
+					</div>
+				</div>
+				<div class="dsn-snipet-tab-content">
+					<div class="section group b-space-15 dsn-dark-field">
+						<button title="Unlock fields" class="dsn-307 dsn-snipet-btn"></button>
+						<button title="Empty fields" class="dsn-308 dsn-snipet-btn"></button>
+						<button id="dsn-329" title="Stash selected" class="dsn-snipet-btn"></button>
+						<button id="dsn-330" title="Stash all" class="dsn-snipet-btn"></button>
+						<button id="dsn-331" title="Create new" class="dsn-snipet-btn"></button>
+						<button id="dsn-332" title="Restore" class="dsn-snipet-btn"></button>
+					</div>
 				</div>
 				<div class="section group b-space-10 dsn-dark-field"> 
 					<div class="col-f span-40"><label class="indent left-5" for="dsn-el-tag-name">Name :</label></div>
@@ -606,17 +641,29 @@
 						</select>
 					</div>
 				</div>
-				<div class="section group b-space-25 dsn-dark-field">
-					<div class="col-f span-40"><label for="dsn-el-child-nodes">Module :</label></div>
-					<div class="col-f span-60"><input type="text" id="dsn-317" class="span-80" disabled></div>
+				<div class="section group b-space-25 dsn-dark-field" style="visibility: hidden;">
+					<div class="col-f span-40"><label for="dsn-el-child-nodes">Project :</label></div>
+					<div class="col-f span-60">
+						<select id="dsn-317" class="span-80" disabled>
+						</select>
+					</div>
 				</div>
+				
+				<!-- Enviro settings -->
+				
 				<div class="section group span-80 dsn-vary-properties dsn-dark-field c-box">
-					<div class="span-100 t-space-10"><span class="box indent" style="line-height: 1.5rem;">Screen width</span></div>
+					<div class="section group span-100 t-space-10 b-space-20">
+						<span class="col-f span-80 indent-05" style="line-height: 1.5rem;">Screen width</span>
+						<span class="col-f span-20"><input id="dsn-304" type="text" class="span-70 right" style="text-align:right" placeholder="px"></span>
+						
+					</div>
 					<div class="section group span-100" style="height: 2.6rem;">
-						<span class="col span-1-of-4"><button id="dsn-303" title="monitor" class="dsn-enviro-btn dsn-monitor-btn "></button></span>
-						<span class="col span-1-of-4"><button id="dsn-302" title="tablet" class="dsn-tablet-btn dsn-enviro-btn"></button></span>
-						<span class="col span-1-of-4"><button id="dsn-301" title="phone" class="dsn-enviro-btn dsn-smartphone-btn "></button></span>
-						<span class="col span-1-of-4" style="margin: .5rem auto .5rem 1.6%"><input id="dsn-304" type="text" class="span-60" style="text-align:right" placeholder="px"></input></span>
+						<span class="col span-1-of-6"><button id="dsn-334" title="Responsive mode" class="dsn-enviro-btn dsn-responsive-mode"></button></span>
+						<span class="col span-1-of-6"><button class="dsn-enviro-btn " style="visibility: hidden;"></button></span>
+						<span class="col span-1-of-6"><button id="dsn-333" title="full screen" class="dsn-enviro-btn dsn-monitor-btn "></button></span>
+						<span class="col span-1-of-6"><button id="dsn-303" title="working size" class="dsn-enviro-btn dsn-monitor-btn "></button></span>
+						<span class="col span-1-of-6"><button id="dsn-302" title="tablet" class="dsn-tablet-btn dsn-enviro-btn"></button></span>
+						<span class="col span-1-of-6"><button id="dsn-301" title="phone" class="dsn-enviro-btn dsn-smartphone-btn "></button></span>
 					</div>
 					<div class="span-100 t-space-10"><span class="box indent" style="line-height: 1.5rem;">Background color</span></div>
 					<div class="section group span-100 c-box b-space-10" style="border: 1px solid #111;">
@@ -631,6 +678,9 @@
 					<button class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">in at end</button>
 				</div>
 			</div>
+			
+			<!-- Project settings -->
+			
 			<button class="collapse dns-collapse-button">Project</button>
 			<div class="collapse-content dsn-element-properties">
 				<div class="section group span-90 c-box dsn-dark-field t-space-15">
