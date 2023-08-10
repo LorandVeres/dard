@@ -101,6 +101,26 @@
 	
 	};
 	
+	// Pushing text in notifications bar
+	function pushNotes() {
+		let arg = arguments[0], box = $('#dsn-notifications-text'), bg = $('#dsn-notifications');
+		isSet(arg) && box.ihtml(capitalize( arg ) );
+		bg.style.border = '1px solid #b0ff22';//#f23a01';
+		setTimeout( () =>  bg.style.border = '1px solid #424242', 800);
+	}
+	
+	// Pushing current snipet name in notifications bar
+	function pushName() {
+		let arg = arguments[0], box = $('#dsn-snipet-name');
+		isSet(arg) && !empty(arg) ? box.ihtml ( capitalize( arg )  ) : empty(arg) && box.ihtml("") && box.append($("<span>", "can't see me").css({'visibility':'hidden'}));
+	}
+	
+	// Pushing current snipet name in notifications bar
+	function pushProject() {
+		let arg = arguments[0], box = $('#dsn-project-title');
+		isSet(arg) && box.ihtml ( capitalize( arg )  );
+	}
+	
 	// Adjusting the work enviroment width:  Mobile, tablet, monitor, full screen view or a custom width
 	// Total menu width = scrollWidth + left margin included
 	function screenEnviro() {
