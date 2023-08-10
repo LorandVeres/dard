@@ -162,7 +162,7 @@
 		}
 		
 		function  selectCustom() {
-			setProperties(this.value);
+			!empty(this.value) ? setProperties(this.value) : setProperties(monitorWidth);
 		}
 		
 		function selectFullScreen (){
@@ -186,6 +186,46 @@
 			color = v;
 		}
 		
+		function reponsiveMode(){
+			let editable;
+			if(this.classList.contains('active') ){
+				setProperties(monitorWidth);
+				$('.dsn-body').empty();
+				editable = $.snipetHandler.sett.call( { obj:$n.c.body, recipient: $('.dsn-body'), position:'beforeend' } );
+				$d.snipetListener.call(editable);
+				pushNotes("Edit mode activated...");
+			} else if( !this.classList.contains('active')) { 
+				el && el.classList.contains('dsn-active') && el.classList.remove('dsn-active');
+				el && el.classList.contains('dsn-hover') && el.classList.remove('dsn-hover');
+				el && ( el = undefined );
+				$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
+				$d.listenerRemover.call($('.dsn-body'));
+				$('.dsn-body').empty();
+				$.send_json({
+					url: 'snippet?a=responsive',
+					data: { body: $n.c.body},
+					callback: function(r){
+						setTimeout( (r == null && framing()) , 200);
+					}
+				});
+				pushNotes("Responsive mode activated...");
+			}
+			$(this).attrtoggle('title', 'Responsive mode', 'Edit mode') ;
+			this.classList.toggle('active');
+		}
+		
+		function framing () {
+			let fr, attr = {};
+			attr = {
+				id: 'dsn-frame',
+				src: 'snippet?a=responsive',
+				title: 'Mobile frame',
+				style: "min-height:100%;width:100%;border:none;"
+			};
+			fr = $('<iframe>').addattrlist(attr);
+			$('#dsn_5').append( fr );
+		}
+		
 		$('#dsn-301').addEventListener('click', selectMobile);
 		$('#dsn-302').addEventListener('click', selectTablet);
 		$('#dsn-303').addEventListener('click', selectMonitor);
@@ -193,6 +233,7 @@
 		$('#dsn-306').addEventListener('change', watchColorPicker);
 		//$('#dsn-306').addEventListener('input', watchColorPicker);
 		$('#dsn-305').addEventListener('change', watchColorField);
+		$('#dsn-334').addEventListener('click', reponsiveMode);
 		
 		snb && ( snb.style.width = nowWidth );
 	}
