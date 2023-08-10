@@ -666,7 +666,7 @@
 	 *  $d.snipetListener.call(bbg);
 	 *
 	 */
-		
+	 
 	function snipetMoveover(e){
 		e.stopPropagation();
 		this.classList.toggle('dsn-hover');
@@ -835,19 +835,19 @@
 	
 	 /** Move to the first element child */
 	 
-	$d.goToFirstKid = function(){ if(el.firstElementChild) $d.change.call(el.firstElementChild); };
+	$d.goToFirstKid = function(){ if(el && el.firstElementChild) $d.change.call(el.firstElementChild); };
 	
 	/** Move to parent element. Stops before exiting the snipet container */
 	
-	$d.goToParent = function(){ if(el.parentElement && !el.parentElement.classList.contains("dsn-body") ) $d.change.call(el.parentElement); };
+	$d.goToParent = function(){ if(el && el.parentElement && !el.parentElement.classList.contains("dsn-body") ) $d.change.call(el.parentElement); };
 	
 	/** Move to the younger sibling DOWN :) */
 	
-	$d.goToYoungerBrother = function( ){ if(el.nextElementSibling) $d.change.call(el.nextElementSibling); };
+	$d.goToYoungerBrother = function( ){ if(el && el.nextElementSibling) $d.change.call(el.nextElementSibling); };
 	
 	/** Move to the older sibling UP :) */
 	
-	$d.goToOlderBrother = function(){ if(el.previousElementSibling) $d.change.call(el.previousElementSibling); };
+	$d.goToOlderBrother = function(){ if(el && el.previousElementSibling) $d.change.call(el.previousElementSibling); };
 	
 	/**
 	*************************************
@@ -955,7 +955,7 @@
 			showObj = { snipet:{ } }, // the object passed to showAttr {obj, arr, datatype, datavalue, callback}
 			bool = false, bool1 = false, // Do not touch! true once we have the listeners set up
 			reseting = false, // used to pause the attributes change while reseting listAttr
-			at = { ar:[], rq:[], cl:[], cu:{}, all:{ } };
+			at = { ar:[], rq:[], exp:[], cl:[], cu:{}, all:{ } };
 		
 		
 		showObj.snipet.obj = $n.customAttribute;
@@ -1032,8 +1032,9 @@
 			
 			// Generete required attributes array, including the id and title
 			function bond() {
-				at.rq = []; at.rq = [ 'id', 'title']; // an initial value set, as we have checks against it's lenght
+				at.rq = []; at.rq = [ 'id', 'title']; at.exp = [];// an initial value set, as we have checks against it's lenght
 				if(isSet(elStruct[elName])) {
+					at.exp = elStruct[elName].exAttr;
 					at.rq = arrayMerge( at.rq , elStruct[elName].reqAttr, elStruct[elName].exAttr );
 				}
 			}
@@ -1057,7 +1058,7 @@
 			
 			// add the attribute, and change color in menu
 			function setAttr(attr, val, s){
-				el.setAttribute( attr, val);
+				empty(val) || val === "" ? el.setAttributeNode(document.createAttribute( attr )) : el.setAttribute( attr, val); 
 				s.previousElementSibling.style.color = "#0a9c05";
 			}
 			
@@ -1111,6 +1112,10 @@
 						i < 2 && ( field = parent.children[i] );
 						if( i > 1) {
 							field = $.snipetHandler.sett.call(snipet, [ capitalize(at.rq[i])+' :' ] ) ;
+							// First expected attribute div will have an extra space from required
+							if( isSet(at.exp) && at.exp.length > 0 ){
+								at.rq[i] === at.exp[0] && field.classList.add('dsn-vary-properties-top');
+							}
 							field.children[1].addEventListener('change', listen);
 							fieldsAttr.call(field, i);
 						}
@@ -1324,9 +1329,9 @@
 				if (!empty(this.v) ) {
 					fields[this.i].e.placeholder = "name here" ;
 					if( checks(this.v, value ) ){
-						fields[i].e.value = "";console.log(fields[i].e);
+						fields[i].e.value = "";
 						fields[this.i-1].e.value = "";
-					}console.log(this.e);
+					}
 				} 
 			}
 			/**
@@ -1334,7 +1339,7 @@
 			*   Clear the input fields once a atttribute/name pair has been added
 			*/
 			if(this.d === "attr-value"){
-				i = this.i - 1;console.log(fields);
+				i = this.i - 1;
 				name = fields[i].e.value
 				if( !empty(this.v) ) {
 					if(checks(name, this.v )) {
@@ -1388,7 +1393,7 @@
 			return fields;
 		}
 		
-		/**
+		/**snipets
 		 *  It sets the event listeners at this time for class input and the 2 input fields
 		 *  for custom attributes
 		 */
@@ -1490,7 +1495,7 @@
 			}
 			$.snipetHandler.get_http(
 				{
-					url: 'snipet?a=get-snipet-by-name&name=' + snipetName,
+					url: 'snippet?a=get-snipet-by-name&name=' + snipetName,
 					name: snipetName,
 					fn: homeSnipet
 					//el:$('#dsn_5')
@@ -1502,7 +1507,7 @@
 		function get_Insert_Snipet(snipetName){
 			$.snipetHandler.get_http(
 				{
-					url: 'snipet?a=get-snipet-by-name&name=' + snipetName,
+					url: 'snippet?a=get-snipet-by-name&name=' + snipetName,
 					el: el,
 					pos: settings.layoutPosition
 				}
@@ -1511,7 +1516,7 @@
 		
 		// Setting up elStruct with elements and attributes
 		function getHttpTags(){
-			function homeTags(name, snipet_obj){
+			function homeTags( name, snipet_obj){
 				let elname;
 				for ( let i = 0; i < snipet_obj.length; i++) {
 					elname = snipet_obj[i]['name'];
@@ -1525,7 +1530,7 @@
 			}
 			$.snipetHandler.get_http(
 				{
-					url: 'snipet?a=load-tags',
+					url: 'snippet?a=load-tags',
 					name: 'o',
 					fn: homeTags
 				}
@@ -1549,7 +1554,7 @@
 				}
 			}
 			$.get_json({
-				url: 'snipet?a=load_dummy_text',
+				url: 'snippet?a=load_dummy_text',
 				callback : homeDummy,
 			});
 		}
@@ -1560,7 +1565,13 @@
 				isSet(d) && (d !== "") && ( t = $n.dummy[d][ Math.floor(Math.random() * 5) ] );
 				( isSet(d) && !empty(d) ) ? temp = $('<'+ ev +'>', t) : temp = $('<'+ ev +'>') ;
 				e.e_type = 1; e.e_attr =""; e.e_name = ev; e.e_content = t;
-				temp = $.snipetHandler.sett.call( { obj:e, recipient:el, position:settings.layoutPosition } );
+				if(el) {
+					// if el exist and we are not on a empty slate
+					temp = $.snipetHandler.sett.call( { obj:e, recipient:el, position:settings.layoutPosition } );
+				}else if(!el) {
+					// we are on a empty slate,default position is beforeend
+					temp = $.snipetHandler.sett.call( { obj:e, recipient:$('.dsn-body') } );
+				}
 				temp && $d.snipetListener.call(temp);
 			}
 		}
@@ -1608,8 +1619,3 @@ if($('.dsn-body')){
 	//console.log(new_snipet.el());
 }
 
-let asd = {recipient:$('.dsn-body')};
-asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
-console.log(asd);
-let bbg = $.snipetHandler.sett.call(asd);
-console.log(bbg);
