@@ -679,6 +679,7 @@
 	
 	function snipetClickable(e){
 		e.stopPropagation();
+		e.preventDefault();
 		$d.change.call(this);
 	}
 	
@@ -713,6 +714,20 @@
 			$(this).walkChild( $d.snipetListener ) ;
 		}
 	};
+	
+	$d.listenerRemover = function() {
+		
+		if(this instanceof HTMLElement) {
+			removeSnipetEvent.call(this);
+		}else if(isObj(this)) {
+			for( prop in this){
+				$d.listenerRemover.call(this[prop]);
+			}
+		}
+		
+		if( this.childElementCount > 0 )
+			$(this).walkChild($d.listenerRemover);
+	}
 	
 	/**
 	 *  @Unfinnished Idea yet
