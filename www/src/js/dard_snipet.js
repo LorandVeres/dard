@@ -24,7 +24,7 @@
 		elName, // current element name to lowercase
 		esb = [], // element siblings if any
 		ep, // element parentElement
-		$n = { dummy:{} }, // dsn snipet objects
+		$n = { dummy:{}, c={}, p:{}, style:{} }, // dsn snippet objects
 		settings = { }, // will store various settings
 		weListen = [], // an array objects  { 0:element, 1:event, 2:function };
 		elStruct = { }, // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
@@ -32,6 +32,8 @@
 		copy, // the new copy function
 		snipets = {}, // the snipets on what we work
 		attributes, // function in $d.init
+		$st = {id:0, body:{}, name:'', type:'', status:'live', css:'' }, // stash
+		$p = {id: 3, name:'sandbox', maxid: 0, maxclass: 0, $: {} }, // project
 		$i;
 		// Inline styling structure
 		$n.style = {
@@ -40,15 +42,20 @@
 			dsn : "\n",
 			general : ".dsn-body div{ max-height:max-content; background: #ececec; margin:1.5%;overflow:auto;} .dsn-body p{ padding:10px; line-height:1.5rem}\n",
 			classes : "\n",
-			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 2px 2px rgba(2, 100, 180, .3) inset; }\n",
-			active : ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 2px 2px rgba(2, 100, 180, .3) inset; }\n"
+			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n",
+			active : ".dsn-active { outline: 1px solid #3b97e3 !important; outline-offset: -2px; background: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n"
 		};
 		// default settings 
 		settings.layoutPosition = "beforeend"; // used when iserting new tags or layouts
-		settings.project = "sandbox"; // we need a default project and that is sandbox
-		settings.maxId = 0; // max auto id generated
-		settings.maxClass = 0; // max auto class generated
-		settings.stash = {};
+		$p.name = "sandbox"; // we need a default project and that is sandbox
+		$p.maxid = 0; // max auto id generated
+		$p.maxclass = 0; // max auto class generated
+		$p.$.live = { form: [], block: [], header: [], footer: [], menu: [], article : [], cards: [], list: [], page: [], table: []};
+		$p.$.template = { form: [], block: [], header: [], footer: [], menu: [], article : [], cards: [], list: [], page: [], table: []};
+		$p.$.draft = { form: [], block: [], header: [], footer: [], menu: [], article : [], cards: [], list: [], page: [], table: [] };
+		$p.$.type = ['form','block','header','footer','menu','article','cards','list','page','table'];
+		$n.c = { id:0, body:{}, name:'', type:'', status:'', css:[] } // current snippet
+		$n.p = { id:0, body:{}, name:'', type:'', status:'', css:[]} // downloaded snippet
 		
 		
 		elStruct.input = {  id:'0', reqAttr:['type', 'hidden'], exAttr:[ 'name', 'value', 'placeholder', 'required'] }
@@ -71,7 +78,7 @@
 		$(snb).walkChild( $d.snipetListener );
 		//snipetListen.add.call($(snb));
 		// Using a tab sytem for side menu
-		$.tabs( { tab:['dsn_110', 'dsn_107', 'dsn_108'],  content:["dsn_4", "dsn_7", "dsn_6"], active:'active', event:'click' } );
+		$.tabs( { tab:['dsn_110', 'dsn_107', 'dsn_108'],  content:["dsn_4", "dsn_7", "dsn_6"], active:'active', event:'click', default:2 } );
 		
 		if( !isSet(attributes) ) attributes = new $d.attr();
 		attributes.listen();
