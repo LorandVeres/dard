@@ -881,14 +881,19 @@
 		let copy, self = {}, newEl = {}, copyButton, pasteButton, e;
 		
 		self.save = function(){
+			if($('#dsn-334').classList.contains('active')) { 
+				pushNotes("Responsive mode activated. Can't use copy...");
+				return;
+			}
 			el.classList.contains("dsn-active") && el.classList.toggle('dsn-active');
 			el.classList.contains("dsn-hover") && el.classList.toggle('dsn-hover');
 			copy = $.snipetHandler.gett(el);
 			el.classList.toggle("dsn-active");
+			pushNotes("Element copied...");
 		};
 		
 		self.paste = function(obj) {
-			$.snipetHandler.sett.call();
+			//$.snipetHandler.sett.call();
 		}
 		
 		copyButton = document.getElementById("dsn_106");
@@ -896,13 +901,20 @@
 		
 		pasteButton = document.getElementById("dsn_100");
 		pasteButton.addEventListener('click', function(){
-			newEl.obj = copy;
-			newEl.position = settings.layoutPosition ;   //  default in to the current element at the end
-			newEl.recipient = el; // default the recipient is the curently selected element 
-			newEl.contentArray = [];
-			e = $.snipetHandler.sett.call(newEl );
-			$d.snipetListener.call( e );
-			$d.change.call(e);
+			if($('#dsn-334').classList.contains('active')) { 
+				pushNotes("Responsive mode activated. Can't use paste...");
+				return;
+			}
+			if(copy !== undefined ) {
+				newEl.obj = copy;
+				newEl.position = settings.layoutPosition ;   //  default in to the current element at the end
+				 // default recipient is the curently selected element 
+				isSet(el) ? newEl.recipient = el : newEl.recipient = $('.dsn-body'); 
+				newEl.contentArray = [];
+				e = $.snipetHandler.sett.call( newEl );
+				$d.snipetListener.call( e );
+				$d.change.call(e);
+			}
 		});
 		
 		return self;
