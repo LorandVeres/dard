@@ -266,14 +266,14 @@
 				if(arguments.length > 0) {
 					bool = arguments[0];
 					!bool && field.hasAttribute('disabled') && field.removeAttribute('disabled');
-					bool && !field.hasAttribute('disabled') && field.setAttribute('disabled', '');
+					bool && !field.hasAttribute('disabled') && field.addattr('disabled');
 				}else{
-					field.hasAttribute('disabled') ? field.removeAttribute('disabled') : field.setAttribute('disabled', '');
+					field.hasAttribute('disabled') ? field.removeAttribute('disabled') : field.addattr('disabled');
 				}
 			}
 		}
 		
-		// Fast way to clear the fields, 
+		// Fast way to clear the fields
 		function emptyFieldsValue() {
 			let fields = [ "dsn-314", "dsn-315", "dsn-316", "dsn-317"], field;
 			for( let i =0; i < fields.length; i++) {
@@ -282,55 +282,77 @@
 			}
 		}
 		
+		// Used when switching tabs in snippet settings
+		// It refers when we are on snipet tab
+		function refreshFieldsValue() {
+			$('#dsn-314').value = $n.c.name; 
+			$('#dsn-315').value = $n.c.type;
+			$('#dsn-316').value = $n.c.status;
+			$('#dsn-317').value = "";
+			fieldDisable(true);
+		}
+		
+		// Used when switching tabs in snippet settings
+		function refreshDownloadFieldsValue() {
+			$('#dsn-314').value = $n.p.name;
+			$('#dsn-315').value = $n.p.types;
+			$('#dsn-316').value = $n.p.status;
+			$('#dsn-317').value = "";
+			fieldDisable(true);
+		}
+		
 		function createNewProject(){
 			let project = {};
-			project.Name = $('#dsn-320').value;
+			project.Name = $('#dsn-320').value.toLowerCase();
+			
+			if(empty(project.Name)) {
+				pushNotes('Project name is empty...');
+				return;
+			}
+			
 			function handle (r) {
-				let res = JSON.parse(r);
+				let res = r;
 				if(isObj(res) && isSet(res.lastId)){
-					console.log('good inserted');
-					console.log(res.lastId);
+					pushNotes('New project created : ' + project.Name);
+					fillSelectFields('load-projects-name', '#dsn-319', {v:$p.name, t:$p.name} );
 				}else if(isStr(res)){
-					console.log('bad is error string');
+					pushNotes(res);
 				}
 			}
 			$.send_json({
 				data : project,
-				url: 'snipet?a=add-project',
+				url: 'snippet?a=add-project',
 				callback: handle
 			});
 		}
 		
-		
-		
-		function sendSnipet(func, urlarg, snipet, callback) {
-			//save the actual one has to be implemented
-			let info;
-						
-			if(isSet(snipet)) {
-				snipet.body = {};
-				snipet.project = settings.project;
-				snipet.name = $('#dsn-314').value;
-				snipet.type = $('#dsn-315').value;
-				snipet.status = $('#dsn-316').value;
-				info = "\nName : " + snipet.name + "\nType : " + snipet.type + "\nStatus : " +snipet.status;
+		function setProject () {
+			let obj = {}; 
+			$p.name = $('#dsn-319').value;
+			obj.name = $p.name;
+			//getDefaultSnippet();
+			function getProjectData(r){
+				if(isSet(r) && r !== null) {
+					$p.maxid = r.maxid;
+					$p.maxclass = r.maxclass;
+					$p.id = r.id;
+					pushProject($p.name);
+					// set time out to delay the notification :))
+					getDefaultSnippet();
+					setTimeout( () => pushNotes('Switched to project: ' + $p.name), 50);
+				}
 			}
 			
-			if(!empty(snipet.name) && !empty(snipet.type) && !empty(snipet.status)) {
-				isFunc(func) && func();
-				$.send_json({
-					url: 'snipet?a=' + urlarg,
-					data: snipet,
-					callback: callback
-				});
-			}else{
-				isSet(arguments[4]) && alert(arguments[4] + info);
-			}
+			$.send_json({
+				url: 'snippet?a=get-project-data',
+				data: obj,
+				callback: getProjectData
+			});
 		}
 		
 		function createNewSnipet() {
-			let snipet = {},
-				alertText = "To create a new snipet the following fields can't be empty :" ;
+			let snipet = {}, info,
+				alertText = "To create a new snippet, the following fields can't be empty :" ;
 				
 			function createDummySnipet() {
 				let catchel;
@@ -342,17 +364,169 @@
 			}
 			
 			function handleResponse(r){
-				let res = JSON.parse(r)
+				let res = r,
+					backup = $n.c;
 				if(isObj(res) && isSet(res.lastId) ){
-					console.log('good inserted');
-					console.log(res.lastId);
+					$n.c.id = res.lastId;
+					// If res.lastId it means we get the last inserted id 
+					// Setting up the current snipet
+					$n.c.name = snipet.name;
+					$n.c.type = snipet.type;
+					$n.c.status = snipet.status
+					$n.c.body = snipet.body;
+					pushNotes('New snippet created : ' + snipet.name);
+					fieldDisable(true);
+					pushName(snipet.name);
 				}else if(isStr(res)){
-					console.log('bad is error string');
+					pushNotes(res);
 				}
-				//console.log(arguments[0]);
+			}
+			// Assign values to snipet object before is sent to the server
+			snipet.body = {};
+			snipet.project = $p.name;
+			snipet.name = $('#dsn-314').value;
+			snipet.type = $('#dsn-315').value;
+			snipet.status = $('#dsn-316').value;
+			snipet.css = "";
+			
+			info = "\nName : " + snipet.name + "\nType : " + snipet.type + "\nStatus : " +snipet.status;
+			
+			// If the fields are not empty, data can be sent
+			if(!empty(snipet.name) && !empty(snipet.type) && !empty(snipet.status)) {
+				createDummySnipet();
+				$.send_json({
+					url: 'snippet?a=add-snippet',
+					data: snipet,
+					callback: handleResponse
+				});
+			}else{
+				alert( alertText + info );
+			}
+		}
+		
+		// this can store just the body of the snippet
+		function get_Store_Snipet(snipetName){
+			function homeSnipet(name, snipet_obj){
+				snipets[ name ]  = snipet_obj;
+			}
+			$.snipetHandler.get_http(
+				{
+					url: 'snipet?a=get-snipet&name=' + snipetName,
+					name: snipetName,
+					fn: homeSnipet
+					//el:$('#dsn_5')
+				}
+			);
+		}
+		
+		// Called when switching projects in setProject()
+		function getDefaultSnippet(){
+			let backup = $n.c, obj ={name:'default', project:$p.name };
+			
+			function down(t) {
+				if( isSet(t) ){
+					if( isObj(t) && t !== null) {
+						$n.c = t;
+						pushNotes('Download finished for snippet: ' + obj.name);
+						refreshFieldsValue();
+						pushName(obj.name);
+						clearWorkspace();
+						( isObj( $n.c.body )  && $n.c.body !== null ) && $d.snipetListener.call( $.snipetHandler.sett.call({ obj:$n.c.body, recipient:$('.dsn-body')}) );
+					}
+					if( t === null || t === undefined) { 
+						pushNotes("Couldn't find snippet with name: " + obj.name);
+						$n.c = backup;
+					}
+				}
+				fieldDisable(true);
+			}
+			$.send_json( { url: 'snippet?a=get-snippet-by-name',  data: obj, callback: down } );
+		}
+		
+		// Function responsible to download snippets by name
+		function downloadSnipet(){
+			let backup = $n.p, name = $('#dsn-314').value, obj = {};
+			obj.name = $('#dsn-314').value;
+			obj.project = $('#dsn-317').value;
+			empty(obj.project) && ( obj.project = $p.name );
+			
+			function down(t) {
+				if( isSet(t) ){
+					$n.p = {};
+					if( isObj(t) && t !== null) {
+						$n.p = t;
+						pushNotes('Download finished for snippet: ' + name);
+						refreshDownloadFieldsValue();
+					}
+					if( t === null || t === undefined) { 
+						pushNotes("Couldn't find snippet with name: " + name);
+						$n.p = backup;
+					}
+				}
+				fieldDisable(true);
+			}
+			$.send_json( { url: 'snippet?a=get-snippet-by-name',  data: obj, callback: down } );
+		}
+		
+		// Later implementation of updating the stashes with the new name should be done
+		// Or an id based association should be implemented
+		function saveSnippet () {
+			let s = {}, namev = $('#dsn-314').value, typev = $('#dsn-315').value, statusv = $('#dsn-316').value;
+			if($('#dsn-334').classList.contains('active')) { 
+				if( pushNotes("Responsive mode activated. Can't save...")) {
+					return;
+				}
+			}
+			if(!isSet(el)) { return; }
+			// Updating the current snippet object if name, type or status are desired for change
+			!empty(namev) && ( $n.c.name = namev );
+			!empty(typev) && ( $n.c.type = typev );
+			!empty(statusv) && ( $n.c.status = statusv);
+			el.classList.remove('dsn-active');
+			$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
+			s = $n.c;
+			s.project = $p.name;
+			
+			function down(r) {
+				if(isSet(r.lastId)) pushNotes('Snippet saved...');
 			}
 			
-			sendSnipet(createDummySnipet, 'add-snipet', snipet, handleResponse, alertText);
+			$.send_json( { url: 'snippet?a=save-snippet',  data: s, callback: down } );
+			el.classList.add('dsn-active');
+		}
+		
+		function applyExtension () {
+			let id, parentel, pos, newel;
+			this.hasAttribute('id') && ( id = this.getAttribute('id') );
+			if(id === "dsn-323") {
+				if (isSet(el) && el instanceof HTMLElement) {
+					parentel = el;
+					pos = settings.layoutPosition;
+					newel = $.snipetHandler.sett.call( { obj: $n.p.body, recipient:parentel, position:pos});
+				} else {
+					parentel = $('.dsn-body');
+					newel = $.snipetHandler.sett.call( { obj: $n.p.body, recipient:parentel});
+				}
+				$d.snipetListener.call(newel);
+			}
+		}
+		
+		function editDownload() {
+			let newel;
+			fieldDisable(false);
+			emptyFieldsValue();
+			saveSnippet();
+			setTimeout(	function() {
+				$d.listenerRemover.call($('.dsn-body'));
+				clearWorkspace();
+				$.snipetHandler.sett.call( { obj: $n.p.body, recipient:$('.dsn-body')});
+				$('.dsn-body').walkChild($d.snipetListener);
+				$n.c = $n.p;
+				pushName($n.c.name);
+				pushNotes($n.c.name + ' snippet ready...');
+				fieldDisable(true);
+				$n.p = {};
+			},50);
 		}
 		
 		/** Empty then
@@ -363,9 +537,11 @@
 			let s = $(id), arg;
 			s.empty();
 			isSet(arguments[2] ) && ( arg = arguments[2]);
-			
+			if(isSet(arg) && empty(arg.v))
+				s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
 			function setSelect(r){
 				let p, o;
+				
 				for( let i = 0; i < r.length; i++) {
 					p = r[i];
 					o = $('<option>', p.name).addattr('value', p.name);
@@ -376,19 +552,52 @@
 			}
 			
 			$.get_json({
-				url: 'snipet?a=' + urlarg,
+				url: 'snippet?a=' + urlarg,
 				callback: setSelect
 			});
 		}
 		
-		$('#dsn-307').addEventListener('click', function(){ fieldDisable()});
-		$('#dsn-308').addEventListener('click', emptyFieldsValue);
+		// Switch what and when to fill in the fields under snippet tabs
+		function snipetTabBehavior (){
+			let att;
+			att = this.getAttribute('id');
+			if(att === "dsn-326" || att === "dsn-328" ) {
+				$('#dsn-317').stepup(2).style.visibility = "hidden";
+				att === "dsn-326" ? refreshFieldsValue() : null;
+			}else {
+				$('#dsn-317').stepup(2).style.visibility = "visible";
+				refreshDownloadFieldsValue();
+			}
+			fieldDisable(true);
+		}
+		
+		function fieldLockListener() {
+			for(let i = 0; i < this.length; i++) {
+				this[i].addEventListener('click', function(){ fieldDisable()});
+			}
+		}
+		
+		function fieldEmptyListener() {
+			for(let i = 0; i < this.length; i++) {
+				this[i].addEventListener('click', emptyFieldsValue);
+			}
+		}
+		
+		$('.dsn-307', fieldLockListener );
+		$('.dsn-308', fieldEmptyListener );
+		$('#dsn-309').addEventListener('click', downloadSnipet);
+		$('#dsn-310').addEventListener('click', saveSnippet);
 		$('#dsn-311').addEventListener('click', createNewSnipet);
+		$('#dsn-312').addEventListener('click', editDownload);
 		$('#dsn-313').addEventListener('click', clearWorkspace);
 		$('#dsn-322').addEventListener('click', createNewProject);
+		$('#dsn-321').addEventListener('click', setProject);
+		$('#dsn-323').addEventListener('click', applyExtension);
 		fillSelectFields('load-projects-name', '#dsn-319', {v:'sandbox',t:'sandbox'} );
-		fillSelectFields('load-snipet-type', '#dsn-315');
-		fillSelectFields('load-snipet-status', '#dsn-316');
+		fillSelectFields('load-projects-name', '#dsn-317', {v:'',t:''} );
+		fillSelectFields('load-snippet-type', '#dsn-315');
+		fillSelectFields('load-snippet-status', '#dsn-316');
+		$.tabs( { tab: 'dsn-snipet-tab',  content: 'dsn-snipet-tab-content', active:'active', event:'click', default:0, callback:snipetTabBehavior } );
 	}
 	
 	/**
