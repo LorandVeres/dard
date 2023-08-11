@@ -13,7 +13,7 @@ class dbConect extends DardConfig{
 	
 	public function insertDB($arg, $query)
 	{
-		$link = mysqli_connect($this->cf_host, $this->cf_user, $this->cf_password, $this->cf_db);
+		$link = mysqli_connect($this->cf_db_host, $this->cf_db_user, $this->cf_db_password, $this->cf_db_name);
 		
 		$query = $this->prepareQuery($link, $query, $arg);
 		
@@ -50,7 +50,7 @@ class dbConect extends DardConfig{
 	
 	public function selectDB($arg, $query, $assoc, $return_format){
 			
-		$link = mysqli_connect($this->cf_host, $this->cf_user, $this->cf_password, $this->cf_db);
+		$link = mysqli_connect($this->cf_db_host, $this->cf_db_user, $this->cf_db_password, $this->cf_db_name);
 		
 		$query = $this->prepareQuery($link, $query, $arg);
             $i=0;
