@@ -7,28 +7,62 @@
 class DardSession extends dbConect{
 
     // 24 minutes max session life time
-    private $time = 1440;
+    private $time;
     // home of web app
-    private $path = "/";
+    private $path;
     // max garbage colection probability default 100
     private $gcp = 100;
     // max garbage life lenght default to 1 day
     private $max_g_life = 86400;
     //max utd cookie life 1 year
-    private $utd_life = 31536000;
+    private $utd_life ;
 
     function __construct() {
+        $this -> init_params();
         $this -> init_session();
         $this -> user_cookie(time());
+        $this -> init_user_session();
+        $this -> check_session_last_time();
     }
-
+	
+	private function init_params() {
+		$this -> time = $this -> cf_session_lifetime;
+		$this -> path = $this -> cf_session_path;
+		$this -> utd_life = $this -> cf_session_utd_life;
+	}
+	
     public function init_session() {
-        if (!isset($_COOKIE['PHPSESSID'])) {
-            session_set_cookie_params($this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE, 'SameSite=Strict' );
+        $options = array ( 
+            'expires' => time() + $this -> time,
+            'path' => $this -> path,
+            'domain' => '.' . $_SERVER['HTTP_HOST'],
+            'secure' => TRUE,
+            'httponly' => TRUE,
+            'samesite' => 'Strict'
+        );
+        if (!isset($_COOKIE['DARDSESSID'])) {
+            session_set_cookie_params(
+                $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, 'SameSite=Strict' 
+            );
+            session_name('DARDSESSID');
             session_start();
         } else {
             session_start();
-            setcookie('PHPSESSID', session_id(), time() + $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, TRUE, 'SameSite=None; Secure');
+            setcookie('DARDSESSID', session_id(), $options);
+        }
+    }
+    
+    private function check_session_last_time() {
+        if(!isset($_SESSION['session_last_time'])){
+            $_SESSION['session_last_time'] = time() + $this -> time;
+        }else if( isset($_SESSION['session_last_time']) ){
+            if ( time() > $_SESSION['session_last_time'] && ( $_SESSION['user_name'] !== 'anonymous' || $_SESSION['user_loged'] )) {
+				$this -> end_session();
+				$_SESSION['session_last_time'] = time() + $this -> time;
+			}else { 
+				$_SESSION['session_last_time'] = time() + $this -> time;
+			}
+        
         }
     }
 
@@ -38,7 +72,7 @@ class DardSession extends dbConect{
         $_SESSION = array();
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), session_id(), time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"], 'SameSite=None; Secure');
+            setcookie(session_name(), 1, $params["path"], $params["domain"], $params["secure"], $params["httponly"], $params['samesite']);
         }
         session_destroy();
         session_commit();
@@ -61,12 +95,20 @@ class DardSession extends dbConect{
     public function user_cookie($la) {
         $_SERVER['HTTPS'] = 'ON' ? $http = TRUE : $http = FALSE;
         $time = time() + $this -> utd_life;
+		$options = array ( 
+            'expires' => $time,
+            'path' => $this -> path,
+            'domain' => '.' . $_SERVER['HTTP_HOST'],
+            'secure' => TRUE,
+            'httponly' => TRUE,
+            'samesite' => 'Strict'
+        );
         if (!isset($_COOKIE['d_utd'])) {
-            setcookie('d_utd', $this -> utd_str($la), $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http, 'SameSite=None; Secure');
+            setcookie('d_utd', $this -> utd_str($la), $options);
         } else {
             $n = explode('|', $_COOKIE['d_utd']);
             $string = $n[0] . '|' . $la;
-            setcookie('d_utd', $string, $time, $this -> path, '.' . $_SERVER['HTTP_HOST'], $http, $http, 'SameSite=None; Secure');
+            setcookie('d_utd', $string, $options);
         }
     }
 
@@ -94,9 +136,5 @@ class DardSession extends dbConect{
             $_SESSION['user_loged'] = FALSE;
 	}
     
-    public function ela (){
-        echo "helooooo";
-    }
-
 }
 ?>

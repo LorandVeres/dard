@@ -25,7 +25,6 @@ class GetMyPage extends DardSession {
 	public $dard_stats = array(); // statistics properties
 
 	function __construct($tag) {
-		$this -> init_user_session();
 		$this -> getAllPage();
 		$this -> sendDoc($tag);
 	}
