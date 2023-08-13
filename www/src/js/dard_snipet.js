@@ -24,7 +24,7 @@
 		elName, // current element name to lowercase
 		esb = [], // element siblings if any
 		ep, // element parentElement
-		$n = { dummy:{}, c={}, p:{}, style:{} }, // dsn snippet objects
+		$n = { dummy:{}, c:{}, p:{}, style:{} }, // dsn snippet objects
 		settings = { }, // will store various settings
 		weListen = [], // an array objects  { 0:element, 1:event, 2:function };
 		elStruct = { }, // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
@@ -94,12 +94,34 @@
 		
 		//copy = new 
 		$d.copyEl();
-		forms(); $i = new input();
+		
 		//$d.listen.call(weListen);
 		
 		$d.tagsLayout();
 	
 	};
+	
+	// undefine element
+	function undefineEl() {
+		function elset(id) {
+			let arg;
+			arguments.length > 1 && ( arg = arguments[1] );
+			if(!arg) {
+				return document.getElementById(id);
+			} else {
+				document.getElementById(id).value = arg;
+			}
+		}
+		el && el.classList.contains('dsn-active') && el.classList.remove('dsn-active');
+		el && el.classList.contains('dsn-hover') && el.classList.remove('dsn-hover');
+		el && ( el = undefined );
+		ep && ( ep = undefined );
+		elName && ( elName = '' );
+		$i.sett('dsn_90', '');
+		$i.sett('dsn_91', '');
+		$i.sett('dsn_92', '');
+		$i.sett('dsn_93', '');
+	}
 	
 	/**
 	 *  Sets and get value of input elements based on id
@@ -212,9 +234,7 @@
 				$d.snipetListener.call(editable);
 				pushNotes("Edit mode activated...");
 			} else if( !this.classList.contains('active')) { 
-				el && el.classList.contains('dsn-active') && el.classList.remove('dsn-active');
-				el && el.classList.contains('dsn-hover') && el.classList.remove('dsn-hover');
-				el && ( el = undefined );
+				undefineEl();
 				$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
 				$d.listenerRemover.call($('.dsn-body'));
 				$('.dsn-body').empty();
@@ -448,6 +468,7 @@
 						refreshFieldsValue();
 						pushName(obj.name);
 						clearWorkspace();
+						undefineEl();
 						( isObj( $n.c.body )  && $n.c.body !== null ) && $d.snipetListener.call( $.snipetHandler.sett.call({ obj:$n.c.body, recipient:$('.dsn-body')}) );
 					}
 					if( t === null || t === undefined) { 
@@ -536,6 +557,7 @@
 			setTimeout(	function() {
 				$d.listenerRemover.call($('.dsn-body'));
 				clearWorkspace();
+				undefineEl();
 				$.snipetHandler.sett.call( { obj: $n.p.body, recipient:$('.dsn-body')});
 				$('.dsn-body').walkChild($d.snipetListener);
 				$n.c = $n.p;
