@@ -34,7 +34,7 @@
 		attributes, // function in $d.init
 		$st = {id:0, body:{}, name:'', type:'', status:'live', css:'' }, // stash
 		$p = {id: 3, name:'sandbox', maxid: 0, maxclass: 0, $: {} }, // project
-		$i;
+		$i  = {}; // Sets and get value of input elements based on id
 		// Inline styling structure
 		$n.style = {
 			reset : "\n",
@@ -100,6 +100,23 @@
 		$d.tagsLayout();
 	
 	};
+	
+	/**
+	 *  Sets and get value of input elements based on id
+	 *  
+	 *  @Use $i.gett('id'), $i.sett('id', 'new_value')
+	 */
+	$i.sett = function(id, val){
+		let e = document.getElementById(id);
+		isStr(id) && e instanceof HTMLElement && ( e.value = val );
+	}
+	$i.gett = function (id){
+		let e;
+		isStr(id) && ( e = document.getElementById(id) );
+		if ( e instanceof HTMLElement ) {
+			return e.value ;
+		}
+	}
 	
 	// Pushing text in notifications bar
 	function pushNotes() {
@@ -763,36 +780,6 @@
 	};
 	
 	/**
-	 *  Sets and get value of input elements based on id
-	 *  Has in instance in init function 
-	 *  @Use $i.get('id'), $i.set('id', 'new_value')
-	 */
-	function input(){
-		let ext ={};
-		// get the value of an input element
-		ext.get = function (id){
-			let e;
-			isStr(id) && ( e = document.getElementById(id) );
-			if ( e instanceof HTMLElement ) {
-				return e.value ;
-			}
-		}
-		// set the value of in input element
-		ext.set = function(id, val){
-			let e = document.getElementById(id);
-			isStr(id) && e instanceof HTMLElement && ( e.value = val );
-		}
-		return ext;
-	};
-	
-	function forms(){
-		let f;
-		
-		
-		
-	}
-	
-	/**
 	*************************************
 	* Changing the current element
 	* @returns the new element
@@ -821,10 +808,10 @@
 			};
 			return i+1;
 		}
-		$i.set('dsn_90', elName);
-		$i.set('dsn_91', myindex(el));
-		$i.set('dsn_92', ep.children.length - 1);
-		$i.set('dsn_93', el.children.length);
+		$i.sett('dsn_90', elName);
+		$i.sett('dsn_91', myindex(el));
+		$i.sett('dsn_92', ep.children.length - 1);
+		$i.sett('dsn_93', el.children.length);
 		
 		return el;
 	};
