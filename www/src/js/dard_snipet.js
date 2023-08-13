@@ -8,9 +8,7 @@
  * 
  * @ToDo 
  *      @snipet
- *              get snipet by name
- *              get snipet colection
- *              save snipet
+ *              
  *
  * 
  *
@@ -26,10 +24,7 @@
 		ep, // element parentElement
 		$n = { dummy:{}, c:{}, p:{}, style:{} }, // dsn snippet objects
 		settings = { }, // will store various settings
-		weListen = [], // an array objects  { 0:element, 1:event, 2:function };
 		elStruct = { }, // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
-		html_blocks = [ 'form', 'section', 'cards', 'list'], // type of implemented blocks
-		copy, // the new copy function
 		snipets = {}, // the snipets on what we work
 		attributes, // function in $d.init
 		$st = {id:0, body:{}, name:'', type:'', status:'live', css:'' }, // stash
@@ -92,7 +87,6 @@
 		
 		snipetSetings();
 		
-		//copy = new 
 		$d.copyEl();
 		
 		//$d.listen.call(weListen);
@@ -767,39 +761,6 @@
 		if( this.childElementCount > 0 )
 			$(this).walkChild($d.listenerRemover);
 	}
-	
-	/**
-	 *  @Unfinnished Idea yet
-	 *  Add event listeners on the weListen array like format [ { 0:element, 1:event, 2:function }]
-	 *  Can add liteners to HTMLElements $d.listen.call(element, 'eventName', callback)
-	 *  
-	 *  @Need a good review or deleted
-	 */
-	
-	$d.listen = function(){
-		let warn0 = 'oops the element with id ' + this[0] + ' is not found in menuListener',
-			warn1 = 'oops the callback is not a function in menuListener for element ' + this[0] ;
-		
-		// Add event listeners on the weListen array like format [ { 0:element, 1:event, 2:function }]
-		if(isArray(this)){
-			for(let i = 0; i < this.length; i++ ){
-				if( this[i][0] && isFunc(this[i][2]) ) { 
-					this[i][0].addEventListener(this[i][1], function(e){
-						this[i][2].call(this[i][0]);
-					});
-				}
-				( !this[i][0] && console.log(warn0) ) && ( !isFunc( this[i][2] ) && console.log(warn1) ) ;
-			}
-		}
-		
-		// Add liteners to HTMLElements $d.listen.call(element, 'eventName', callback)
-		if(this instanceof HTMLElement){ console.log(arguments);
-			this.addEventListener(arguments[0], function(e){
-				isFunc(arguments[1]) ? arguments[1].call(this) : console.warn(warn1);
-				//arguments[1].call(this)
-			});
-		}
-	};
 	
 	/**
 	*************************************
