@@ -283,6 +283,7 @@
 			}
 			$('.dsn-body').walkChild(rem);
 			$('.dsn-body').empty();
+			undefineEl();
 			//fieldDisable(false);
 			//emptyFieldsValue();
 		}
@@ -462,7 +463,6 @@
 						refreshFieldsValue();
 						pushName(obj.name);
 						clearWorkspace();
-						undefineEl();
 						( isObj( $n.c.body )  && $n.c.body !== null ) && $d.snipetListener.call( $.snipetHandler.sett.call({ obj:$n.c.body, recipient:$('.dsn-body')}) );
 					}
 					if( t === null || t === undefined) { 
@@ -551,7 +551,6 @@
 			setTimeout(	function() {
 				$d.listenerRemover.call($('.dsn-body'));
 				clearWorkspace();
-				undefineEl();
 				$.snipetHandler.sett.call( { obj: $n.p.body, recipient:$('.dsn-body')});
 				$('.dsn-body').walkChild($d.snipetListener);
 				$n.c = $n.p;
