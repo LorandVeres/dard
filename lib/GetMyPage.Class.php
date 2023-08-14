@@ -189,19 +189,47 @@ class GetMyPage extends DardSession {
 
 	private function set_snippet_page_head_properties() {
 		// temporary patch 
-		if ( $this -> top_page_name === 'snippet' && isset($_SESSION['snippet-project'] ) ) {
-			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
-				$this -> link_tags[] = array(
-					"rel"=>"stylesheet",
-					"type"=>"text/css",
-					"sizes"=>NULL,
-					"title"=>NULL,
-					"href"=>"/src/css/dsn/". $_SESSION['snippet-project'] .".css",
-					"media"=>NULL );
-				$this -> all_js_scripts = array();
-				array_push( $this -> all_js_scripts, array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body") );
+		$href = ''; $newtags = array();
+		$snippet_project_css = array(
+			"rel"=>"stylesheet",
+			"type"=>"text/css",
+			"sizes"=>NULL,
+			"title"=>NULL,
+			"href"=>"/src/css/dsn/". $_SESSION['snippet-project'] .".css",
+			"media"=>NULL );
+		$dardjs = array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
+		$snipetjs = array( "file"=>"src/js/dard_snipet.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
+		
+		if ( $this -> top_page_name === 'snippet' ) {
+			// sorting css
+			foreach ($this -> link_tags as $value) {
+				if (isset($value['rel']) && $value['rel'] === 'stylesheet') {
+					$href = $value['href'];
+					if( $href === "/src/css/reset.css" || $href === "/src/css/dsn.css" || $href === "/src/css/ui.css"){
+						if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
+							if($href !== "/src/css/dsn.css")
+								$newtags[] = $value;
+						} else {
+							$newtags[] = $value;
+						}
+					}
+				}else {
+					$newtags[] = $value;
+				}
 			}
-		}
+			$this -> link_tags = $newtags;
+			if (isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive' && isset($_SESSION['snippet-project']) )
+				$this -> link_tags[] = $snippet_project_css;
+			// sorting js files
+			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
+				$this -> all_js_scripts = array();
+				array_push( $this -> all_js_scripts, $dardjs );
+			} else if( !isset( $this -> url_arguments['a'] ) || $this -> url_arguments['a'] !== 'responsive') {
+				$this -> all_js_scripts = array();
+					array_push( $this -> all_js_scripts, $dardjs );
+					array_push( $this -> all_js_scripts, $snipetjs );
+			}
+		} 
 	}
 	
 	private function set_page_head_properties($result) {
