@@ -37,9 +37,12 @@
 			dsn : "\n",
 			general : ".dsn-body div{ max-height:max-content; background: #ececec; margin:1.5%;overflow:auto;} .dsn-body p{ padding:10px; line-height:1.5rem}\n",
 			classes : "\n",
-			hover : ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n",
-			active : ".dsn-active { outline: 1px solid #3b97e3 !important; outline-offset: -2px; background: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n"
+			dsn: ""
 		};
+		$n.style.dsn = ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";
+		$n.style.dsn += ".dsn-active { outline: 1px solid #3b97e3 !important; outline-offset: -2px; background: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";
+		$n.style.dsn += ".dsn-min-size { min-height:1rem; padding:5px; }";
+		
 		// default settings 
 		settings.layoutPosition = "beforeend"; // used when iserting new tags or layouts
 		$p.name = "sandbox"; // we need a default project and that is sandbox
@@ -66,7 +69,7 @@
 		// Adjusting the snipet body container width
 		screenEnviro();
 		
-		$('head').append($('<style>', $n.style.reset + $n.style.ui + $n.style.dsn + $n.style.general + $n.style.classes + $n.style.hover + $n.style.active ));
+		$('head').append($('<style>', $n.style.reset + $n.style.ui + $n.style.dsn + $n.style.general + $n.style.classes + $n.style.dsn ));
 
 
 		// event listener on all elements of the snipet
@@ -1542,6 +1545,7 @@
 					temp = $.snipetHandler.sett.call( { obj:e, recipient:$('.dsn-body') } );
 				}
 				temp && $d.snipetListener.call(temp);
+				temp.classList.add('dsn-min-size');
 			}
 		}
 				
