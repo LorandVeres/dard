@@ -368,6 +368,7 @@
 			//getDefaultSnippet();
 			function getProjectData(r){
 				if(isSet(r) && r !== null) {
+					simulateClick($('#dsn-326'));
 					$p.maxid = r.maxid;
 					$p.maxclass = r.maxclass;
 					$p.id = r.id;
@@ -488,12 +489,12 @@
 			function down(t) {
 				if( isSet(t) ){
 					$n.p = {};
-					if( isObj(t) && t !== null) {
+					if( isObj(t) && t.body !== null) {
 						$n.p = t;
 						pushNotes('Download finished for snippet: ' + name);
 						refreshDownloadFieldsValue();
 					}
-					if( t === null || t === undefined) { 
+					if( t.body === null || t === undefined) { 
 						pushNotes("Couldn't find snippet with name: " + name);
 						$n.p = backup;
 					}
@@ -1424,7 +1425,7 @@
 			
 			function setSettings() {
 				pos = this.getAttribute('data-pos')
-				$i.get('dsn-205').value = pos;
+				$i.gett('dsn-205').value = pos;
 				settings.layoutPosition = pos;
 				this.classList.add('active');
 			}
