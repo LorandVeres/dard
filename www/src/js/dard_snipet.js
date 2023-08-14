@@ -326,9 +326,9 @@
 		
 		// Used when switching tabs in snippet settings
 		function refreshDownloadFieldsValue() {
-			$('#dsn-314').value = $n.p.name;
-			$('#dsn-315').value = $n.p.types;
-			$('#dsn-316').value = $n.p.status;
+			isSet($n.p.name) ? $('#dsn-314').value = $n.p.name : $('#dsn-314').value = '';
+			isSet($n.p.type) ? $('#dsn-315').value = $n.p.type : $('#dsn-315').value = '' ;
+			isSet($n.p.status ) ? $('#dsn-316').value = $n.p.status : $('#dsn-316').value = ''; 
 			$('#dsn-317').value = "";
 			fieldDisable(true);
 		}
