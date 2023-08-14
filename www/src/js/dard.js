@@ -125,13 +125,12 @@ function toggle(el) {
 	s === 'none' ? el.style.display = 'block' : el.style.display = 'none';
 };
 
-/*
-* recomended usage for testing pourpuse only
-*
+/**
+* Dispatch a click event onTarget element
+* @param onTarget can be an element, or string like for the selector parameter: '#id' or '.class' or 'elementName' 
 */
 function simulateClick(onTarget) {
-	let evt = document.createEvent("MouseEvents");
-	evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	evt = new Event("click", { bubbles: false, cancelable: true });
 	$(onTarget).dispatchEvent(evt);
 }
 /*
