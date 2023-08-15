@@ -27,6 +27,9 @@ include_once 'template/module/live/layout/menu.php';
             <input type="submit" value="Register">
 
         </form>
+        <div class="login-links">
+			<span class="c-box c-text span-100 space-20">By signing up you agree with our<br><a href="<?php mylink('terms-and-conditions'); ?> ">Terms and conditions</a> </span>
+        </div>
 	<script>
 		(function(){
 			let el = document.getElementById("captcha");

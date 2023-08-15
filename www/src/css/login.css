@@ -1,6 +1,6 @@
 body {
-  background: #ffffff;/*#05274f;#2c3338;*/
-  color: #606468;
+  background: #bdb4c1;
+  color: #323436;
 }
 
 @media (max-width: 420px){
@@ -21,28 +21,33 @@ input {
   border: none;
   font-family: 'Open Sans', Arial, sans-serif;
   font-size: 16px;
-  line-height: 1.5em;
+  line-height: 1.5rem;
   padding: 0;
   -webkit-appearance: none;
   box-sizing: border-box;
 }
 
 p {
-  line-height: 1.5em;
+  line-height: 1.5rem;
 }
 
 after { clear: both; }
 
 #login {
   margin: 80px auto;
+  width: 100%;
   max-width: 420px;
 }
 
 #login a{
-    color: #015e68;
+    color: #027735;
     text-decoration: none;
-    line-height: 1.1rem;
+    line-height: 1.5rem;
     font-size: 1rem;
+}
+
+#login a:hover {
+	border-bottom: 1px dashed #004b21;
 }
 
 .inner{
@@ -57,14 +62,11 @@ after { clear: both; }
   -moz-box-shadow: 0px 0px 12px 3px #888888;
 }
 
-.inner nav{
-    background: inherit;
-}
-
 #login form {
   margin: auto;
   box-sizing:border-box;
   width: 100%;
+  padding: 1rem 0;
 }
 
 h1{
@@ -105,10 +107,15 @@ input[type="text"], input[type="password"], input[type="email"]{
   border-collapse: collapse;
   border: 1px solid #b0b8ba;
   color: #353738;
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
   padding: 0 16px;
   width: 80%;
   height: 50px;
+  outline: none;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus{
+	border: 1px solid #121212;
 }
 
 #captcha{
@@ -123,32 +130,33 @@ input[type="text"], input[type="password"], input[type="email"]{
 #login form input[type="submit"] {
   background: #027735;
   width: 100%;
-  height: 40px;
+  height: 2.6rem;
   border-radius: 5px;
   color: white;
   cursor: pointer;
   transition: background 0.5s ease-in-out;
+  margin: 3rem auto 1rem  auto;
+  
 }
 #login form input[type="submit"]:hover {
   background: #015124;
 }
-#login nav{
-  margin-top: 30px;
-  margin-bottom: 30px;
-  padding:1%;
-  box-sizing:border-box;
-  width: 100%;
-}
+
 .bl{
     border-left: 2px solid #015e68;
 }
 .br{
     border-right: 2px solid #015e68;
 }
-.hr{
-    border-bottom: 2px solid #015E68;
+
+.login-links{
+    width: 100%;
+    border-radius: 5px;
+    padding: 1rem;
+    color: #121212;
+    background-color: #bfc6c7;
+    border: 1px solid #aeb3b4;
+    font-size: 1rem;
+    line-height: 1.5rem;
 }
-#login nav span{
-    padding: 4%;
-    background-color: #bfcacc;
-}
+

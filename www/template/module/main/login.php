@@ -8,7 +8,7 @@ include_once 'template/module/live/layout/menu.php';
 
 <div id="login">
     <div class="inner">
-        <h1>Log in to Dard</h1>
+        <h1>Log in into Dard</h1>
         <?php $new_login->html_wrap_errors($tag);
         ?>
         <form name='form-login' method="post" action="/login">
@@ -24,10 +24,10 @@ include_once 'template/module/live/layout/menu.php';
             <input type="submit" value="Login">
 
         </form>
-        <nav>
-            <span class="left hr"> <a href="<?php mylink('register'); ?> ">Register account</a> </span>
-            <span class="right hr"> <a href="<?php mylink('forgot-password'); ?>">Forgot password</a> </span>
-        </nav>
+        <div class="login-links">
+            <span class="c-box c-text span-100 space-20">Don't you have an account? <br><a href="<?php mylink('register'); ?> ">Sign up</a> </span>
+            <span class="c-box c-text span-100 b-space-20"> <a href="<?php mylink('forgot-password'); ?>">I forgot my password</a> </span>
+        </div>
         <script>
     		(function(){
     			let el = document.getElementById("captcha");
