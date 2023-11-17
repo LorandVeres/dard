@@ -170,19 +170,16 @@ class GetMyPage extends DardSession {
 	}
 
 	private function check_user_priv() {
-		$query = "SET @pagepriv = (SELECT `user_privi` FROM `page` WHERE `id` = $this->current_page_id);";
-		$user_id = '';
+		$params = array( $this->current_page_id );
 		if(!$_SESSION['user_loged']){
-			$query .= "SET @userpriv = (SELECT `priv_flag` FROM `u_group` WHERE `id` = 2);";
+			$params[1] = 0;
 		}elseif(isset($_SESSION['user_id'])){
-			$user_id = $_SESSION['user_id'];
-			$query .= "SET @userpriv = (SELECT `u_groupi` FROM `user` WHERE `id` = $user_id );";
+			$params[1] = $_SESSION['user_id'];
 		}else{
 			$this -> get_error_page('500');
 		}
-		$query .= "SELECT ( HEX (@pagepriv & @userpriv) NOT LIKE '0') AS access;";
-		$result = $this -> selectDB($user_id, $query, TRUE, 'array');
-		if ($result === NULL || $result['access'] === '0') {
+		$result = $this ->stmt ('', $params, 'checkUserPrivilegePerPage', $params);
+		if ($result['access'] === NULL || $result['access'] === '0') {
 				$this -> get_error_page('403');
 		}
 	}
