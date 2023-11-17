@@ -35,13 +35,14 @@
 			reset : "\n",
 			ui : "\n",
 			dsn : "\n",
-			general : ".dsn-body div{ max-height:max-content; background: #ececec; margin:1.5%;overflow:auto;} .dsn-body p{ padding:10px; line-height:1.5rem}\n",
+			general : "\n",
 			classes : "\n",
 			dsn: ""
 		};
-		$n.style.dsn = ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";
+		$n.style.dsn = ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -1px; }\n";
+		$n.style.dsn += ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";
 		$n.style.dsn += ".dsn-active { outline: 1px solid #3b97e3 !important; outline-offset: -2px; background: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";
-		$n.style.dsn += ".dsn-min-size { min-height:1rem; padding:5px; }";
+		$n.style.dsn += ".dsn-min-size { min-height:2rem; padding:5px; }\n";
 		
 		// default settings 
 		settings.layoutPosition = "beforeend"; // used when iserting new tags or layouts
@@ -89,6 +90,8 @@
 		$d.menuListener.call(['dsn_101', $d.goToOlderBrother ]);
 		
 		snipetSetings();
+		
+		generalSettings();
 		
 		$d.copyEl();
 		
@@ -264,10 +267,10 @@
 		$('#dsn-302').addEventListener('click', selectTablet);
 		$('#dsn-303').addEventListener('click', selectMonitor);
 		$('#dsn-304').addEventListener('change', selectCustom);
-		$('#dsn-306').addEventListener('change', watchColorPicker);
-		//$('#dsn-306').addEventListener('input', watchColorPicker);
+		$('#dsn-306').addEventListener('input', watchColorPicker);
 		$('#dsn-305').addEventListener('change', watchColorField);
 		$('#dsn-334').addEventListener('click', reponsiveMode);
+		$('#dsn-333').addEventListener('click', () => { let a = new fullScreen(); a.toggle(); });
 		
 		snb && ( snb.style.width = nowWidth );
 	}
@@ -635,6 +638,25 @@
 		fillSelectFields('load-snippet-status', '#dsn-316');
 		$.tabs( { tab: 'dsn-snipet-tab',  content: 'dsn-snipet-tab-content', active:'active', event:'click', default:0, callback:snipetTabBehavior } );
 	}
+	
+	/**
+	 * 
+	 */
+	 function generalSettings() {
+	    
+	    // highlight all elemnts
+	    function highlightAll() {
+	        let hil = 0;
+	        function addDottedBorder(){
+	            this.classList.toggle('dsn-highlighted');
+	            if(this.childElementCount > 0)
+	                $(this).walkChild(addDottedBorder);
+	        }
+	        $('.dsn-body').walkChild( addDottedBorder);
+		}
+	    
+	    $('#dsn-335').addEventListener('click', function() {highlightAll(); this.classList.toggle('active'); } );
+	 }
 	
 	/**
 	 * This is the dard JSON HTML data structure
