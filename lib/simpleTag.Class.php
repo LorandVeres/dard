@@ -112,7 +112,7 @@ class simpleTag {
 		$n = chr(10);
 
 		$single = $this -> check_single_tag($tagname);
-		if (!$single) {
+		if (!$single && !empty($tagname)) {
 			$tag = array();
 			$tag[] = $o . $tagname . $this -> setAttr($attr) . $c;
 			$tag[] = !empty($txt) || $txt === '0' ? array($txt) : array();
@@ -120,6 +120,8 @@ class simpleTag {
 
 		} elseif ($single) {
 			$tag = ($o . $tagname . $this -> setAttr($attr) . $c . $n);
+		} elseif(empty($tagname)) {
+			$tag = $txt;
 		}
 		return $tag;
 	}
@@ -216,11 +218,14 @@ class simpleTag {
 			$inline = '';
 			if(is_array($var)){
 				foreach ($var as $key => $val) {
-					if(is_string($val))
+					if(is_string($val)){
 						$inline .= $val;
-					if(is_array($val)){
-						if(count($val) == 3)
-							$inline .= str_replace("\n", "", $this -> tag($val[0], $val[1], $val[2]));
+					} elseif (is_array($val)){
+						if(count($val) === 3 ){
+							if($this -> check_tag_type(preg_replace('/[<\/>]+/i', "" , $val[0] ), $this -> inline_tag)) {
+								$temp = $val[0] . $val[1][0] . $val[2];
+								$inline .= str_replace("\n", "", $temp);
+							}
 					}
 				}
 			}elseif(is_string($var)){
@@ -231,7 +236,7 @@ class simpleTag {
 		if(is_array($value[1])){
 			if(!isset($value[1][0]) && empty($value[1]))
 			 	$value[1][0] = '';
-			printf("%s", $tf . $value[0] . $loop_inline_tags($value[1][0], $tf) . $value[2] . "\n");
+			printf("%s", $tf . $value[0] . $loop_inline_tags($value[1], $tf) . $value[2] . "\n");
 		}else if(is_string($value[1])){
 			printf("%s", $tf . $value[0] . $loop_inline_tags($value[1], $tf) . $value[2] . "\n");
 		}
@@ -245,8 +250,8 @@ class simpleTag {
 	 */
 	private function print_text($value) {
 		$tf = str_pad("", $this -> indentNum + 1, "\t");
-		if ($this -> check_plain_txt($value[0]))
-			printf("%s", $tf . $value[0] . "\n");
+		if ($this -> check_plain_txt($value))
+			is_array($value) ? printf("%s", $tf . $value[0] . "\n") : ( is_string($value) ? printf("%s", $tf . $value . "\n") : '' );
 	}
 
 	/**
@@ -257,7 +262,13 @@ class simpleTag {
 	 */
 	private function print_single_tag($value) {
 		$tf = str_pad("", $this -> indentNum + 1, "\t");
-		printf("%s", $tf . $value . "");
+		if(is_string($value))
+			printf("%s", $tf . $value . "");
+		if(is_array($value)) {
+			if(count($value) === 1 && isset($value[0]))
+				printf("%s", $tf . $value[0] . "");
+		}
+		
 	}
 
 	/**
@@ -309,7 +320,7 @@ class simpleTag {
 	private function docOutput($argument) {
 		foreach ($argument as $key => $value) {
 			if (is_array($value) && !empty($value)) {
-				if (is_string($value[0])) {
+				if (isset($value[0]) && is_string($value[0])) {
 					if ($this -> check_tag_type($value, $this -> block_tag)) {
 						// increment the indenting if block tag
 						$this -> check_start_tag($value[0]) ? $this -> indentNum++ : '';
@@ -317,21 +328,25 @@ class simpleTag {
 					} elseif ($this -> check_tag_type($value, $this -> inline_tag) && count($value) === 3) {
 						$this -> print_inline_tag($value);
 					} elseif (count($value) >= 1) {
-						if(count($value) === 1 && $this -> check_tag_type($value, $this -> single_tag))
+						if(count($value) === 1 && $this -> check_tag_type($value, $this -> single_tag)) {
 							$this -> print_single_tag($value);
-						if(count($value) === 1 && $this -> check_plain_txt($value)){
+						} elseif(count($value) === 1 && $this -> check_plain_txt($value)){
 							$this -> print_text($value);
 						} elseif(count($value) >= 1){
 							foreach ($value as $val){
 								if(is_array($val)){
 									if($this -> check_tag_type($val, $this -> inline_tag)){
 										$this -> print_inline_tag($val);
+									}elseif($this -> check_tag_type($val, $this -> single_tag)){
+										$this -> print_single_tag($val);
 									}else{
 										$this -> docOutput($val);
 									}
 								}elseif(is_string($val) && $this -> check_tag_type($value, $this -> single_tag)){
 									$this -> print_single_tag($val);
-								}else{
+								}lseif(is_string($val) && $this -> check_plain_txt($val)){
+									$this -> print_text($val);
+								}elseif($this -> check_tag_type($value, $this -> block_tag)){
 									$this -> print_block_tag($val);
 								}
 							}
