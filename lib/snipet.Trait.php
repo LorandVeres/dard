@@ -14,6 +14,7 @@ trait snipetHandler{
 	 */
     function snipet_json_to_html($snipet, $tag) {
         $new_tag = array();
+        $block = array();
         $set_attributes = function($snipet_attr){
             $attr = '';
             foreach ($snipet_attr as $key => $value) {
@@ -42,13 +43,17 @@ trait snipetHandler{
 			}
         };
         if(isset($snipet['e_type'])){
-            $tag_block($snipet, $tag);
+            if( isset($snipet['e_content']))
+                $tag_block($snipet, $tag);
+            $block = $new_tag;
         }else{
             foreach ( $snipet as $value){
-				$tag_block($value, $tag);
+				if( isset($value['e_content']))
+					$tag_block($value, $tag);
+				$block[] = $new_tag;
             }
         }
-        return $new_tag;
+        return $block;
     }
 }
 
