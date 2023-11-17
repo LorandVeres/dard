@@ -226,6 +226,7 @@ class simpleTag {
 								$temp = $val[0] . $val[1][0] . $val[2];
 								$inline .= str_replace("\n", "", $temp);
 							}
+						}
 					}
 				}
 			}elseif(is_string($var)){
@@ -344,7 +345,7 @@ class simpleTag {
 									}
 								}elseif(is_string($val) && $this -> check_tag_type($value, $this -> single_tag)){
 									$this -> print_single_tag($val);
-								}lseif(is_string($val) && $this -> check_plain_txt($val)){
+								}elseif(is_string($val) && $this -> check_plain_txt($val)){
 									$this -> print_text($val);
 								}elseif($this -> check_tag_type($value, $this -> block_tag)){
 									$this -> print_block_tag($val);
