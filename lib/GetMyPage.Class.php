@@ -186,13 +186,15 @@ class GetMyPage extends DardSession {
 
 	private function set_snippet_page_head_properties() {
 		// temporary patch 
+		isset($_SESSION['snippet-project']) ? $project = $_SESSION['snippet-project'] : $project = "";
+		
 		$href = ''; $newtags = array();
 		$snippet_project_css = array(
 			"rel"=>"stylesheet",
 			"type"=>"text/css",
 			"sizes"=>NULL,
 			"title"=>NULL,
-			"href"=>"/src/css/dsn/". $_SESSION['snippet-project'] .".css",
+			"href"=>"/src/css/dsn/". $project .".css",
 			"media"=>NULL );
 		$dardjs = array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
 		$snipetjs = array( "file"=>"src/js/dard_snipet.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
