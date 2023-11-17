@@ -206,6 +206,12 @@
 .dsn-responsive-mode.active:hover {
 	background-image: url('../../images/icons/g/24/l/underline-button.png');
 }
+#dsn-335 {
+	background-image: url('../../images/icons/g/24/l/dashed-select.png');
+}
+#dsn-335:hover {
+	background-image: url('../../images/icons/g/24/m/dashed-select.png');
+}
 
 
 .dsn-page .dsn-header{
@@ -373,8 +379,8 @@
 }
 
 .dns-collapse-button {
-	background-color: #2a2a2a;
-	border-bottom: 1px solid #333333;
+	background-color: #323232;
+	border-bottom: 1px solid #4a4545;
 	text-indent: 1.5rem;
 	color: #949494;
 }
@@ -424,7 +430,7 @@
 .dsn-element-properties {
 	width: 100%;
     margin: 0;
-    background-color: #241e1e; /* 130f0f */
+    background-color: #2d2626; /* 130f0f */
     font-size: 0.8rem;
     border-bottom: 1px solid #232323;
 }
@@ -450,7 +456,7 @@
 	border-top: 1px solid #292929;
 }
 
-#dsn-class-properties, {
+#dsn-class-properties {
 	padding-bottom: 1.2rem;
 	border-bottom: 1px solid #292929;
 }
@@ -506,7 +512,7 @@
 
 .dsn-90-box {
 	width: 90%;
-	background-color: #242424;
+	background-color: #373737;
 	border-radius: 5px;
 	border: 1px solid #150c0c;
 	padding: 4% 2%;

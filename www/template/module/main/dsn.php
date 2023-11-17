@@ -585,7 +585,20 @@
 		<!-- SETTINGS -->
 		
 		<section id="dsn_6" class="span-100 b-space-15">
-			<button class="collapse dns-collapse-button">Snipet</button>
+			<button class="collapse dns-collapse-button">General</button>
+			<div class="collapse-content dsn-element-properties">
+				<div class="section group b-space-15 dsn-dark-field">
+					<button id="dsn-335" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-336" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-338" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-339" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-340" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-341" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-342" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-343" title="" class="dsn-snipet-btn"></button>
+				</div>
+			</div>
+			<button class="collapse dns-collapse-button">Snippet</button>
 			<div class="collapse-content dsn-element-properties">
 				<div class="section group span-100">
 					<button id="dsn-326" class="dsn-snipet-tab col-f span-1-of-3-f">Snippet</button>

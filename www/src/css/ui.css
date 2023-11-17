@@ -322,6 +322,7 @@
 	text-align:center;
 	display: block;
 	margin: 20px auto;
+	border: none;
 }
 
 .dard-form input[type="submit"]:hover {
