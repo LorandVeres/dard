@@ -151,6 +151,7 @@ function str2el(html) {
    document.body.removeChild(fakeEl);
    return el;
 };
+
 /*
 *  Empty the element provided
 *
@@ -161,6 +162,58 @@ function emptyEl(el) {
 	   e.removeChild(e.firstChild);
    }
 }
+
+/** fullScreen
+*   Toggle full screen per element or document
+*   @USE
+*   a = new fullScreen()  // for document
+*   a = new fullScreen(element)  // any valid element
+*   a.toggle();
+*   a.close();
+*   a.open();
+*   a.state() ? a.close() : a.open();
+*   () => { let a = new fullScreen($('#my-video')); a.toggle(); }
+*
+*/
+function fullScreen() {
+	let elem, self = {};
+	isSet(arguments[0]) ? elem = arguments[0] : elem = document.documentElement;
+	
+	self.open = function() {
+		try{
+			elem.requestFullscreen();
+		} catch(error) {
+			if (elem.webkitRequestFullscreen) { /* Safari */
+				elem.webkitRequestFullscreen();
+			  } else if(elem.msRequestFullscreen) { /* IE11 */
+				elem.msRequestFullscreen();
+			  }
+		}
+	}
+	
+	self.close = function() {
+		try{
+			document.exitFullscreen();
+		} catch(error) {
+			if (document.webkitExitFullscreen) { /* Safari */
+				document.webkitExitFullscreen();
+			} else if (document.msExitFullscreen) { /* IE11 */
+				document.msExitFullscreen();
+			}
+		}
+	}
+	
+	self.toggle = function(){
+		document.fullscreenElement ? self.close() : self.open();
+	}
+	
+	self.state = function() {
+		return document.fullscreenElement ? true : false ;
+	}
+	
+	return self;
+}
+
 /*
 * Counter function. The perfect example for a closure
 *
