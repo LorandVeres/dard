@@ -1125,8 +1125,10 @@ $.constructor.prototype.snipetHandler = (function() {
 		};
 
 		set_TextNode = function(txt_Obj, parent){
-			const text = document.createTextNode(txt_Obj);
-			parent.appendChild(text);
+			if(!empty(txt_Obj) || txt_Obj !== "undefined" || txt_Obj !== undefined ) {
+				const text = document.createTextNode(txt_Obj);
+				parent.appendChild(text);
+			}
 		};
 
 		set_Element = function(obj, parent_El){
@@ -1144,20 +1146,22 @@ $.constructor.prototype.snipetHandler = (function() {
 						set_Attributes(obj.e_attr, element);
 					if(obj.keyIn(e_content)){
 						if(isStr(obj.e_content)){
-							if( obj.e_content === "" || ( obj.e_attr.keyIn('data-dsn-txt-id') || obj.e_attr.keyIn('data-dsntext') ) ) {
-								isSet( contentArray ) && set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
-								isSet( contentText ) && set_TextNode( contentText , element ); // simple for small snipets in loop
+							if( obj.e_content === "" && ( obj.e_attr.keyIn('data-dsn-txt-id') || obj.e_attr.keyIn('data-dsntext') ) ) {
+								if( obj.e_attr.keyIn('data-dsn-txt-id'))
+									isSet( contentArray ) && set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
+								if( obj.e_attr.keyIn('data-dsntext') )
+									isSet( contentText ) && obj.e_attr.keyIn('data-dsntext')  && set_TextNode( contentText , element ); // simple for small snipets in loop
 							}
-								//set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
-							if(obj.e_content !== "")
+							if(obj.e_content !== ""){
 								set_TextNode(obj.e_content, element);
+							}
 						}
 						if(isObj(obj.e_content) && !isStr(obj.e_content)){
 							walk_Content(obj.e_content, element);
 						}
 					}return element
 				// Not a practical mode to include a one single text node.
-				}else if(obj.e_type === 3 || isStr(obj.e_content)){
+				}else if(obj.e_type === 3 && isStr(obj.e_content)){
 					set_TextNode(obj.e_content, parent_El);
 				}
 			}else {
