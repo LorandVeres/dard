@@ -657,39 +657,39 @@ var $ = function () {
 		*  be possible
 		*/
 
-		el.constructor.prototype.click = function() {
+		el.constructor.prototype.clicked = function() {
 			let callback = arguments[0],
 			    prevent = arguments[1],
 			    once = arguments[2],
-			    tip;
-			function doclick() {
-				let el = this;
+			    tip,
+			    e = this;
+			function doclick(event) {
 				callback();
 				if (prevent) {
-					event.preventDefault("click");
+					event.preventDefault();
 				}
 				if (once) {
-					this.removeEventListener("click", doclick, tip);
+					e.removeEventListener("click", doclick, tip);
 				}
 			}
 			if (isSet(prevent) && prevent == true) {
 				if (isSet(once) && once == true) {
-					this[0].addEventListener("click", doclick, false);
+					e.addEventListener("click", doclick, false);
 					tip = false;
 				} else if (!isSet(once) || once == false) {
-					this[0].addEventListener("click", doclick, true);
+					e.addEventListener("click", doclick, true);
 					tip = true;
 				}
 			} else {
 				if (isSet(once) && once == true) {
-					this[0].addEventListener("click", doclick, false);
+					e.addEventListener("click", doclick, false);
 					tip = false;
 				} else if (!isSet(once) || once == false) {
-					this[0].addEventListener("click", doclick, true);
+					e.addEventListener("click", doclick, true);
 					tip = true;
 				}
 			}
-			return this;
+			return e;
 		};
 
 		/** 
