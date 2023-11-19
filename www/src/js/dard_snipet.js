@@ -892,7 +892,7 @@
 		}
 		
 		copyButton = document.getElementById("dsn_106");
-		copyButton.addEventListener('click', function(){self.save(); console.log(copy);});
+		copyButton.addEventListener('click', function(){self.save();});
 		
 		pasteButton = document.getElementById("dsn_100");
 		pasteButton.addEventListener('click', function(){
@@ -1047,7 +1047,7 @@
 				let j = arguments[0], attr = at.rq[j], field = arguments[1];
 				j == 0 && ( attr = 'id');
 				j == 1 && ( attr = 'title');
-				at.all[attr] !== undefined ? field.previousElementSibling.style.color = "#0a9c05" : null;
+				(at.all[attr] !== undefined && isStr(at.all[attr]))? field.previousElementSibling.style.color = "#0a9c05" : null;
 				return at.all[attr];
 			}
 			
@@ -1115,7 +1115,7 @@
 							fieldsAttr.call(field, i);
 						}
 						attr = currentElAttr(i, field.children[1]);
-						attr !== undefined && ( field.children[1].value = attr );
+						if( attr !== undefined && isStr(attr) ) field.children[1].value = attr ;
 					}
 					parentMaxHeight.call(parent);
 				}else {
@@ -1124,7 +1124,7 @@
 						field = parent.children[i];
 						parent.children[i].children[1];
 						attr = currentElAttr(i, field.children[1]);
-						attr !== undefined && ( field.children[1].value = attr );
+						if( attr !== undefined && isStr(attr) ) field.children[1].value = attr ;
 					}
 				}
 			}
