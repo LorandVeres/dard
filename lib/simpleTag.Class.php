@@ -55,7 +55,7 @@ class simpleTag {
 
 	private $Doc = '';
 	private $inline_tag = array('a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br',  'button', 'i', 'cite', 'code', 'dfn', 'dd', 'dt', 'em', 'hr', 'img', 'input', 'kbd', 'li', 'link', 'map', 'meta', 'object', 'option', 'q', 'script', 'samp',  'small', 'span', 'strong', 'sub', 'sup', 'textarea', 'td', 'th', 'time', 'title', 'tt', 'var');
-	private $block_tag = array('address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'label', 'main', 'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'select', 'table', 'tr', 'tfoot', 'ul', 'video');
+	private $block_tag = array('address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'label', 'legend', 'main', 'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'select', 'table', 'tr', 'tfoot', 'ul', 'video');
 	private $single_tag = array('!DOCTYPE html', 'meta', 'link', 'br', 'img', 'hr', 'input', 'embed', 'bgsound', 'base', 'col', 'source');
 	private $indentNum = 0;
 	private $set_count = TRUE;
