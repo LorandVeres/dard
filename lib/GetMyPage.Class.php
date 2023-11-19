@@ -82,7 +82,7 @@ class GetMyPage extends DardSession {
 		if(is_array($arg)) {
 			$this -> current_page_id = $arg['id'];
 			$this -> current_module_id = $arg['module_id'];
-			$this -> current_page_groups_priv = $arg['user_priv'];
+			$this -> current_page_groups_priv = $arg['access'];
 			$this -> all_page_properties['page_name'] = $arg['pagename'];
 			$this -> all_page_properties['type'] = $arg['type'];
 			$this -> all_page_properties['title'] = $arg['title'];
@@ -92,7 +92,7 @@ class GetMyPage extends DardSession {
 
 	private function get_error_page($num) {
 		$error_page = $num.'_error';
-		$query = "SELECT `id`, `pagename`, `type`, `title`, `user_priv`, `file_path`, `module_id`  FROM `page` WHERE `pagename` = '$error_page';";
+		$query = "SELECT `id`, `pagename`, `type`, `title`, `access`, `file_path`, `module_id`  FROM `page` WHERE `pagename` = '$error_page';";
 		$result = $this -> selectDB($num, $query, TRUE, 'array');
 		$this -> prep_all_page_properties($result);
 		$this -> set_up_error_page_headers($num);
@@ -112,7 +112,7 @@ class GetMyPage extends DardSession {
 	}
 
 	private function sql_top_page() {
-		$query = "SELECT `id`, `pagename`, `type`, `title`, `user_priv`, `file_path`, `module_id`, `parentpage`, `status`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
+		$query = "SELECT `id`, `pagename`, `type`, `title`, `access`, `file_path`, `module_id`, `parentpage`, `status`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
 		$result = $this -> selectDB($this -> top_page_name, $query, TRUE, 'array');
 		if( !$result){
 			$this -> get_error_page('404');
@@ -125,7 +125,7 @@ class GetMyPage extends DardSession {
 
 	private function sql_sub_page($sub_page) {
 		$query = "SET @parent_id = (SELECT `parentpage` FROM `page` WHERE `pagename` = '$sub_page');";
-		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`user_priv`) AS user_priv, S.`file_path`, S.`module_id`, S.`status`,  P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
+		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`access`) AS user_priv, S.`file_path`, S.`module_id`, S.`status`,  P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
 		$result = $this -> selectDB($sub_page, $query, TRUE, 'array');
 		if (!$result || $result['top_page_name'] !== $this -> URI[0]) {
 			$this -> get_error_page('404');

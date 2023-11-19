@@ -41,7 +41,7 @@ class login extends User {
 
 	private function check_user_login_credentials($dard) {
 		isset($_POST['email']) ? $email = $_POST['email'] : $email = '';
-		$query = "SELECT `id`, `email`, `password`, `u_group`, `firstname` FROM `user` WHERE `email` = '$email';";
+		$query = "SELECT `id`, `email`, `password`, `group`, `firstname` FROM `user` WHERE `email` = '$email';";
 		$cred = $dard -> selectDB($email, $query, TRUE, 'array');
 		if ($cred === NULL || !password_verify($_POST['password'], $cred['password'])) {
 			return FALSE;
@@ -92,7 +92,7 @@ class login extends User {
 		$_SESSION['user_id'] = $user['id'];
 		$_SESSION['user_name'] = $username;
 		$_SESSION['user_loged'] = TRUE;
-		$_SESSION['user_priv'] = $user['u_group'];
+		$_SESSION['user_priv'] = $user['group'];
 	}
 
 }
