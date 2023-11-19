@@ -288,13 +288,33 @@
 	width: 80%;
 	outline: none;
 }
+.dard-form select {
+	display:block;
+	border: 1px solid #dadada;
+	line-height: 22px;
+	font-size: 1rem;
+	margin: 0 auto 10px auto;
+	color: #878787;
+	border-radius: 3px;
+	padding: 6px;
+	width: 82%;
+	outline: none;
+	background-color: #efefef;
+	box-sizing: border-box;
+}
+
+.dard-form fieldset {
+	width: 80%;
+	margin: 0 auto 15px auto;
+}
 
 .dard-form textarea {
 	resize: vertical;
 }
 
 .dard-form input:focus,
-.dard-form textarea:focus {
+.dard-form textarea:focus,
+.dard-form select:focus {
 	border: 1px solid #474747;/*#005aeb;/*#04b315;*/
 }
 .dard-form input::placeholder,
@@ -309,8 +329,8 @@
 	border: 1px solid #dadada;
 	display: block;
 	float: left;
-	min-width: 30px;
-	min-height: 30px;
+	min-width: 2rem;
+	min-height: 2rem;
 }
 
 .dard-form input[type="submit"] {
@@ -347,7 +367,7 @@
 	margin: 0 auto 10px auto;
 	display: block;
 	width: 80%;
-	line-height: 30px;
+	line-height: 2rem;
 	padding: 0 0 6px 0;
 	cursor: pointer;
 	border: none;

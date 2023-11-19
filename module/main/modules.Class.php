@@ -35,17 +35,17 @@ class modules extends FormCleaner {
 	 */
 	public function print_modules_combo_boxes($dard, $tag) {
 		$modules_all = $this -> select_all_modules($dard);
-		$box = $tag -> tag('div', 'class="section group max_row_9 c-box"', '');
+		$box = $tag -> tag('div', 'class="section group span-80 c-box"', '');
 		for ($i = 0; $i < count($modules_all); $i++) {
 			$module_id = $modules_all[$i]["id"];
 			$col = $tag -> tag('div', 'class="module_comp_box"', '');
-			$link_div = $tag -> tag('div', 'class="section group center"', '');
-			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=add-page&moduleid='. $module_id .'" class="col_r spacer_1"', 'Add page'));
-			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=view-pages&moduleid=' .$module_id. '" class="col_r spacer_1"', 'View pages'));
-			$tag -> append_tag($link_div, $tag -> tag('a', 'href="pages/error-messages?a=view&moduleid='. $module_id. '" class="col_r spacer_1"', 'Run time mesages'));
-			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=snipets&moduleid='. $module_id .'" class="col_r spacer_1"', 'Snipets'));
+			$link_div = $tag -> tag('div', 'class="section group c-box span-90 b-space-10"', '');
+			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=add-page&moduleid='. $module_id .'" class=""', 'Add page'));
+			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=view-pages&moduleid=' .$module_id. '" class=""', 'View pages'));
+			$tag -> append_tag($link_div, $tag -> tag('a', 'href="pages/error-messages?a=view&moduleid='. $module_id. '" class=""', 'Run time mesages'));
+			$tag -> append_tag($link_div, $tag -> tag('a', 'href="modules?a=snipets&moduleid='. $module_id .'" class=""', 'Snippets'));
 			$tag -> append_tag($col, $tag -> tag('h3', '', $modules_all[$i]["name"]));
-			$tag -> append_tag($col, $tag -> tag('p', '', $modules_all[0]["description"]));
+			$tag -> append_tag($col, $tag -> tag('p', '', $modules_all[$i]["description"]));
 			$tag -> append_tag($col, $link_div);
 			$tag -> append_tag($box, $col);
 		}
