@@ -23,7 +23,8 @@ class dsn_snipet extends FormCleaner {
 		'load_snippet_type',
 		'load_snippet_status',
 		'load_tags',
-		'responsive'
+		'responsive',
+		'list_css_files'
 		);
 	private $action;
 
@@ -167,6 +168,10 @@ class dsn_snipet extends FormCleaner {
 			$body = json_decode($res['body'], true);
 			$tag -> print_doc($this -> snipet_json_to_html( $body, $tag), 2);
 		}
+	}
+	
+	private function list_css_files() {
+		echo json_encode(file_names_array($dir));
 	}
 }
 ?>
