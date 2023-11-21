@@ -112,7 +112,7 @@ class GetMyPage extends DardSession {
 	}
 
 	private function sql_top_page() {
-		$query = "SELECT `id`, `pagename`, `type`, `title`, `access`, `file_path`, `module_id`, `parentpage`, `status`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
+		$query = "SELECT `id`, `pagename`, `type`, `title`, HEX(`access`) AS access, `file_path`, `module_id`, `parentpage`, `status`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
 		$result = $this -> selectDB($this -> top_page_name, $query, TRUE, 'array');
 		if( !$result){
 			$this -> get_error_page('404');
@@ -125,7 +125,7 @@ class GetMyPage extends DardSession {
 
 	private function sql_sub_page($sub_page) {
 		$query = "SET @parent_id = (SELECT `parentpage` FROM `page` WHERE `pagename` = '$sub_page');";
-		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`access`) AS user_priv, S.`file_path`, S.`module_id`, S.`status`,  P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
+		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`access`) AS access, S.`file_path`, S.`module_id`, S.`status`,  P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
 		$result = $this -> selectDB($sub_page, $query, TRUE, 'array');
 		if (!$result || $result['top_page_name'] !== $this -> URI[0]) {
 			$this -> get_error_page('404');
@@ -171,7 +171,7 @@ class GetMyPage extends DardSession {
 
 	private function check_user_priv() {
 		$params = array( $this->current_page_id );
-		if(!$_SESSION['user_loged']){
+		if(!isset($_SESSION['user_loged']) || !$_SESSION['user_loged']){
 			$params[1] = 0;
 		}elseif(isset($_SESSION['user_id'])){
 			$params[1] = $_SESSION['user_id'];

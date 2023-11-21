@@ -11,7 +11,7 @@ class dbConect extends DardConfig{
     const D = 'default';
         
 	
-	public function insertDB($arg, $query)
+	protected function insertDB($arg, $query)
 	{
 		$link = mysqli_connect($this->cf_db_host, $this->cf_db_user, $this->cf_db_password, $this->cf_db_name);
 		
@@ -48,7 +48,7 @@ class dbConect extends DardConfig{
 	}
 	
 	
-	public function selectDB($arg, $query, $assoc, $return_format){
+	protected function selectDB($arg, $query, $assoc, $return_format){
 			
 		$link = mysqli_connect($this->cf_db_host, $this->cf_db_user, $this->cf_db_password, $this->cf_db_name);
 		
@@ -114,7 +114,7 @@ class dbConect extends DardConfig{
 		
 	}
 	
-	public function stmt($table, $arg, $stmt, $data ) {
+	protected function stmt($table, $arg, $stmt, $data ) {
 		$bool = true; 
 		$argtext = '';
 		$query = '';
@@ -132,7 +132,7 @@ class dbConect extends DardConfig{
 	
 	// stmt small, no params just the function name. Good to select all fields
 	// or statements with no parameters
-	public function stmts ($arg){
+	protected function stmts ($arg){
 		$query = "CALL " . $arg . "();";
 		return $this -> selectDB('', $query, TRUE, 'array');
 	}

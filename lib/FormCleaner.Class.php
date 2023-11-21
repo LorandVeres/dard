@@ -2,7 +2,7 @@
 /**
  *
  */
-class FormCleaner {
+class FormCleaner extends dbConect{
 
 	public $post = FALSE;
 	// $error store an array of error id's

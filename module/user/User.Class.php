@@ -14,7 +14,7 @@ class User extends FormCleaner{
     
     
     protected function passw_hassh($passw){
-        $options = array ('cost' => $dard -> cf_password_cost );
+        $options = array ('cost' => $this -> cf_password_cost );
         return password_hash($passw, PASSWORD_BCRYPT,  $options);
     }
         
