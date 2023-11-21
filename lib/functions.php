@@ -86,6 +86,45 @@ function mysql_human_date($value, $date_type) {
 	return $date;
 }
 
+function file_names_array($dir) {
+	$list = array();
+	$cdir = scandir($dir);
+	foreach ($cdir as $key => $value) {
+		if (!in_array($value,array(".",".."))) {
+			if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
+				$res = file_names_array($dir . DIRECTORY_SEPARATOR . $value);
+				if( $res ) {
+					$list['dir'][$value] = $res;
+				}
+			} else {
+				$list['files'][] = $value;
+			}
+		}
+	}
+	if (!count($list) > 0 ) {
+		$list = null;
+	}else{
+		if (isset($list['dir'])) {
+			foreach ($list['dir'] as $key => $value) {
+				if($value === NULL ) {
+					unset ($list[$key]);
+				} 
+			
+			}
+			if(!count($list['dir']) > 0) {
+				unset($list['dir']);
+			}
+		}
+		if (isset($list['files']) && !count($list['files']) > 0) {
+			unset($list['files']);
+		}
+		if (!count($list) > 0 ) {
+			$list = null;
+		}
+	}
+	return $list;
+}
+
 function print_user_sign_in($tag) {
 	$_SESSION['user_loged'] ? $user = $_SESSION['user_name'] : $user = 'Account';
 	$login_div = $tag -> tag('div', 'class="col-r user-account-logins"', '');
