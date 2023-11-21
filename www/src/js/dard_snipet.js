@@ -16,6 +16,7 @@
 
  let snipet_creator = (function (){
 	let $d = {},
+		overlay,
 		snb = $('.dsn-body'), //snipet body ( container )
 		smn = $('.dsn-side-menu'), // side menu
 		el, // current element
@@ -98,6 +99,8 @@
 		//$d.listen.call(weListen);
 		
 		$d.tagsLayout();
+		
+		overlay = new $d.overlay();
 	
 	};
 	
@@ -1586,6 +1589,45 @@
 	
 	$d.loadDsn =function() {
 		
+	}
+	
+	$d.overlay = function() {
+		let inswitch = false, self = {};
+		
+		self.body = $('<div>').addattrlist({'class':'overlay-body'});
+		
+		self.addbody = function() {
+			let h = $('head'),
+				content = $('<div>').addattrlist({'class':'c-box dsn-overlay-body'});
+			self.body.append(content);
+			$('#dsn_5').append(self.body);
+		}
+		
+		self.rembody = function() {
+			if($('.overlay-body')){
+				self.body.empty();
+				$('#dsn_5').removeChild(self.body);
+				inswitch = false;
+			}else{
+				self.body.empty();
+				self.addbody();
+				inswitch = true;
+			}
+		}
+		
+		function controler() {
+			if(inswitch) {
+				self.rembody();
+			}else{
+				self.addbody();
+				inswitch = true;
+			}console.log(inswitch);
+		}
+		
+		self.do = function() {
+			controler();
+		}
+		return self;
 	}
 	
 		

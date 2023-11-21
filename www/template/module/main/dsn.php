@@ -40,7 +40,10 @@
 				<div class="collapse-content dsn-element-properties">
 					<div class="section group b-space-10 t-space-15 dsn-dark-field"> 
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-tag-name">Current element :</label></div>
-						<div class="col-f span-50"><input type="text" id="dsn_90" name="dsn-el-tag-name" class="span-70" disabled></div>
+						<div class="col-f span-50">
+							<input type="text" id="dsn_90" name="dsn-el-tag-name" class="span-70 left" disabled>
+							<span class="span-20 left"><button id="dsn_89" class="dsn-ctl-btn dsn-edit-btn span-100 left"></button></span>
+						</div>
 					</div>
 					<div class="section group b-space-10 dsn-dark-field">
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-index">Index :</label></div>
