@@ -684,3 +684,9 @@
 .dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; background-color: rgba(47, 157, 248, 0.2); }
 */
 
+.dsn-overlay-body{
+	width: 90%;
+	height: 100%;
+	overflow-y: auto;
+	background-color: #ffffff;
+}
