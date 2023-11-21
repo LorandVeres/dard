@@ -1331,6 +1331,8 @@ $.constructor.prototype.overlay = function() {
 		overlay.style.top = '0';
 		overlay.style.left = '0';
 		overlay.style.zIndex = '1000';
+		overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+		overlay.style.margin = '0px';
 	}
 	if(!isSet(obj.elb) && !bodyname) {
 		closeBtn.css({
@@ -1345,9 +1347,6 @@ $.constructor.prototype.overlay = function() {
 			'background-color': 'rgba(0,0,0, 0);'
 		});
 	}
-	
-	overlay.style.margin !== '0px' && ( overlay.style.margin = '0px' );
-	overlay.style.backgroundColor === body.style.backgroundColor && ( overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)' );
 	
 	!isSet(obj.nobtn) ? closeBtn.addEventListener("click", closeme, false) : overlay.removeChild(closeBtn);
 	// Return the overlay body to have a reference to attache elements to
