@@ -42,8 +42,9 @@ class RegisterUser extends User {
         $email = $_POST['email'];
         $password = $this -> passw_hassh($_POST['password']);
         $arg = array($email, $password);
-        $query = "INSERT INTO `user`(`email`, `password`) VALUES ('$email', '$password');";
-        $dard -> insertDB($arg, $query);
+        $params = array($email, $password, $GLOBALS['cf_session_utd_cookie']);
+        $res = $this -> stmt('', $params, ' registerUser', $params);
+        var_dump($res);
     }
 
     private function register_user($dard) {

@@ -41,8 +41,7 @@ class login extends User {
 
 	private function check_user_login_credentials($dard) {
 		isset($_POST['email']) ? $email = $_POST['email'] : $email = '';
-		$query = "SELECT `id`, `email`, `password`, `group`, `firstname` FROM `user` WHERE `email` = '$email';";
-		$cred = $dard -> selectDB($email, $query, TRUE, 'array');
+		$cred = $this -> stmt('', array($email), 'userLogin', array($email));
 		if ($cred === NULL || !password_verify($_POST['password'], $cred['password'])) {
 			return FALSE;
 		} else {
@@ -65,8 +64,10 @@ class login extends User {
 				} else {
 					$this -> set_session($is_user);
 					$_SERVER["HTTPS"] == "on" ? $http = "https://" : $http = "http://";
-					empty($dard -> cf_login_redirect) ? $dard -> cf_login_redirect = $_SERVER["SERVER_NAME"] : '';
-					redirect($http . $dard -> cf_login_redirect);
+					empty($dard -> cf_login_redirect) ? $re_direct = $_SERVER["SERVER_NAME"] : $re_direct = $dard -> cf_login_redirect ;
+					$query_params = array($_SESSION['user_id'], $GLOBALS['cf_session_utd_cookie']);
+					$newcook = $this -> stmt('', $query_params, 'updateUserCookieAtLogin', $query_params);
+					redirect($http . $re_direct);
 				}
 			}
 		}
@@ -92,7 +93,6 @@ class login extends User {
 		$_SESSION['user_id'] = $user['id'];
 		$_SESSION['user_name'] = $username;
 		$_SESSION['user_loged'] = TRUE;
-		$_SESSION['user_priv'] = $user['group'];
 	}
 
 }

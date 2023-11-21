@@ -20,9 +20,9 @@ class DardSession extends dbConect{
     function __construct() {
         $this -> init_params();
         $this -> init_session();
-        $this -> user_cookie(time());
         $this -> init_user_session();
         $this -> check_session_last_time();
+        $this -> user_cookie(time());
     }
 	
 	private function init_params() {
@@ -40,13 +40,13 @@ class DardSession extends dbConect{
             'httponly' => TRUE,
             'samesite' => 'Strict'
         );
-        if (!isset($_COOKIE['DARDSESSID'])) {
+        if (!isset($_COOKIE['DARDSESSID']) && session_status() === 1) {
             session_set_cookie_params(
                 $this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, 'SameSite=Strict' 
             );
             session_name('DARDSESSID');
             session_start();
-        } else {
+        } else if(session_status() === 1) {
             session_start();
             setcookie('DARDSESSID', session_id(), $options);
         }
@@ -71,11 +71,15 @@ class DardSession extends dbConect{
             session_start();
         $_SESSION = array();
         if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), 1, $params["path"], $params["domain"], $params["secure"], $params["httponly"], $params['samesite']);
+            session_destroy();
+            session_commit();
+            session_set_cookie_params(
+				$this -> time, $this -> path, '.' . $_SERVER['HTTP_HOST'], TRUE, 'SameSite=Strict' 
+			);
+			session_name('DARDSESSID');
+			session_start();
+			$this -> init_user_session();
         }
-        session_destroy();
-        session_commit();
     }
 
     public function gc_session() {
@@ -104,23 +108,14 @@ class DardSession extends dbConect{
             'samesite' => 'Strict'
         );
         if (!isset($_COOKIE['d_utd'])) {
-            setcookie('d_utd', $this -> utd_str($la), $options);
+            setcookie('d_utd', trim(shell_exec('cat /proc/sys/kernel/random/uuid')) . '|' . $la, $options);
         } else {
             $n = explode('|', $_COOKIE['d_utd']);
             $string = $n[0] . '|' . $la;
+            $GLOBALS['cf_session_utd_cookie'] = $string;
             setcookie('d_utd', $string, $options);
+            $this -> autologin($_COOKIE['d_utd'], $string);
         }
-    }
-
-    private function utd_str($la) {
-        $str = time();
-        $str .= $_SERVER['HTTP_USER_AGENT'];
-        $r = rand(5, 15);
-        while ($r) {
-            $name = md5($str);
-            $r--;
-        }
-        return substr($name, 0, -16) . '|' . $la;
     }
 
     public function logout() {
@@ -134,6 +129,20 @@ class DardSession extends dbConect{
             $_SESSION['user_name'] = 'anonymous';
         if (!isset($_SESSION['user_loged']))
             $_SESSION['user_loged'] = FALSE;
+	}
+	
+	private function autologin($oldcook, $newcook) {
+		$login = $this -> stmt('', array($oldcook), 'autoLogin', $oldcook);
+		if( isset($login['autologin']) && $login['autologin'] === 'y') {
+			$login['firstname'] !== NULL ? $name = $login['firstname'] : $name = substr_replace($login['email'], '', strpos($login['email'], '@'));
+			if (!isset($_SESSION['user_name']) || $_SESSION['user_name'] === 'anonymous' || $_SESSION['user_name'] === "")
+				$_SESSION['user_name'] = $name;
+			if ( !isset($_SESSION['user_loged']) || $_SESSION['user_loged'] === FALSE )
+				$_SESSION['user_loged'] = TRUE;
+			if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] === "")
+				$_SESSION['user_id'] = $login['id'];
+		}
+		$cookset = $this -> stmt('', array($oldcook, $newcook), 'updateUserCookie', array($oldcook, $newcook));
 	}
     
 }
