@@ -171,7 +171,7 @@ class dsn_snipet extends FormCleaner {
 	}
 	
 	private function list_css_files() {
-		echo json_encode(file_names_array($dir));
+		echo json_encode(file_names_array('src/css'));
 	}
 }
 ?>

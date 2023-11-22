@@ -41,8 +41,8 @@
 			dsn: ""
 		};
 		$n.style.dsn = ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -1px; }\n";
-		$n.style.dsn += ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; background-color: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";
-		$n.style.dsn += ".dsn-active { outline: 1px solid #3b97e3 !important; outline-offset: -2px; background: rgba(212, 235, 255, 0.1); box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";
+		$n.style.dsn += ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background-color: rgba(212, 235, 255, 0.1)
+		$n.style.dsn += ".dsn-active { outline: 1px solid #3b97e3 !important; outline-offset: -2px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background: rgba(212, 235, 255, 0.1)
 		$n.style.dsn += ".dsn-min-size { min-height:2rem; padding:5px; }\n";
 		
 		// default settings 
@@ -657,8 +657,171 @@
 	        }
 	        $('.dsn-body').walkChild( addDottedBorder);
 		}
-	    
+
+		function addCssFiles() {
+			let self={}, files, pos, path = '/src/css/', existing = [], parent, newpath, open = false;
+			//h.append($('<link>').addattr('rel', 'stylesheet').addattr('type', 'text/css').addattr('href', '/src/css/dsn/dard.css'));
+			
+			function getCssFiles() {
+				$.get_json({
+					url: 'snippet?a=list_css_files',
+					callback: function() {files = arguments[0]}
+				});
+			}
+			
+			function setPosition() {
+				$('head').walkChild(
+					function(){
+						if(this.nodeName.toLowerCase() === 'style'){
+							pos = this;
+							return;
+						}
+				});
+			}
+			
+			function checkExisting(){
+				let i = 0;
+				existing = [];
+				$('head').walkChild(
+					function(){
+						if(this.nodeName.toLowerCase() === 'link' && this.hasAttribute('type')){
+							if(this.getAttribute('type') === "text/css"){
+								existing[i] = this.getAttribute('href')
+								i++;
+							}
+						}
+					});
+			}
+			
+			function printTop(){
+				let top = $('<div>', 'LOADED CSS FILES').addattrlist({'class':'span-80 c-box dsn-add-list-title'}),
+					f = $('<div>', "FOLDER : " +   path).addattrlist({'class':'span-80 c-box dsn-add-list-title'});
+				parent.append(top).append(f);
+			}
+			
+			function listExisting() {
+				let ex = $('<div>').addattrlist({'id':'dsn-loaded-css','class':'span-80 c-box space-20'}),
+					sp;
+				if($('#dsn-loaded-css')) {
+					$('#dsn-loaded-css').parentElement.removeChild($('#dsn-loaded-css'));
+				}
+				for(let i =0; i < existing.length; i++) {
+					sp = $('<span>', existing[i]).addattrlist({'class':'col-f dsn-add-list-existing'});
+					ex.append(sp);
+				}
+				$('.dsn-add-list-title').insertAdjacentElement("afterend", ex);
+				ex.style.height = ex.scrollHeight + "px"
+			}
+			
+			function addFile () {
+				let link, rbt, filepath;
+				filepath = this.parentElement.parentElement.children[0].getAttribute('data-file-path')
+				link = $('<link>').addattrlist({'rel':'stylesheet', 'type':'text/css', 'href':filepath});
+				rbt = $('<button>').addattrlist({'class':'span-100 box dsn-ctl-btn-l dsn-24-m-rem-bt'});
+				pos.insertAdjacentElement("beforebegin", link)
+				this.parentElement.previousElementSibling.appendChild(rbt);
+				this.removeEventListener('click', addFile);
+				this.parentElement.removeChild(this);
+				rbt.addEventListener('click', remFile);
+				existing.push(filepath);
+				listExisting();
+			}
+			
+			function remFile() {
+				let link, abt, rempath;
+				abt = $('<button>').addattrlist({'class':'span-100 box dsn-ctl-btn-l dsn-24-m-add-bt'});
+				rempath = this.parentElement.previousElementSibling.getAttribute('data-file-path');
+				$('head').walkChild(
+					function(){
+						if(this.nodeName.toLowerCase() === 'link' && this.hasAttribute('type')){
+							if(this.getAttribute('type') === "text/css" && this.getAttribute('href') === rempath) {
+								this.parentElement.removeChild(this);
+							}
+						}
+					}
+				);
+				this.parentElement.nextElementSibling.appendChild(abt);
+				abt.addEventListener('click', addFile);
+				this.removeEventListener('click', remFile);
+				this.parentElement.removeChild(this);
+				arrayRemove(existing, rempath);
+				listExisting();
+			}
+			
+			function build(o, path){
+				let ul = $('<ul>').addattrlist({'class':'span-80 c-box space-20 dsn-add-list'}), i, ob, li, f, r, a, rbt, abt;
+				
+				if(o.keyIn('files')){
+					for(i = 0; i < o.files.length ; i++){
+						newpath = '';
+						newpath = path + o.files[i];
+						li = $('<li>').addattrlist({'class':'span-90 c-box'});
+						f = $('<span>', o.files[i]).addattrlist({'class':'span-80 col-f left', 'data-file-path': newpath});
+						r = $('<span>').addattrlist({'class':'span-10 col-f left', 'style':'height: 2rem'});
+						a = $('<span>').addattrlist({'class':'span-10 col-f left', 'style':'height: 2rem'});
+						if(existing.includes(newpath)){
+							rbt = $('<button>').addattrlist({'class':'span-100 box dsn-ctl-btn-l dsn-24-m-rem-bt'});
+							r.append(rbt);
+							if(newpath !== "/src/css/dsn.css" && newpath !== "/src/css/reset.css" && newpath !== "/src/css/ui.css") {
+								rbt.addEventListener('click', remFile);
+							}
+						} else {
+							abt = $('<button>').addattrlist({'class':'span-100 box dsn-ctl-btn-l dsn-24-m-add-bt'});
+							a.append(abt);
+							abt.addEventListener('click', addFile);
+						}
+						ul.append(li.append(f).append(r).append(a));
+					}
+					parent.append(ul);
+				}
+				if(o.keyIn('dir')){
+					ob = o.dir;
+					
+					for(let prop in ob) {
+						if(ob.hasOwnProperty(prop)){
+							newpath = '';
+							newpath = path + prop + '/';
+							parent.append($('<div>', 'FOLDER : ' + path + prop).addattrlist({'class':'span-80 c-box dsn-add-list-title'}));
+							build(ob[prop], newpath);
+						}
+					}
+				}
+			}
+			
+			function removeRemovalEvents(){
+				for(let i = 0; i < this.length; i++) {
+					this[i].removeEventListener('click', remFile);
+				}
+			}
+			
+			function removeAdditionEvents(){
+				for(let i = 0; i < this.length; i++) {
+					this[i].removeEventListener('click', addFile);
+				}
+			}
+			
+			self.add = function(){
+				if (open && $('.dsn-overlay-body')){
+					$('.dsn-24-m-rem-bt', removeRemovalEvents);
+					$('.dsn-24-m-add-bt', removeAdditionEvents);
+				}
+				overlay.do();
+				if(parent = $('.dsn-overlay-body')) {
+					getCssFiles();
+					checkExisting();
+					setPosition
+					printTop()
+					listExisting();
+					build(files, path)
+				}
+				open ? open = false : open = true;
+			}
+			return self;
+		}
+		
+	    let cssfiles = new addCssFiles();
 	    $('#dsn-335').addEventListener('click', function() {highlightAll(); this.classList.toggle('active'); } );
+	    $('#dsn-336').addEventListener('click', cssfiles.add );
 	 }
 	
 	/**
@@ -1621,11 +1784,15 @@
 			}else{
 				self.addbody();
 				inswitch = true;
-			}console.log(inswitch);
+			}
 		}
 		
 		self.do = function() {
 			controler();
+		}
+		
+		self.printSwitch = function() {
+			return inswitch;
 		}
 		return self;
 	}
