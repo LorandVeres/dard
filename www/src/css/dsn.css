@@ -16,7 +16,7 @@
 	background-color: #160a26;
 }
 
-.dsn-ctl-btn {
+.dsn-ctl-btn, .dsn-ctl-btn-l {
 	float: right;
 	margin: 0;
 	width: 24px;
@@ -24,11 +24,22 @@
 	outline: none;
 	border: none;
 	border-radius: 3px;
-	background-color: rgba(0,0,0, 0);
 	background-position: center center;
 	background-repeat: no-repeat;
 }
-
+.dsn-ctl-btn{
+	background-color: rgba(0,0,0, 0);
+	width: 24px;
+	height: 24px;
+}
+.dsn-ctl-btn-l {
+	width: 2rem;
+	height: 2rem;
+	background-color: inherit;
+}
+.dsn-ctl-btn-l:hover {
+	background-color: rgba(0,0,0, 0.1);
+}
 
 .dsn-enviro-btn, .dsn-snipet-btn {
 	float: right;
@@ -212,7 +223,30 @@
 #dsn-335:hover {
 	background-image: url('../../images/icons/g/24/m/dashed-select.png');
 }
-
+#dsn-336 {
+	background-image: url('../../images/icons/g/24/l/css-files.png');
+}
+#dsn-336:hover {
+	background-image: url('../../images/icons/g/24/m/css-files.png');
+}
+.dsn-24-l-add-bt{
+	background-image: url('../../images/icons/g/24/l/add.png');
+}
+.dsn-24-m-add-bt{
+	background-image: url('../../images/icons/g/24/l/add.png');
+}
+.dsn-24-d-add-bt{
+	background-image: url('../../images/icons/g/24/l/add.png');
+}
+.dsn-24-l-rem-bt{
+	background-image: url('../../images/icons/g/24/l/remove.png');
+}
+.dsn-24-m-rem-bt{
+	background-image: url('../../images/icons/g/24/l/remove.png');
+}
+.dsn-24-d-rem-bt{
+	background-image: url('../../images/icons/g/24/l/remove.png');
+}
 
 .dsn-page .dsn-header{
     height: 2rem;
@@ -689,4 +723,35 @@
 	height: 100%;
 	overflow-y: auto;
 	background-color: #ffffff;
+}
+
+.dsn-add-list:first-child{
+	margin-top: 3rem;
+}
+.dsn-add-list li{
+	border-bottom: 1px solid #d1d1d1;
+	color: #2b2b2b;
+	height: 2rem;
+	line-height: 2rem;
+	text-indent: 2rem;
+}
+.dsn-add-list li:hover {
+	background-color: #f9f9f9;
+}
+.dsn-add-list-title{
+	height: 3rem;
+	line-height: 3rem;
+	text-indent: 2rem;
+	background-color: #E1EDFF;
+}
+.dsn-add-list-title:first-child{
+	margin-top: 20px;
+}
+.dsn-add-list-existing {
+	border: 1px solid #d1d1d1;
+	line-height: 2rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	text-indent: 0;
+	margin: 0 5px 15px 5px;
 }
