@@ -812,10 +812,12 @@
 					setPosition
 					printTop()
 					listExisting();
-					build(files, path)
+					build(files, path);
 				}
 				open ? open = false : open = true;
 			}
+			!files && getCssFiles();
+			!pos && setPosition();
 			return self;
 		}
 		
