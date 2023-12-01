@@ -186,29 +186,33 @@ class GetMyPage extends DardSession {
 
 	private function set_snippet_page_head_properties() {
 		// temporary patch 
-		isset($_SESSION['snippet-project']) ? $project = $_SESSION['snippet-project'] : $project = "";
-		
+		$responsive = false;
+		$csspath = array();
 		$href = ''; $newtags = array();
-		$snippet_project_css = array(
-			"rel"=>"stylesheet",
-			"type"=>"text/css",
-			"sizes"=>NULL,
-			"title"=>NULL,
-			"href"=>"/src/css/dsn/". $project .".css",
-			"media"=>NULL );
+		if($this -> ajax) {
+			$obj = json_decode( file_get_contents('php://input'), true );
+			if(isset($obj['data']['cssfile']))
+				$csspath = $obj['data']['cssfile'];
+		}
+		if(!$this -> ajax && !isset($_SESSION['snippet']['project-name'])){
+			$_SESSION['snippet']['project-name'] = 'sandbox';
+		}
+		
+		
 		$dardjs = array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
 		$snipetjs = array( "file"=>"src/js/dard_snipet.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
 		
 		if ( $this -> top_page_name === 'snippet' ) {
+			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive')
+				$responsive = true;
 			// sorting css
-			foreach ($this -> link_tags as $value) {
+			foreach ($this -> link_tags as $key => $value) {
 				if (isset($value['rel']) && $value['rel'] === 'stylesheet') {
 					$href = $value['href'];
 					if( $href === "/src/css/reset.css" || $href === "/src/css/dsn.css" || $href === "/src/css/ui.css"){
-						if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
-							if($href !== "/src/css/dsn.css")
-								$newtags[] = $value;
-						} else {
+						if($responsive) {
+							$newtags[] = $value;
+						}else {
 							$newtags[] = $value;
 						}
 					}
@@ -216,9 +220,24 @@ class GetMyPage extends DardSession {
 					$newtags[] = $value;
 				}
 			}
+			if( isset($_SESSION['snippet']['project-name']) && is_array($csspath))
+				array_push( $csspath,  "/src/css/dsn/" .$_SESSION['snippet']['project-name'] . ".css");
+			// It seams it's still not working as expected
+			if(count($_SESSION['snippet']['cssfiles']) > 0)
+				array_merge( $csspath, $_SESSION['snippet']['cssfiles']);
+			if(count($csspath) >= 1 ){
+				foreach ($csspath as $val) {
+					array_push($newtags, array(
+						"rel"=>"stylesheet",
+						"type"=>"text/css",
+						"sizes"=>NULL,
+						"title"=>NULL,
+						"href"=> $val,
+						"media"=>NULL
+					));
+				}
+			}
 			$this -> link_tags = $newtags;
-			if (isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive' && isset($_SESSION['snippet-project']) )
-				$this -> link_tags[] = $snippet_project_css;
 			// sorting js files
 			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
 				$this -> all_js_scripts = array();
