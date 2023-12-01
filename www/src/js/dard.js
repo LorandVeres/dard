@@ -438,7 +438,7 @@ var $ = function () {
 		*
 		*/
 
-		el.constructor.prototype.append = function(e) {
+		el.append = function(e) {
 			if ( typeof e === 'object') {
 				try {
 					this.appendChild(e);
@@ -499,7 +499,7 @@ var $ = function () {
 		*  .addattr(attr, value);
 		*/
 
-		el.constructor.prototype.addattr = function() {
+		el.addattr = function() {
 			let arg = varyArgs(arguments);
 			if (arguments.length === 2) {
 				this.setAttribute(arg[0], arg[1]);
@@ -772,7 +772,7 @@ var $ = function () {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
-// $ object prototype extended
+// $ object extended
 //
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -888,7 +888,6 @@ $.constructor.prototype.send_json = function() {
 			let newr;
 			try {
 				newr = JSON.parse(r);
-				obj.keyIn('log') && console.log(newr); // for debuging
 				if(obj.keyIn('callback')){
 					if(isFunc( obj.callback)){
 						obj.callback(newr);
@@ -969,7 +968,7 @@ $.constructor.prototype.get_json = function() {
 *
 */
 
-$.constructor.prototype.snipetHandler = (function() {
+let dard_snipetHandler = function() {
 	let self = {},
 		snipet_JSON = {},
 		snipets = {};
@@ -1100,7 +1099,6 @@ $.constructor.prototype.snipetHandler = (function() {
 			walk_Content, // Function
 			set_Element, // Function
 			insert_Element, // Function
-			arg = varyArgs(arguments), // array of arguments
 			dom_object = this.obj, // DOM object pased to the function
 			recipient_Element = this.recipient, // Recipient or reference element
 			el_Position, // The element position when adjacent element is used
@@ -1314,7 +1312,7 @@ $.constructor.prototype.snipetHandler = (function() {
 	};
 
 	return self;
-}());
+};$.snipetHandler = new dard_snipetHandler();
 
 /** Element overlay
 *  Creates a modal or partial overlay over the given element 
