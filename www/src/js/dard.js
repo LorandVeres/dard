@@ -510,6 +510,26 @@ var $ = function () {
 		};
 		
 		/**
+		*  Get and set attributes to itself,
+		*  To set attributes must be a pair of arguments: attribute name and value
+		*  Second parameter is optional
+		*  let id = $(el).attr('id'); to get the attribute
+		*  $(el).attr('id', 'idvalue'); to set the attribute
+		*/
+		
+		el.attr = function() {
+			let arg = arguments, att;
+			if( isSet(arg[0] && arg.length == 1 )){
+				this.hasAttribute(arg[0]) && ( att = this.getAttribute(arg[0]));
+				return att;
+			}else if( arg.length == 2) {
+				this.hasAttribute(arg[0]) && this.removeAttribute(arg[0]);
+				this.setAttribute(arg[0], arg[1]);
+				return this;
+			}
+		}
+		
+		/**
 		*  Add multiple attributes to itself, attribute and value or just an attribute
 		*  @Param Obj{ class:'whole class list', id:'anyid', style:'margin: 0;width:80%'}
 		*  .addattrlist( obj );
