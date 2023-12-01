@@ -438,7 +438,7 @@ var $ = function () {
 		*
 		*/
 
-		el.constructor.prototype.append = function(e) {
+		el.append = function(e) {
 			if ( typeof e === 'object') {
 				try {
 					this.appendChild(e);
@@ -499,7 +499,7 @@ var $ = function () {
 		*  .addattr(attr, value);
 		*/
 
-		el.constructor.prototype.addattr = function() {
+		el.addattr = function() {
 			let arg = varyArgs(arguments);
 			if (arguments.length === 2) {
 				this.setAttribute(arg[0], arg[1]);
@@ -508,6 +508,26 @@ var $ = function () {
 			}
 			return this;
 		};
+		
+		/**
+		*  Get and set attributes to itself,
+		*  To set attributes must be a pair of arguments: attribute name and value
+		*  Second parameter is optional
+		*  let id = $(el).attr('id'); to get the attribute
+		*  $(el).attr('id', 'idvalue'); to set the attribute
+		*/
+		
+		el.attr = function() {
+			let arg = arguments, att;
+			if( isSet(arg[0] && arg.length == 1 )){
+				this.hasAttribute(arg[0]) && ( att = this.getAttribute(arg[0]));
+				return att;
+			}else if( arg.length == 2) {
+				this.hasAttribute(arg[0]) && this.removeAttribute(arg[0]);
+				this.setAttribute(arg[0], arg[1]);
+				return this;
+			}
+		}
 		
 		/**
 		*  Add multiple attributes to itself, attribute and value or just an attribute
@@ -752,7 +772,7 @@ var $ = function () {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
-// $ object prototype extended
+// $ object extended
 //
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -868,7 +888,6 @@ $.constructor.prototype.send_json = function() {
 			let newr;
 			try {
 				newr = JSON.parse(r);
-				obj.keyIn('log') && console.log(newr); // for debuging
 				if(obj.keyIn('callback')){
 					if(isFunc( obj.callback)){
 						obj.callback(newr);
@@ -877,6 +896,10 @@ $.constructor.prototype.send_json = function() {
 			} catch (error) {
 				console.warn('Dard warn: Received invalid JSON data from: ' + obj.url);
 				console.log(r);
+				if(isSet(obj.log)){
+					console.log(obj.log);
+					console.log(error);
+				}
 			}
 		},
 		json : true,
@@ -925,6 +948,10 @@ $.constructor.prototype.get_json = function() {
 			} catch (error) {
 				console.warn('Dard warn: Received invalid JSON data from: ' + obj.url);
 				console.log(r);
+				if(isSet(obj.log)){
+					console.log(obj.log);
+					console.log(error);
+				}
 			}
 		},
 		error : 'Could not load anything via get_json' + obj.url + ' '
@@ -941,7 +968,7 @@ $.constructor.prototype.get_json = function() {
 *
 */
 
-$.constructor.prototype.snipetHandler = (function() {
+let dard_snipetHandler = function() {
 	let self = {},
 		snipet_JSON = {},
 		snipets = {};
@@ -1038,12 +1065,15 @@ $.constructor.prototype.snipetHandler = (function() {
 	*  Insert an HTML node in the document from a snipets object or JSON snipet string
 	*   @Need to be implemented a js event hook as for the text 
 	*  @param snipet {
-	*           obj: {},    //  snipet object
-	*           recipient: element, // The recipient or adjacent element [ HTMLElement object ]
-	*           position: 'afterend' // [ optional ] one of ( afterbegin, beforeend, beforebegin, afterend )
-	*           },
-	*  @param contentArray // [ optional ] The array for the content. Handy for large snipets, with miss match text to be included
-	*  @param contentText // [ optional ] The text for the content. Handy in loops, with a liniar array
+	*           obj: {},                //  snipet object
+	*           recipient: element,     // The recipient or adjacent element [ HTMLElement object ]
+	*           position: 'afterend'    // [ optional ] one of ( afterbegin, beforeend, beforebegin, afterend )
+	*   },
+	*   @param optional{                //the second parameter an object is optional, below are explained the properties
+	*       @param contentArray         // [ optional ] The array for the content. Handy for large snipets, with miss match text to be included
+	*       @param contentText          // [ optional ] The text for the content. Handy in loops, with a liniar array
+	*       @param callback             // [ optional ] based on object property name function applied per element. data-dsnfnobj attribute value will hold the function name
+	*   }
 	*
 	*  @Use
 	*  snipetHandler.sett.call(
@@ -1051,8 +1081,11 @@ $.constructor.prototype.snipetHandler = (function() {
 	*           obj: {},
 	*           recipient: element,
 	*           position: 'afterend'
-	*           },
-	*       contentArray 
+	*       },
+	*       {   
+	*           contentArray: ['item0', 'item1'],
+	*           contentText : 'any text',
+	*           callback:{ func : () =>{} } }
 	*       };
 	*   );
 	*  
@@ -1066,7 +1099,6 @@ $.constructor.prototype.snipetHandler = (function() {
 			walk_Content, // Function
 			set_Element, // Function
 			insert_Element, // Function
-			arg = varyArgs(arguments), // array of arguments
 			dom_object = this.obj, // DOM object pased to the function
 			recipient_Element = this.recipient, // Recipient or reference element
 			el_Position, // The element position when adjacent element is used
@@ -1076,13 +1108,18 @@ $.constructor.prototype.snipetHandler = (function() {
 			arrayElements = {},
 			oneElement,
 			j = 0,
-			stopBool = false;
+			stopBool = false,
+			opt,
+			callback;
 			isSet( this.position ) && ( el_Position = this.position ) ;
-			arg.length > 0 && ( isArray(arg[0]) && ( contentArray = arg[0] ) );
-			arg.length > 0 && ( isStr(arg[0]) && ( contentText = arg[0] ) );
+			if( arguments.length > 0 ) {
+				opt = arguments[0];
+				isSet( opt.contentArray ) && ( contentArray = opt.contentArray );
+				isSet( opt.contentText ) && ( contentText = opt.contentText );
+				isSet( opt.callback ) && ( callback = opt.callback );
+			}
 			
-		const e_attr = 'e_attr',
-			e_content = 'e_content';
+		const e_attr = 'e_attr', e_content = 'e_content';
 
 		set_Attributes = function(attr_Obj, el){
 			let attr={};
@@ -1132,6 +1169,7 @@ $.constructor.prototype.snipetHandler = (function() {
 		};
 
 		set_Element = function(obj, parent_El){
+			let fname;
 			if ( (!isSet(obj) || obj === null ) || !isObj(obj) || !isSet(parent_El) ) {
 				! isSet(obj) && console.warn( 'Dard warn: snipetHandler.sett first parameter is not an object... exiting');
 				! isSet(parent_El) && console.warn( 'Dard warn: snipetHandler.sett second (or recipient) parameter is not an object... exiting');
@@ -1141,25 +1179,36 @@ $.constructor.prototype.snipetHandler = (function() {
 			if(isSet(obj.e_type) && (obj.e_type === 1 || obj.e_type === 3)){
 				if(obj.e_type === 1){
 					const element = document.createElement(obj.e_name);
-					!isSet(parent_El) ? console.log(element) : insert_Element(element, parent_El);
-					if(obj.keyIn(e_attr))
-						set_Attributes(obj.e_attr, element);
+					if(obj.keyIn(e_attr)) {
+						if ( isSet(obj.e_attr['data-dsnfnobj']) && callback !== undefined ) {
+							isSet( callback[obj.e_attr['data-dsnfnobj']]) && ( fname = obj.e_attr['data-dsnfnobj'] );
+							if ( isFunc(callback[fname]) ) {
+								callback[fname].call(obj, parent_El);
+								//obj.e_content = undefined;
+							}
+						} else {
+							//const element = document.createElement(obj.e_name);
+							!isSet(parent_El) ? console.log(element) : insert_Element(element, parent_El);
+							set_Attributes(obj.e_attr, element);
+						}
+					}
 					if(obj.keyIn(e_content)){
 						if(isStr(obj.e_content)){
-							if( obj.e_content === "" && ( obj.e_attr.keyIn('data-dsn-txt-id') || obj.e_attr.keyIn('data-dsntext') ) ) {
-								if( obj.e_attr.keyIn('data-dsn-txt-id'))
-									isSet( contentArray ) && set_TextNode( contentArray [ obj.e_attr['data-dsn-txt-id']] , element );
+							if( obj.e_content === "" && ( obj.e_attr.keyIn('data-dsntextid') || obj.e_attr.keyIn('data-dsntext') ) ) {
+								if( obj.e_attr.keyIn('data-dsntextid'))
+									isSet( contentArray ) && set_TextNode( contentArray [ obj.e_attr['data-dsntextid']] , element );
 								if( obj.e_attr.keyIn('data-dsntext') )
 									isSet( contentText ) && obj.e_attr.keyIn('data-dsntext')  && set_TextNode( contentText , element ); // simple for small snipets in loop
 							}
-							if(obj.e_content !== ""){
+							if(obj.e_content !== "" && ( !obj.e_attr.keyIn('data-dsntextid') && !obj.e_attr.keyIn('data-dsntext'))){
 								set_TextNode(obj.e_content, element);
 							}
 						}
 						if(isObj(obj.e_content) && !isStr(obj.e_content)){
 							walk_Content(obj.e_content, element);
 						}
-					}return element
+					}
+					return element
 				// Not a practical mode to include a one single text node.
 				}else if(obj.e_type === 3 && isStr(obj.e_content)){
 					set_TextNode(obj.e_content, parent_El);
@@ -1263,7 +1312,7 @@ $.constructor.prototype.snipetHandler = (function() {
 	};
 
 	return self;
-}());
+};$.snipetHandler = new dard_snipetHandler();
 
 /** Element overlay
 *  Creates a modal or partial overlay over the given element 
