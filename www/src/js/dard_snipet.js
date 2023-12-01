@@ -763,29 +763,40 @@
 		
 		/** Empty then
 		*   Populate the select option with data
-		*   @def [ optional ] object default first item {v: 'any', t: 'text to be inserted' }
+		*   @def [ optional ] object default first item {v: 'any value', t: 'text to be inserted' }
 		*/
 		function fillSelectFields(urlarg, id ) {
-			let s = $(id), arg;
+			let s = $(id), arg, send = {}, at;
 			s.empty();
-			isSet(arguments[2] ) && ( arg = arguments[2]);
+			( isSet(arguments[2] ) && isObj(arguments[2]) && ( arg = arguments[2] ));
+			isSet(arg) && arg.keyIn('send') && ( send = arg.send );
+			isSet(arg) && arg.keyIn('attr') && ( at = arg.attr );
 			if(isSet(arg) && empty(arg.v))
 				s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
 			function setSelect(r){
 				let p, o;
-				
-				for( let i = 0; i < r.length; i++) {
-					p = r[i];
-					o = $('<option>', p.name).addattr('value', p.name);
-					if(isSet(arg) && p.name === arg.v)
-						o.addattr('selected');
-					s.append(o);
+				//console.log(at);
+				if(r) {
+					for( let i = 0; i < r.length; i++) {
+						p = r[i];
+						o = $('<option>', p.name).addattr('value', p.name);
+						if(isSet(arg) && p.name === arg.v)
+							o.addattr('selected');
+						if(isSet(at) && isObj(at)){
+							for( let prop in at){
+								at.hasOwnProperty(prop) && o.addattr(prop, at[prop]);
+							}
+						}
+						s.append(o);
+					}
 				}
 			}
 			
-			$.get_json({
+			$.send_json({
+				data: send,
 				url: 'snippet?a=' + urlarg,
-				callback: setSelect
+				callback: setSelect,
+				log: 'Failed while loading select option values'
 			});
 		}
 		
