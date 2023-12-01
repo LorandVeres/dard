@@ -13,24 +13,9 @@
  * 
  *
  */
+"use strict";
 
- let snipet_creator = (function (){
-	let $d = {},
-		overlay,
-		snb = $('.dsn-body'), //snipet body ( container )
-		smn = $('.dsn-side-menu'), // side menu
-		el, // current element
-		elName, // current element name to lowercase
-		esb = [], // element siblings if any
-		ep, // element parentElement
-		$n = { dummy:{}, c:{}, p:{}, style:{} }, // dsn snippet objects
-		settings = { }, // will store various settings
-		elStruct = { }, // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
-		snipets = {}, // the snipets on what we work
-		attributes, // function in $d.init
-		$st = {id:0, body:{}, name:'', type:'', status:'live', css:'' }, // stash
-		$p = {id: 3, name:'sandbox', maxid: 0, maxclass: 0, $: {} }, // project
-		$i  = {}; // Sets and get value of input elements based on id
+ let dard_snipet = function (){
 		// Inline styling structure
 		$n.style = {
 			reset : "\n",
@@ -66,7 +51,20 @@
 	 */
 	$d.init = function(){
 		// init el if not set
-		window.onload && !isSet( el ) && $d.change.call($('.dsn-body').firstElementChild);
+		window.addEventListener("load", (event) => { 
+			settings.changeSwitch && $d.change.call($('.dsn-body').firstElementChild);
+			
+			// event listener on all elements of the side menu
+			smn.addEventListener('click', (ev) => {
+				let targetel = ev.target, at;
+				at = $(targetel).attr('data-dsnfname');
+				isFunc($fn.menu[at]) && $fn.menu[at].call(ev.target);
+			});
+			
+			// event listener on all elements of the snipet
+			$d.snipetListener = snippetListener();
+			$d.snipetListener.add();
+		});
 		
 		// Adjusting the snipet body container width
 		screenEnviro();
@@ -96,12 +94,8 @@
 		
 		$d.copyEl();
 		
-		//$d.listen.call(weListen);
-		
 		$d.tagsLayout();
 		
-		overlay = new $d.overlay();
-	
 	};
 	
 	// undefine element
@@ -879,81 +873,59 @@
 	
 
 	/**
-	 *  Seting up the event listener on the snipet 
-	 *  this will remain global inside the snipet.js 
-	 *  to be accessible at addition and removal of elemnts
-	 *
-	 *  @Use 
-	 *  Example for a full snipet block of html
-	 *
-	 *  let asd = {recipient:$('.dsn-body')};
-	 *  asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
-	 *  let bbg = $.snipetHandler.sett.call(asd);
-	 *  $d.snipetListener.call(bbg);
+	 *  Seting up the event listener on the snipet container
 	 *
 	 */
-	 
-	function snipetMoveover(e){
-		e.stopPropagation();
-		this.classList.toggle('dsn-hover');
-	}
-	
-	function snipetMoveout(e){
-		e.stopPropagation();
-		this.classList.toggle('dsn-hover');
-	}
-	
-	function snipetClickable(e){
-		e.stopPropagation();
-		e.preventDefault();
-		$d.change.call(this);
-	}
-	
-	// accessible for one element
-	
-	function removeSnipetEvent() {
-		this.removeEventListener('mouseover', snipetMoveover);
-		this.removeEventListener('mouseout', snipetMoveout);
-		this.removeEventListener('click', snipetClickable);
-	}
-	// accessible for one element
-	
-	function addSnipetEvent() {
-		this.addEventListener('mouseover', snipetMoveover);
-		this.addEventListener('mouseout', snipetMoveout);
-		this.addEventListener('click', snipetClickable);
-	}
-	
-	// accessible for one element and recursively all it's child elements
-
-	$d.snipetListener = function(){
+	function snippetListener(){
+		let self = {}, snipetClickable, snipetMoveout, snipetMoveover;
 		
-		if(this instanceof HTMLElement) {
-			addSnipetEvent.call(this);
-		}else if(isObj(this)) {
-			for( prop in this){
-				$d.snipetListener.call(this[prop]);
+		snipetMoveover = function(ev){
+			let e = ev.target;
+			if(settings.elChangeLock){
+				e.classList.toggle('dsn-hover');
 			}
 		}
 		
-		if( this.childElementCount > 0 ) {
-			$(this).walkChild( $d.snipetListener ) ;
+		snipetMoveout = function(ev){
+			let e = ev.target;
+			if(settings.elChangeLock){
+				if(e && e.classList.contains("dsn-hover")){
+					e.classList.toggle('dsn-hover');
+					e.hasAttribute('class') && ( e.getAttribute('class') === '' && e.removeAttribute('class'));
+				}
+			}
 		}
+		
+		snipetClickable = function(ev){
+			let e = ev.target, fname;
+			if(settings.elChangeLock){
+				$(e).attr('id') !== 'dsn_5' && $d.change.call(e);
+				ev.preventDefault();
+			} else {
+				settings.targetElement = e;
+				try{
+					fname = $(e).attr('data-dsnfname');
+					$fn.body.hasOwnProperty(fname) && $fn.body[fname].call(e);
+				} catch(error){
+					console.log(error);
+				}
+			}
+	}
+		
+		self.add = function() {
+			snb.addEventListener('mouseover', snipetMoveover);
+			snb.addEventListener('mouseout', snipetMoveout);
+			snb.addEventListener('click', snipetClickable);
+		}
+		
+		self.remove = function() {
+			snb.removeEventListener('mouseover', snipetMoveover);
+			snb.removeEventListener('mouseout', snipetMoveout);
+			snb.removeEventListener('click', snipetClickable);
+		}
+		
+		return self;
 	};
-	
-	$d.listenerRemover = function() {
-		
-		if(this instanceof HTMLElement) {
-			removeSnipetEvent.call(this);
-		}else if(isObj(this)) {
-			for( prop in this){
-				$d.listenerRemover.call(this[prop]);
-			}
-		}
-		
-		if( this.childElementCount > 0 )
-			$(this).walkChild($d.listenerRemover);
-	}
 	
 	/**
 	*************************************
@@ -1023,7 +995,6 @@
 		let nextel;
 		if(confirm('Would you, Realy want to delete this element ?') == true ){
 			if( el ) {
-				$d.listenerRemover.call(el);
 				el.parentElement.removeChild(el);
 				if(!ep.classList.contains('dsn-body') ) {
 					nextel = ep;
@@ -1075,7 +1046,6 @@
 				isSet(el) ? newEl.recipient = el : newEl.recipient = $('.dsn-body'); 
 				newEl.contentArray = [];
 				e = $.snipetHandler.sett.call( newEl );
-				$d.snipetListener.call( e );
 				$d.change.call(e);
 			}
 		});
@@ -1804,7 +1774,6 @@
 	let asd = {recipient:$('.dsn-body')};
 	asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
 	let bbg = $.snipetHandler.sett.call(asd);
-	$d.snipetListener.call(bbg);
 	
 	
 	
@@ -1815,14 +1784,9 @@
 }());
 
 
-//let new_snipet = snipet_creator();
-
-
-//$.snipetHandler.gett($('form'));
-//console.log($.snipetHandler.gett($('.overlay-snipet')).e_content);
-if($('.dsn-body')){
-	//let new_snipet = new snipet_creator();
+// Finaly let the fun begun
+if($('#dsn_5')){
+	$.ds = new dard_snipet();
 	$.collapse();
-	//console.log(new_snipet.el());
 }
 
