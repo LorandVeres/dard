@@ -127,10 +127,10 @@
 .dsn-308:hover{
 	background-image: url('../../images/icons/g/24/m/eraser.png');
 }
-#dsn-309 {
+#dsn-309, .dsn-list-btn-download {
 	background-image: url('../../images/icons/g/24/l/download.png');
 }
-#dsn-309:hover {
+#dsn-309:hover, .dsn-list-btn-download:hover {
 	background-image: url('../../images/icons/g/24/m/download.png');
 }
 #dsn-310 {
@@ -169,10 +169,10 @@
 #dsn-322:hover {
 	background-image: url('../../images/icons/g/24/m/add.png');
 }
-#dsn-323 {
+#dsn-323, .dsn-list-btn-extension {
 	background-image: url('../../images/icons/g/24/l/extension.png');
 }
-#dsn-323:hover {
+#dsn-323:hover, .dsn-list-btn-extension:hover {
 	background-image: url('../../images/icons/g/24/m/extension.png');
 }
 #dsn-329 {
@@ -247,6 +247,36 @@
 .dsn-24-d-rem-bt{
 	background-image: url('../../images/icons/g/24/l/remove.png');
 }
+#dsn-337 {
+	background-image: url('../../images/icons/g/24/l/ulist.png');
+}
+#dsn-337:hover {
+	background-image: url('../../images/icons/g/24/m/ulist.png');
+}
+.dsn-add-list-btn.preview {
+	background-image: url('../../images/icons/g/16/l/visibility.png');
+}
+.dsn-add-list-btn.preview:hover {
+	background-image: url('../../images/icons/g/16/m/visibility.png');
+}
+.dsn-add-list-btn.download {
+	background-image: url('../../images/icons/g/16/l/download.png');
+}
+.dsn-add-list-btn.download:hover {
+	background-image: url('../../images/icons/g/16/m/download.png');
+}
+.dsn-add-list-btn.extension {
+	background-image: url('../../images/icons/g/16/l/extension.png');
+}
+.dsn-add-list-btn.extension:hover {
+	background-image: url('../../images/icons/g/16/m/extension.png');
+}
+#dsn-344 {
+	background-image: url('../../images/icons/g/24/l/build.png');
+}
+#dsn-344:hover {
+	background-image: url('../../images/icons/g/24/m/build.png');
+}
 
 .dsn-page .dsn-header{
     height: 2rem;
@@ -266,7 +296,7 @@
 	top: 2rem;
 	right: 0;
 	height: calc( 100% - 2rem);
-	width : 30%;
+	width : 16%;
 	max-width: 350px;
 	min-width: 280px;
 	margin-left: 0;
@@ -504,7 +534,7 @@
 	border: 1px solid #333333;
 	margin-left: 0.6rem;
 	margin-bottom: .3rem;
-	height: 1.4rem;
+	max-height: fit-content;
 	border-radius: 2px;
 	width: fit-content;
 	display: inline-block;
@@ -518,6 +548,7 @@
 	margin: 0 0 0 0.4rem;
 	line-height: 1.3rem;
 	color: #6f6f6f;
+	overflow-y: scroll;
 }
 
 .dsn-el-property-del {
@@ -719,7 +750,7 @@
 */
 
 .dsn-overlay-body{
-	width: 90%;
+	width: 100%;
 	height: 100%;
 	overflow-y: auto;
 	background-color: #ffffff;
@@ -728,15 +759,15 @@
 .dsn-add-list:first-child{
 	margin-top: 3rem;
 }
-.dsn-add-list li{
+.dsn-add-list li, .dsn-add-list-row{
 	border-bottom: 1px solid #d1d1d1;
-	color: #2b2b2b;
-	height: 2rem;
-	line-height: 2rem;
+	color: #484848;
+	height: 2.4rem;
+	line-height: 2.4rem;
 	text-indent: 2rem;
 }
-.dsn-add-list li:hover {
-	background-color: #f9f9f9;
+.dsn-add-list li:hover, .dsn-add-list-row:hover {
+	background-color: #f6f6f6;
 }
 .dsn-add-list-title{
 	height: 3rem;
@@ -755,3 +786,38 @@
 	text-indent: 0;
 	margin: 0 5px 15px 5px;
 }
+.dsn-add-list-btn {
+	display: block;
+	width: 1.6rem;
+	height: 1.6rem;
+	margin: .4rem 6% .4rem 0;
+	border: none;
+	border-radius: 3px;
+	background-color: inherit;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.dsn-add-list-btn:hover {
+	background-color: #d8d8d8;
+}
+.dsn-add-list-select {
+	background-color: #dfdfdf;
+	border: 2px solid #ccc;
+	height: 2rem;
+	border-radius: 5px;
+	text-indent: 0.2rem;
+}
+.dsn-add-list-button{
+	height: 2rem;
+	border: 2px solid #848484;
+	padding: 0 1rem;
+	border-radius: 5px;
+	background-color: #f8f8ff;
+	color: #484848;
+}
+.dsn-add-list-button:hover {
+	border: 2px solid #353535;
+	color: #2d2d2d;
+}
+
+
