@@ -897,6 +897,10 @@ $.constructor.prototype.send_json = function() {
 			} catch (error) {
 				console.warn('Dard warn: Received invalid JSON data from: ' + obj.url);
 				console.log(r);
+				if(isSet(obj.log)){
+					console.log(obj.log);
+					console.log(error);
+				}
 			}
 		},
 		json : true,
@@ -945,6 +949,10 @@ $.constructor.prototype.get_json = function() {
 			} catch (error) {
 				console.warn('Dard warn: Received invalid JSON data from: ' + obj.url);
 				console.log(r);
+				if(isSet(obj.log)){
+					console.log(obj.log);
+					console.log(error);
+				}
 			}
 		},
 		error : 'Could not load anything via get_json' + obj.url + ' '
