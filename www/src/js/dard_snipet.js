@@ -158,6 +158,34 @@
 	}
 	
 	/**
+	 * Clear the Snippet container of the snippet, and fill with any static settings content
+	 * @param {*} fn1 function to insert the static body
+	 * @param {*} fn2  function to clear the added element. If no needed just pass a void function as reference like $d.staticBody(func1, ()=>{})
+	 */
+	$d.staticBody = function(fn1, fn2) {
+		try{
+			if(settings.elChangeLock) {
+				settings.elChangeLock = false;
+				undefineEl();
+				!$n.c.tempbody && ( $n.c.tempbody = $.snipetHandler.gett(snb, true));
+				snb.empty();
+				isFunc(fn1) ? fn1() : throwError ('Parameter 1 in \'staticBody\' function is not a function!: ' + fn1);
+			} else {
+				isFunc(fn2) ? fn2() : throwError ('Parameter 2 in \'staticBody\' function is not a function!: ' + fn2);
+				snb.empty();
+				$n.c.tempbody !== undefined && $.snipetHandler.sett.call({ obj:$n.c.tempbody, recipient:snb})
+				delete $n.c.tempbody;
+				settings.elChangeLock = true;
+				settings.targetElement = undefined;
+				settings.lastCurrentElement = undefined;
+				settings.staticBody = undefined;
+			}
+		} catch (error){
+			console.log(error);
+		}
+	}
+	
+	/**
 	 *  Sets and get value of input elements based on id
 	 *  
 	 *  @Use $i.gett('id'), $i.sett('id', 'new_value')
