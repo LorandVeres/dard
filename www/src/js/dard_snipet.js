@@ -1123,34 +1123,40 @@
 	* @returns the new element
 	*/
 	 $d.change = function(){
-		// remove the active class from current element
-		if(el && el.classList.contains("dsn-active"))
-			el.classList.toggle('dsn-active');
+		// If this is the snipet container exit from function
+		if($(this).attr('id') !== 'dsn_5') {
+			let noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
+			// remove the active class from current element
+			if(el && el.classList.contains("dsn-active")){
+				el.classList.toggle('dsn-active');
+				el.hasAttribute('class') && ( el.getAttribute('class') === '' && el.removeAttribute('class'));
+				el.hasAttribute('contenteditable') && el.removeAttribute('contenteditable');
+			}
 		
-		
-		el = this;
-		elName = el.nodeName.toLowerCase();
-		ep = el.parentElement; 
-		// Add the active class on the new element
-		el.classList ? el.classList.add('dsn-active') : el.setAttribute('class', 'dsn-active'); 
-		if( !isSet( attributes )){
-			attributes = new $d.attr();
-		}
-			attributes.resetEl();
+			el = this;
+			elName = el.nodeName.toLowerCase();
+			!noneditable.includes(el.nodeName.toLowerCase()) ? el.setAttribute('contenteditable', 'true') : el.setAttribute('contenteditable', 'false');
+			ep = el.parentElement; 
+			// Add the active class on the new element
+			el.classList ? el.classList.add('dsn-active') : el.setAttribute('class', 'dsn-active'); 
+			if( !isSet( attributes )){
+				attributes = new $d.attr();
+			}
+				attributes.resetEl();
 			
-		function myindex(el){
-			let i = 0, e =el;
-			while(e.previousElementSibling){
-				e = e.previousElementSibling;
-			i++
-			};
-			return i+1;
+			function myindex(el){
+				let i = 0, e =el;
+				while(e.previousElementSibling){
+					e = e.previousElementSibling;
+				i++
+				};
+				return i+1;
+			}
+			el && $i.sett('dsn_90', elName);
+			el && $i.sett('dsn_91', myindex(el));
+			ep && $i.sett('dsn_92', ep.children.length - 1);
+			el && $i.sett('dsn_93', el.children.length);
 		}
-		$i.sett('dsn_90', elName);
-		$i.sett('dsn_91', myindex(el));
-		$i.sett('dsn_92', ep.children.length - 1);
-		$i.sett('dsn_93', el.children.length);
-		
 		return el;
 	};
 	
