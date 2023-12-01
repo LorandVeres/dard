@@ -146,8 +146,12 @@
 		s.append(document.createTextNode($n.style.reset + $n.style.ui + $n.style.dsnFrame + $n.style.general + $n.style.classes + $n.style.snippetCss + $n.style.dsn));
 	}
 	
+	// undefine the active element, 
+	function undefineEl() {
 		el && el.classList.contains('dsn-active') && el.classList.remove('dsn-active');
 		el && el.classList.contains('dsn-hover') && el.classList.remove('dsn-hover');
+		el && el.hasAttribute('contenteditable') && el.removeAttribute('contenteditable');
+		el && ( settings.lastCurrentElement = el );
 		el && ( el = undefined );
 		ep && ( ep = undefined );
 		elName && ( elName = '' );
@@ -255,7 +259,7 @@
 		nowWidth = monitorWidth + 'px';
 		
 		function checkSideMenu() {
-			let vis = s = window.getComputedStyle(snb, null).getPropertyValue("display");
+			let vis = window.getComputedStyle(snb, null).getPropertyValue("display");
 			vis === 'none' && ( snb.style.display = 'block' );
 		}
 		
@@ -840,7 +844,7 @@
 		
 		$('.dsn-307', fieldLockListener );
 		$('.dsn-308', fieldEmptyListener );
-		$('#dsn-309').addEventListener('click', downloadSnipet);
+		$('#dsn-309').addEventListener('click', $fn.menu.downloadSnipet);
 		$('#dsn-310').addEventListener('click', saveSnippet);
 		$('#dsn-311').addEventListener('click', createNewSnipet);
 		$('#dsn-312').addEventListener('click', editDownload);
@@ -856,7 +860,8 @@
 	}
 	
 	/**
-	 * 
+	 * These are meant to be larger more complex functionalities, for various settings 
+	 * Probably in future will be moved to an external file
 	 */
 	 function generalSettings() {
 	    
@@ -1269,7 +1274,7 @@
 	$d.menuListener = function(){
 		let callable =this[1],
 			warn0 = 'oops the element with id ' + this[0] + ' is not found in menuListener',
-			warn1 = 'oops the callback is not a function in menuListener' ;
+			warn1 = 'oops the callback is not a function in menuListener',
 			e = document.getElementById(this[0]);
 		e ? e.addEventListener("click", function(e){
 			e.stopPropagation();
@@ -1789,7 +1794,7 @@
 			
 			function setSettings() {
 				pos = this.getAttribute('data-pos')
-				$i.gett('dsn-205').value = pos;
+				$('#dsn-205').value = pos;
 				settings.layoutPosition = pos;
 				this.classList.add('active');
 			}
@@ -1862,7 +1867,7 @@
 					
 					!empty( snipet_obj[i]['exp'] ) && ( elStruct[ elname ].exAttr = snipet_obj[i]['exp'].split(",") );
 					!empty( snipet_obj[i]['req'] ) && ( elStruct[elname].reqAttr = snipet_obj[i]['req'].split(",") );
-					elStruct[elname].goup = snipet_obj[i]['tgroup'] ;
+					elStruct[elname].group = snipet_obj[i]['tgroup'] ;
 				}
 			}
 			$.snipetHandler.get_http(
@@ -1909,8 +1914,7 @@
 					// we are on a empty slate,default position is beforeend
 					temp = $.snipetHandler.sett.call( { obj:e, recipient:$('.dsn-body') } );
 				}
-				temp && $d.snipetListener.call(temp);
-				temp.classList.add('dsn-min-size');
+				temp.classList.add('dsn-minsize');
 			}
 		}
 				
@@ -1949,4 +1953,3 @@ if($('#dsn_5')){
 	$.ds = new dard_snipet();
 	$.collapse();
 }
-
