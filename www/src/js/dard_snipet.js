@@ -307,22 +307,30 @@
 			color = v;
 		}
 		
+		function getCssPath() {
+			let scssc = document.styleSheets, arr = new Array();
+			for (let i = 0; i < scssc.length; i++) {
+				const hrefv = scssc[i].href;
+				hrefv !== null && ( arr[i] = hrefv.substring(hrefv.indexOf("/", 8)));
+			}
+			scssc = undefined;
+			return arr;
+		}
+		
 		function reponsiveMode(){
-			let editable;
+			let editable, cssprop = getCssPath();
 			if(this.classList.contains('active') ){
 				setProperties(monitorWidth);
 				$('.dsn-body').empty();
 				editable = $.snipetHandler.sett.call( { obj:$n.c.body, recipient: $('.dsn-body'), position:'beforeend' } );
-				$d.snipetListener.call(editable);
 				pushNotes("Edit mode activated...");
 			} else if( !this.classList.contains('active')) { 
 				undefineEl();
 				$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
-				$d.listenerRemover.call($('.dsn-body'));
 				$('.dsn-body').empty();
 				$.send_json({
 					url: 'snippet?a=responsive',
-					data: { body: $n.c.body},
+					data: { body: $n.c.body, cssfiles: cssprop},
 					callback: function(r){
 						setTimeout( (r == null && framing()) , 200);
 					}
