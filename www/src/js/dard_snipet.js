@@ -174,6 +174,26 @@
 		}
 	}
 	
+	/**
+	 * @param Array Should be an array with the form fields ids to colect values from
+	 * 
+	 * @returns Object      In the form of {filedName: value, fieldname2 : value2} for each element that has the id in the array, if the element exist
+	 */
+	function getFormValuesById() {
+		let reobj = {}, o = arguments[0], val, name;
+		if(isSet(arguments[1]) && isObj(arguments[1]))
+			reobj = arguments[1];
+		if(isArray(o)) {
+			for (let i = 0; i < o.length; i++) {
+				const id = o[i];
+				$('#' + id) && ( val = $('#' + id).value );
+				$('#' + id) && ( name = $('#' + id).attr('name') );
+				reobj[name] = val;
+			}
+		}
+		return reobj;
+	}
+	
 	// Pushing text in notifications bar
 	function pushNotes() {
 		let arg = arguments[0], box = $('#dsn-notifications-text'), bg = $('#dsn-notifications');
