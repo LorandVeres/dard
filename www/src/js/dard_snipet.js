@@ -1289,6 +1289,14 @@
 		
 		showObj.snipet.obj = $n.customAttribute;
 		
+		function parentMaxHeight () {
+			let customContainer, settingsContainer = $('#dsn-el-setings').children[1];
+			customContainer = settingsContainer.children[3];
+			if( settingsContainer.classList.contains('collapse-content') && settingsContainer.style.maxHeight ) {
+				customContainer.style.maxHeight = customContainer.scrollHeight + 'px';
+				settingsContainer.style.maxHeight = settingsContainer.scrollHeight + 'px';
+			}
+		}
 		/**
 		* Creating a deleting menu block for the atributes
 		* @Param {obj, arr, datatype, datavalue}
@@ -1298,14 +1306,11 @@
 		*/
 		
 		function showAttr( ) {
-			let menu = $.snipetHandler.sett.call(this.snipet, this.arr),
-				link;
-			
+			let menu = $.snipetHandler.sett.call(this.snipet, { contentArray: [ this.arr ] } ), link;
 			link = menu.children[1];
 			link.setAttribute( "data-type", this.datatype);
 			link.setAttribute( "data-value", this.datavalue);
 			link.addEventListener('click', function( ){ removeAttr.call(link) ;});
-			
 		};
 		
 		/**
@@ -1327,7 +1332,7 @@
 		* Show the classes in the menu
 		*/
 		function showClass() {
-			let menu = $.snipetHandler.sett.call(this.snipet, this.arr),
+			let menu = $.snipetHandler.sett.call(this.snipet, { contentArray:  this.arr  } ),
 				link, 
 				arr = this.arr;
 				
@@ -1336,6 +1341,7 @@
 				link.setAttribute( "data-type", this.datatype);
 				link.setAttribute( "data-value", this.datavalue);
 				link.addEventListener('click', function (){ removeClass.call(link, arr[0]) ;});
+				parentMaxHeight();
 		};
 		
 		/**
@@ -1406,17 +1412,6 @@
 				}
 			}
 			
-			// Adjusting the parent element max height in the menu
-			function parentMaxHeight () {
-				let parent;
-				if(this.parentElement) {
-					parent = this.parentElement;
-					if( parent.classList.contains('collapse-content') && parent.style.maxHeight ){
-						parent.style.maxHeight = parent.scrollHeight + 'px';
-					}
-				}
-			}
-			
 			// listener for id and title field one time set up
 			function onelistener(){
 				if(!bool1){ // bool initial is false
@@ -1428,7 +1423,7 @@
 			
 			// append the attribute fields in the element settings menu section {
 			ext.add = function() {
-				let snipet, field, attr;
+				let snipet, field, attr, txt;
 				snipet = {
 					obj: $n.expectedAttribute,
 					recipient: parent,
@@ -1437,10 +1432,11 @@
 				onelistener(); // for id and title fields
 				bond();
 				if( at.rq.length > 2) {
-					for( i = 0; i < at.rq.length; i++){
+					for( let i = 0; i < at.rq.length; i++){
 						i < 2 && ( field = parent.children[i] );
 						if( i > 1) {
-							field = $.snipetHandler.sett.call(snipet, [ capitalize(at.rq[i])+' :' ] ) ;
+							txt = capitalize(at.rq[i])+' :';
+							field = $.snipetHandler.sett.call(snipet, { contentArray: [ txt ] } ) ;
 							// First expected attribute div will have an extra space from required
 							if( isSet(at.exp) && at.exp.length > 0 ){
 								at.rq[i] === at.exp[0] && field.classList.add('dsn-vary-properties-top');
@@ -1454,7 +1450,7 @@
 					parentMaxHeight.call(parent);
 				}else {
 					// changing the color for label text and add id and title attribute 
-					for( i = 0; i < 2; i++){
+					for( let i = 0; i < 2; i++){
 						field = parent.children[i];
 						parent.children[i].children[1];
 						attr = currentElAttr(i, field.children[1]);
@@ -1466,10 +1462,10 @@
 			ext.rem = function(){
 				let field;
 				if( at.rq.length > 2){
-					for( i = 0; i < at.rq.length; i++){
+					for( let i = 0; i < at.rq.length; i++){
 						if( parent.children[i] ) {
 							field = parent.children[i].children[1];
-							field.removeEventListener('change', listen) && console.log('event removed');
+							field.removeEventListener('change', listen);
 							if(i > 1 && parent.children[i]) {
 								while(parent.children.length > 2){
 									parent.removeChild(parent.children[i]);
@@ -1481,7 +1477,7 @@
 					}
 				}else{
 					// changing the color for label text 
-					for( i = 0; i < 2; i++){
+					for( let i = 0; i < 2; i++){
 						field = parent.children[i].children[1];
 						field.value = "";
 						field.previousElementSibling.style.color = "#b9b9b9";
@@ -1570,14 +1566,14 @@
 					}
 				}
 				for( let prop in at.all ){
-					if(at.all.keyIn(prop) && prop !== "class"){
+					if(at.all.keyIn(prop) && prop !== "class" && prop !== "contenteditable"){
 						( at.rq.indexOf(prop) < 0 ) && buildCustomAttribute(at.all[prop], prop);
 					}
 				}
 				
 			};
+			parentMaxHeight();
 			return sel;
-			
 		};
 		
 		/**
@@ -1680,6 +1676,7 @@
 					}
 				}
 			}
+			parentMaxHeight();
 		}
 		
 		/**
@@ -1709,15 +1706,14 @@
 						el.setAttribute(this.d, this.v) && ( at.all[this.d] = this.v );
 				}
 			}
+			parentMaxHeight();
 		};
 		
 		function getFields(){
-			let fields =[], ids = [ 'dsn_96', 'dsn_95', 'dsn_94'], cont=[];
+			let fields =[], ids = [ 'dsn_96', 'dsn_95', 'dsn_94'], cont;
 			for(let i =0; i < ids.length; i++) {
-				cont[i] = document.getElementById(ids[i]);
-			}
-			for(let i =0; i < cont.length; i++){
-				fields.push( { e:cont[i], d:cont[i].getAttribute('data-type') } );
+				cont = document.getElementById(ids[i]);
+				fields.push( { e:cont, d:cont.getAttribute('data-type') } );
 			}
 			return fields;
 		}
