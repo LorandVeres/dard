@@ -69,12 +69,10 @@
 		// Adjusting the snipet body container width
 		screenEnviro();
 		
-		$('head').append($('<style>', $n.style.reset + $n.style.ui + $n.style.dsn + $n.style.general + $n.style.classes + $n.style.dsn ));
+		$('head').append($('<style>'));
+		resetStyleTag('', '');
 
 
-		// event listener on all elements of the snipet
-		$(snb).walkChild( $d.snipetListener );
-		//snipetListen.add.call($(snb));
 		// Using a tab sytem for side menu
 		$.tabs( { tab:['dsn_110', 'dsn_107', 'dsn_108'],  content:["dsn_4", "dsn_7", "dsn_6"], active:'active', event:'click', default:2 } );
 		
@@ -98,17 +96,26 @@
 		
 	};
 	
-	// undefine element
-	function undefineEl() {
-		function elset(id) {
-			let arg;
-			arguments.length > 1 && ( arg = arguments[1] );
-			if(!arg) {
-				return document.getElementById(id);
-			} else {
-				document.getElementById(id).value = arg;
-			}
-		}
+	// Can be used in one line conditional statement to throw errors
+	function throwError(arg) {
+		throw new Error(arg);
+	}
+	
+	function resetStyleTag (g, rules) {
+		let arg = arguments,
+			s = $('style'),
+			r;                  // general coments
+		r = ["/* Reset rules */ \n", "/* Ui rules */ \n", "/* Dsn snippet creator rules */ \n", "/* General rules */ \n", "/* Classes rules */ \n", "/* Css from snippet rules */ \n",];
+		g === 'reset' && ($n.style.reset = r[0] + rules + "\n\n");
+		g === 'ui' && ($n.style.ui = r[1] + rules + "\n\n" );
+		g === 'dsnFrame' && ($n.style.dsnFrame = r[2] + rules + "\n\n");
+		g === 'general' && ($n.style.general = r[3] + rules + "\n\n");
+		g === 'classes' && ($n.style.classes = r[4] + rules + "\n\n");
+		g === 'snippetCss' && ($n.style.snippetCss = r[5] + rules + "\n\n");
+		s.empty();
+		s.append(document.createTextNode($n.style.reset + $n.style.ui + $n.style.dsnFrame + $n.style.general + $n.style.classes + $n.style.snippetCss + $n.style.dsn));
+	}
+	
 		el && el.classList.contains('dsn-active') && el.classList.remove('dsn-active');
 		el && el.classList.contains('dsn-hover') && el.classList.remove('dsn-hover');
 		el && ( el = undefined );
