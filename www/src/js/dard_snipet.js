@@ -16,34 +16,64 @@
 "use strict";
 
  let dard_snipet = function (){
+	let $d = {},                                    // this will be the returned Object. All functions accesible externaly will be in this object
+		snb = $('#dsn_5'),                          // snipet body ( container )
+		smn = $('.dsn-side-menu'),                  // side menu
+		el,                                         // current element
+		elName,                                     // current element name to lowercase
+		esb = [],                                   // element siblings if any
+		ep,                                         // element parentElement
+		$n = { dummy:{}, c:{}, p:{}, style:{} },    // dsn snippet objects
+		settings = { },                             // will store various settings
+		elStruct = { },                             // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
+		snipets = {},                               // the snippet tempalates used for the page
+		attributes,                                 // function in $d.init
+		$st = {id:0, body:{}, name:'', type:'', status:'live', css:'' },    // stash
+		$p = {id: 3, name:'sandbox', maxid: 0, maxclass: 0, $: {} },        // project
+		$i  = {},                                   // Sets and get value of input elements based on id
+		$fn = { body: {}, menu: {}};                // object containing functions to handle events on snippet container static body, and on the menu side
+		
+		
 		// Inline styling structure
 		$n.style = {
-			reset : "\n",
-			ui : "\n",
-			dsn : "\n",
-			general : "\n",
-			classes : "\n",
-			dsn: ""
+			reset : "",
+			ui : "",
+			dsnFrame : "",
+			general : "",
+			classes : "",
+			snippetCss : "",
+			dsn: "/* Dsn last rules to override everything*/ \n"
 		};
-		$n.style.dsn = ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -1px; }\n";
-		$n.style.dsn += ".dsn-hover { outline: 1px dashed #0264b4 !important; outline-offset: -1px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background-color: rgba(212, 235, 255, 0.1)
-		$n.style.dsn += ".dsn-active { outline: 1px solid #3b97e3 !important; outline-offset: -2px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background: rgba(212, 235, 255, 0.1)
-		$n.style.dsn += ".dsn-min-size { min-height:2rem; padding:5px; }\n";
 		
-		// default settings 
-		settings.layoutPosition = "beforeend"; // used when iserting new tags or layouts
-		$p.name = "sandbox"; // we need a default project and that is sandbox
-		$p.maxid = 0; // max auto id generated
-		$p.maxclass = 0; // max auto class generated
+		// Not editable elements 
+		let noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
+		
+		$n.style.dsn += ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -1px; }\n";
+		$n.style.dsn += ".dsn-hover { outline: 1px solid #0264b4 !important; outline-offset: -1px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background-color: rgba(212, 235, 255, 0.1)
+		$n.style.dsn += ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background: rgba(212, 235, 255, 0.1)
+		$n.style.dsn += ".dsn-minsize, dsn-min-size { min-height:2rem; padding:5px; }\n";
+		
+		// default general settings 
+		settings.layoutPosition = "beforeend";          // used when iserting new tags or layouts
+		settings.elChangeLock = true;                   // Used to stop mouse over and click events on elements to show the outline, and set the current el variable
+		settings.staticBody = undefined;
+		settings.targetElement = undefined;             // The event.targetElement while settings.elChangeLock = false. May be used by overlays or deleted in future
+		settings.lastCurrentElement = undefined;        // Saving the last active el if we would like to alter it from static settings pages
+		
+		
+		// default project settings
+		$p.name = "sandbox";                            // we need a default project and that is sandbox
+		$p.maxid = 0;                                   // max auto id generated
+		$p.maxclass = 0;                                // max auto class generated
 		$p.$.live = { form: [], block: [], header: [], footer: [], menu: [], article : [], cards: [], list: [], page: [], table: []};
 		$p.$.template = { form: [], block: [], header: [], footer: [], menu: [], article : [], cards: [], list: [], page: [], table: []};
 		$p.$.draft = { form: [], block: [], header: [], footer: [], menu: [], article : [], cards: [], list: [], page: [], table: [] };
 		$p.$.type = ['form','block','header','footer','menu','article','cards','list','page','table'];
-		$n.c = { id:0, body:{}, name:'', type:'', status:'', css:[] } // current snippet
-		$n.p = { id:0, body:{}, name:'', type:'', status:'', css:[]} // downloaded snippet
+		$n.c = { id:0, body:{}, name:'', type:'', status:'', css:[] };      // current snippet
+		$n.p = { id:0, body:{}, name:'', type:'', status:'', css:[]};       // downloaded snippet ( p stands from parked :) temporary parking )
 		
 		
-		elStruct.input = {  id:'0', reqAttr:['type', 'hidden'], exAttr:[ 'name', 'value', 'placeholder', 'required'] }
+		//elStruct.input = {  id:'0', reqAttr:['type', 'hidden'], exAttr:[ 'name', 'value', 'placeholder', 'required'] }
 		
 		
 	/**
