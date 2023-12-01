@@ -29,6 +29,7 @@
 .span-24 { width: 22%; }
 .span-20 { width: 20%; }
 .span-10 { width: 10%; }
+.span-05 { width: 5%; }
 /* GRID OF TWO */
 .span-1-of-2 { width: 49.2%; }
 /* GRID OF THREE */
@@ -177,6 +178,15 @@
 .right-9 { margin-right: 9%; }
 .right-10 { margin-right: 10%; }
 .right-15 { margin-right: 15%; }
+/** TEXT AND LINE HEIGHT PROPERTIES**/
+/***************************/
+.rem-1-2 {line-height: 2rem; font-size: 1rem;}
+.rem-1-14 {line-height: 1.4rem; font-size: 1rem;}
+.rem-1-15 {line-height: 1.5rem; font-size: 1rem;}
+.rem-1-16 {line-height: 1.6rem; font-size: 1rem;}
+.rem-1-18 {line-height: 1.8rem; font-size: 1rem;}
+/** RESPONSIVE WIDTH PROPERTIES**/
+/***************************/
 @media only screen and (max-width: 600px) {
 	.col-rs, .col-rs-2 {
 	  width: 100%;

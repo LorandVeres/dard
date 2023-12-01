@@ -22,9 +22,11 @@ class dsn_snipet extends FormCleaner {
 		'load_projects_name',
 		'load_snippet_type',
 		'load_snippet_status',
+		'load_snippet_group',
 		'load_tags',
 		'responsive',
-		'list_css_files'
+		'list_css_files',
+		'search_snippets'
 		);
 	private $action;
 
@@ -85,8 +87,10 @@ class dsn_snipet extends FormCleaner {
 		$data->project === 'dsn' ? $table_name = "dsn" : $table_name = 'dsn_'. $data->project;
 		$query = "SELECT * FROM `". $table_name ."` WHERE `name` = '$data->name';";
 		$res = $dard ->selectDB($data, $query, TRUE, 'array');
-		$res['body'] = json_decode($res['body']);
-		echo json_encode($res);
+		if( isset($res['body']) ){
+			$res['body'] = json_decode($res['body'], true);
+			echo json_encode($res);
+		}
 	}
 	
 	private function load_tags($dard) {
@@ -111,6 +115,17 @@ class dsn_snipet extends FormCleaner {
 		$query = "SHOW COLUMNS FROM `snipets` LIKE 'type';";
 		$res = $dard ->selectDB('', $query, TRUE, 'array');
 		echo json_encode( $this -> prepare_db_enum_field_to_json($res['Type']) );
+	}
+	
+	private function load_snippet_group($dard) {
+		$obj = json_decode( file_get_contents('php://input'), true );
+		$data = $obj['data'];
+		$project = $obj['data']['project'];
+		$project === 'dsn' ? $table_name = "dsn" : $table_name = 'dsn_'. $project;
+		$query = "SELECT DISTINCT `sgroup` AS `name` FROM `".$table_name ."` WHERE `sgroup` <> '';";
+		$res = $dard ->selectDB('', $query, TRUE, 'array');
+		count($res) === 1 ? $res = array($res) : null ;
+		echo json_encode( $res );
 	}
 	
 	private function load_snippet_status($dard) {
@@ -139,7 +154,7 @@ class dsn_snipet extends FormCleaner {
 	private function get_project_data($dard) {
 		$obj = json_decode( file_get_contents('php://input'), true );
 		$data = $obj['data'];
-		$_SESSION['snippet-project'] = $data['name']; // temporary, will need checked for invalid  characters
+		$_SESSION['snippet']['project-name'] = $data['name']; // temporary, will need checked for invalid  characters
 		$res = $dard -> stmt('', array($data['name']), 'getProject', $data['name']);
 		echo json_encode( $res );
 	}
@@ -159,6 +174,7 @@ class dsn_snipet extends FormCleaner {
 			$obj = json_decode( file_get_contents('php://input'), true);
 			$data = $obj['data'];
 			$body = json_encode($data['body']);
+			$_SESSION['snippet']['cssfiles'] = $data['cssfiles'];
 			$query = "UPDATE `dsn` SET `body`='". $body . "' WHERE `name` = 'responsive-stash';";
 			$res = $dard ->selectDB($body, $query, TRUE, 'array');
 			echo json_encode($res);//var_dump($body);
@@ -172,6 +188,23 @@ class dsn_snipet extends FormCleaner {
 	
 	private function list_css_files() {
 		echo json_encode(file_names_array('src/css'));
+	}
+	
+	private function search_snippets() {
+		$obj = json_decode( file_get_contents('php://input'), true );
+		$data = $obj['data'];
+		$data['project'] === 'dsn' ? $table_name = "dsn" : $table_name = 'dsn_'. $data['project'];
+		$search = array();
+		if(!isset($data['limit'])){
+			$res = $this -> stmt( $table_name, $search, 'searchSnippetsFavorite', $search);
+		}else{
+			$search = array( $data['type'], $data['status'], $data['sgroup'], $data['limit'] );
+			$res = $this -> stmt( $table_name, $search, 'searchSnippet', $search);
+		}
+		if(is_array($res) && array_key_exists('name', $res))
+			$res = array($res);
+		echo json_encode($res);
+		
 	}
 }
 ?>

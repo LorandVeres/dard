@@ -93,23 +93,21 @@
 					
 					<!-- Custom attributes -->
 					
-					<section>
-						<button class="collapse dsn-naked-collapse-button">Custom attributes</button>
-						<div class="collapse-content dsn-element-properties">
-							<p class="b-space-10 left-5">Attributes list :</p>
-							<div id="dsn_99" class="dsn-dark-box b-space-20">
-								
-							</div>
-							<div class="section group dsn-attr" data-type="attr-name" data-value="">
-								<label for="dsn-el-add-class">Attr Name :</label>
-								<input id="dsn_95" type="text" placeholder="name here" data-type="attr-name" data-value="">
-							</div>
-							<div class="section group dsn-attr b-space-15" data-type="attr-value" data-value="">
-								<label for="dsn-el-add-class">Attr Value :</label>
-								<input id="dsn_94" type="text" placeholder="value here" data-type="attr-value" data-value="">
-							</div>
+					<button class="collapse dsn-naked-collapse-button">Custom attributes</button>
+					<div class="collapse-content dsn-element-properties">
+						<p class="b-space-10 left-5">Attributes list :</p>
+						<div id="dsn_99" class="dsn-dark-box b-space-20">
+							
 						</div>
-					</section>
+						<div class="section group dsn-attr" data-type="attr-name" data-value="">
+							<label for="dsn-el-add-class">Attr Name :</label>
+							<input id="dsn_95" type="text" placeholder="name here" data-type="attr-name" data-value="">
+						</div>
+						<div class="section group dsn-attr b-space-15" data-type="attr-value" data-value="">
+							<label for="dsn-el-add-class">Attr Value :</label>
+							<input id="dsn_94" type="text" placeholder="value here" data-type="attr-value" data-value="">
+						</div>
+					</div>
 				</div>
 			</section>
 			
@@ -618,6 +616,7 @@
 						<button id="dsn-310" title="Save" class="dsn-snipet-btn"></button>
 						<button id="dsn-311" title="Add new" class="dsn-snipet-btn"></button>
 						<button id="dsn-313" title="Clear screen" class="dsn-snipet-btn"></button>
+						<button id="dsn-344" title="Settings" class="dsn-snipet-btn"></button>
 					</div>
 				</div>
 				<div class="dsn-snipet-tab-content">
@@ -627,6 +626,7 @@
 						<button id="dsn-309" title="Download" class="dsn-snipet-btn"></button>
 						<button id="dsn-323" title="Apply extension" class="dsn-snipet-btn"></button>
 						<button id="dsn-312" title="Edit this" class="dsn-snipet-btn"></button>
+						<button id="dsn-337" title="List snipets" class="dsn-snipet-btn" data-dsnfname="searchSnippets"></button>
 					</div>
 				</div>
 				<div class="dsn-snipet-tab-content">
@@ -1144,7 +1144,7 @@
 		<!--  END OF HTML tags and blocks ---->
 		
 		</div>
-		<div id="dsn_5" class="col-r dsn-body" contenteditable="true">
+		<div id="dsn_5" class="col-r dsn-body">
 		<div>
 			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
 			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
@@ -1153,7 +1153,8 @@
 		<div id="wetest">
 			<p> A <b>funny bunny with id</b> text for <i>test <span>little inside the fun</span></i></p>
 		</div>
-		<div><input id="test" type=""></div>
+		<div><input id="test" type=""><br><input type="button" value="get-snippet" data-dsn-fname="downloadSnipet" data-snippet-name="default"></div>
+		
 		</div>
 	</div>
 </div>
