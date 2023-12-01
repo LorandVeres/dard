@@ -1918,50 +1918,6 @@
 		
 	}
 	
-	$d.overlay = function() {
-		let inswitch = false, self = {};
-		
-		self.body = $('<div>').addattrlist({'class':'overlay-body'});
-		
-		self.addbody = function() {
-			let h = $('head'),
-				content = $('<div>').addattrlist({'class':'c-box dsn-overlay-body'});
-			self.body.append(content);
-			$('#dsn_5').append(self.body);
-		}
-		
-		self.rembody = function() {
-			if($('.overlay-body')){
-				self.body.empty();
-				$('#dsn_5').removeChild(self.body);
-				inswitch = false;
-			}else{
-				self.body.empty();
-				self.addbody();
-				inswitch = true;
-			}
-		}
-		
-		function controler() {
-			if(inswitch) {
-				self.rembody();
-			}else{
-				self.addbody();
-				inswitch = true;
-			}
-		}
-		
-		self.do = function() {
-			controler();
-		}
-		
-		self.printSwitch = function() {
-			return inswitch;
-		}
-		return self;
-	}
-	
-		
 	// Multiplying a few elements in the body for testing 
 	let asd = {recipient:$('.dsn-body')};
 	asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
@@ -1973,7 +1929,7 @@
 	
 	$d.init();
 	return $d;
-}());
+};
 
 
 // Finaly let the fun begun
