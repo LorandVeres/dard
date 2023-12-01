@@ -857,16 +857,25 @@
 	                $(this).walkChild(addDottedBorder);
 	        }
 	        $('.dsn-body').walkChild( addDottedBorder);
-		}
+	    }
 
 		function addCssFiles() {
-			let self={}, files, pos, path = '/src/css/', existing = [], parent, newpath, open = false;
+			let self={}, files, pos, path = '/src/css/', existing = [], parent = $('#dsn_5'), newpath, open = false;
 			//h.append($('<link>').addattr('rel', 'stylesheet').addattr('type', 'text/css').addattr('href', '/src/css/dsn/dard.css'));
 			
 			function getCssFiles() {
 				$.get_json({
 					url: 'snippet?a=list_css_files',
-					callback: function() {files = arguments[0]}
+					callback: function(r) {
+						if(r) {
+							files = r;
+							checkExisting();
+							setPosition();
+							printTop();
+							listExisting();
+							build(files, path);
+						}
+					}
 				});
 			}
 			
@@ -895,13 +904,13 @@
 			}
 			
 			function printTop(){
-				let top = $('<div>', 'LOADED CSS FILES').addattrlist({'class':'span-80 c-box dsn-add-list-title'}),
-					f = $('<div>', "FOLDER : " +   path).addattrlist({'class':'span-80 c-box dsn-add-list-title'});
+				let top = $('<div>', 'LOADED CSS FILES').addattrlist({'class':'span-70 c-box dsn-add-list-title'}),
+					f = $('<div>', "FOLDER : " +   path).addattrlist({'class':'span-70 c-box dsn-add-list-title'});
 				parent.append(top).append(f);
 			}
 			
 			function listExisting() {
-				let ex = $('<div>').addattrlist({'id':'dsn-loaded-css','class':'span-80 c-box space-20'}),
+				let ex = $('<div>').addattrlist({'id':'dsn-loaded-css','class':'span-70 c-box space-20'}),
 					sp;
 				if($('#dsn-loaded-css')) {
 					$('#dsn-loaded-css').parentElement.removeChild($('#dsn-loaded-css'));
@@ -950,7 +959,7 @@
 			}
 			
 			function build(o, path){
-				let ul = $('<ul>').addattrlist({'class':'span-80 c-box space-20 dsn-add-list'}), i, ob, li, f, r, a, rbt, abt;
+				let ul = $('<ul>').addattrlist({'class':'span-70 c-box space-20 dsn-add-list'}), i, ob, li, f, r, a, rbt, abt;
 				
 				if(o.keyIn('files')){
 					for(i = 0; i < o.files.length ; i++){
@@ -982,49 +991,23 @@
 						if(ob.hasOwnProperty(prop)){
 							newpath = '';
 							newpath = path + prop + '/';
-							parent.append($('<div>', 'FOLDER : ' + path + prop).addattrlist({'class':'span-80 c-box dsn-add-list-title'}));
+							parent.append($('<div>', 'FOLDER : ' + path + prop).addattrlist({'class':'span-70 c-box dsn-add-list-title'}));
 							build(ob[prop], newpath);
 						}
 					}
 				}
 			}
 			
-			function removeRemovalEvents(){
-				for(let i = 0; i < this.length; i++) {
-					this[i].removeEventListener('click', remFile);
-				}
-			}
-			
-			function removeAdditionEvents(){
-				for(let i = 0; i < this.length; i++) {
-					this[i].removeEventListener('click', addFile);
-				}
-			}
-			
 			self.add = function(){
-				if (open && $('.dsn-overlay-body')){
-					$('.dsn-24-m-rem-bt', removeRemovalEvents);
-					$('.dsn-24-m-add-bt', removeAdditionEvents);
-				}
-				overlay.do();
-				if(parent = $('.dsn-overlay-body')) {
-					getCssFiles();
-					checkExisting();
-					setPosition
-					printTop()
-					listExisting();
-					build(files, path);
-				}
-				open ? open = false : open = true;
+				$d.staticBody(getCssFiles, () => {});
 			}
-			!files && getCssFiles();
-			!pos && setPosition();
+			
 			return self;
 		}
 		
 	    let cssfiles = new addCssFiles();
-	    $('#dsn-335').addEventListener('click', function() {highlightAll(); this.classList.toggle('active'); } );
-	    $('#dsn-336').addEventListener('click', cssfiles.add );
+	    $('#dsn-335').addEventListener('click', () => {highlightAll() } );
+	    $('#dsn-336').addEventListener('click', () => { cssfiles.add() } );
 	 }
 	
 	/**
@@ -1040,7 +1023,7 @@
 			0: {
 				e_name: 'span',
 				e_type: 1,
-				e_attr: { class:'dsn-el-property', "data-dsn-txt-id": "0" },
+				e_attr: { class:'dsn-el-property', "data-dsntextid": "0" },
 				e_content: ''
 			},
 			1: {
@@ -1067,7 +1050,7 @@
 			0: {
 				e_name: 'label',
 				e_type: 1,
-				e_attr: { for:"", "data-dsn-txt-id": "0" },
+				e_attr: { for:"", "data-dsntextid": "0" },
 				e_content: ''
 			},
 			1: {
