@@ -265,17 +265,35 @@
 .dsn-add-list-btn.download:hover {
 	background-image: url('../../images/icons/g/16/m/download.png');
 }
-.dsn-add-list-btn.extension {
-	background-image: url('../../images/icons/g/16/l/extension.png');
+.dsn-add-list-btn.settings {
+	background-image: url('../../images/icons/g/16/l/settings.png');
 }
-.dsn-add-list-btn.extension:hover {
-	background-image: url('../../images/icons/g/16/m/extension.png');
+.dsn-add-list-btn.settings:hover {
+	background-image: url('../../images/icons/g/16/m/settings.png');
+}
+.dsn-add-list-btn.cascading {
+	background-image: url('../../images/icons/g/16/l/sort.png');
+}
+.dsn-add-list-btn.cascading:hover {
+	background-image: url('../../images/icons/g/16/m/sort.png');
 }
 #dsn-344 {
 	background-image: url('../../images/icons/g/24/l/build.png');
 }
 #dsn-344:hover {
 	background-image: url('../../images/icons/g/24/m/build.png');
+}
+#dsn-345 {
+	background-image: url('../../images/icons/g/16/l/custom-css.png');
+}
+#dsn-345:hover {
+	background-image: url('../../images/icons/g/16/m/custom-css.png');
+}
+#dsn-346 {
+	background-image: url('../../images/icons/g/16/l/hashtag.png');
+}
+#dsn-346:hover {
+	background-image: url('../../images/icons/g/16/m/hashtag.png');
 }
 
 .dsn-page .dsn-header{
@@ -521,7 +539,6 @@
 }
 
 #dsn-class-properties {
-	padding-bottom: 1.2rem;
 	border-bottom: 1px solid #292929;
 }
 

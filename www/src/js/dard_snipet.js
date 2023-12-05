@@ -31,7 +31,10 @@
 		$st = {id:0, body:{}, name:'', type:'', status:'live', css:'' },    // stash
 		$p = {id: 3, name:'sandbox', maxid: 0, maxclass: 0, $: {} },        // project
 		$i  = {},                                   // Sets and get value of input elements based on id
-		$fn = { body: {}, menu: {}};                // object containing functions to handle events on snippet container static body, and on the menu side
+		$fn = { body: {}, menu: {}},                // object containing functions to handle events on snippet container static body, and on the menu side
+		noneditable,                                // Not editable elements 
+		hideAttributes,                             // Attributes not shown on element settings
+		hideClasses;                                // Classes not shown on element settings
 		
 		
 		// Inline styling structure
@@ -46,11 +49,18 @@
 		};
 		
 		// Not editable elements 
-		let noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
+		noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
 		
-		$n.style.dsn += ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -1px; }\n";
-		$n.style.dsn += ".dsn-hover { outline: 1px solid #0264b4 !important; outline-offset: -1px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background-color: rgba(212, 235, 255, 0.1)
-		$n.style.dsn += ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background: rgba(212, 235, 255, 0.1)
+		// Attributes not shown on element settings
+		hideAttributes = [ 'class', 'contenteditable', 'dsn-highlighted', 'style', 'dsn-ep-hover'];
+		
+		// Classes not shown on element settings
+		hideClasses = [ 'dsn-hover', 'dsn-active', 'dsn-highlighted'];
+		
+		$n.style.dsn += ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -3px; }\n";
+		$n.style.dsn += ".dsn-hover { outline: 1px solid #0264b4 !important; outline-offset: -1px; box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .15) inset; }\n";//background-color: rgba(212, 235, 255, 0.1)
+		$n.style.dsn += ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; box-shadow: 0px 0px 3px 3px rgba(2, 100, 180, .1) inset; }\n";//background: rgba(212, 235, 255, 0.1)
+		$n.style.dsn += ".dsn-ep-hover { outline: 2px solid rgba(172, 224, 0, .2) !important; outline-offset: 2px; box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .1) inset; }\n";
 		$n.style.dsn += ".dsn-minsize, dsn-min-size { min-height:2rem; padding:5px; }\n";
 		
 		// default general settings 
@@ -224,6 +234,68 @@
 			}
 		}
 		return reobj;
+	}
+	
+	function setFormValuesById () {
+		let vobj = arguments[1], o = arguments[0], val, name;
+		for (let i = 0; i < o.length; i++) {
+			const element = $('#' + o[i]);
+			let nameattr = element.attr('name');
+			if( element.nodeName.toLowerCase() === 'input' && element.attr('type') === 'text') {
+				vobj.keyIn(nameattr) && ( element.value = vobj[nameattr] );
+			}
+			if(element.nodeName.toLowerCase() === 'select' ){
+				vobj.keyIn(nameattr) && element.walkChild(function() { 
+					this.value === vobj[nameattr] && $(this).addattr('selected')
+				});
+			}
+		}
+	}
+	
+	/** Empty then
+	*   Populate the select option with data
+	*   @param urlarg It is the url parameter to get the data from [ optional ] object default first item {v: 'any value', t: 'text to be inserted' }
+	*   @param id it is the id of the select field. Can be a string or an valid element
+	*   @param object {     [ optional ]    The whole object is optional
+	*       @prop v:        [ text ]        stands from the default option value
+	*       @prop t:        [ text ]        stands from the default option visible text
+	*       @prop send:     [ object{} ]    It is an object , Data to be sent to server
+	*       @prop attr:     [ objrct{} ]    Attributes value:pair to be added on option elements if needed
+	*   }
+	*/
+	function fillSelectFields(urlarg, id ) {
+		let s = $(id), arg, send = {}, at;
+		s.empty();
+		( isSet(arguments[2] ) && isObj(arguments[2]) && ( arg = arguments[2] ));
+		isSet(arg) && arg.keyIn('send') && ( send = arg.send );
+		isSet(arg) && arg.keyIn('attr') && ( at = arg.attr );
+		if(isSet(arg) && empty(arg.v))
+			s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
+		function setSelect(r){
+			let p, o;
+			//console.log(at);
+			if(r) {
+				for( let i = 0; i < r.length; i++) {
+					p = r[i];
+					o = $('<option>', p.name).addattr('value', p.name);
+					if(isSet(arg) && p.name === arg.v)
+						o.addattr('selected');
+					if(isSet(at) && isObj(at)){
+						for( let prop in at){
+							at.hasOwnProperty(prop) && o.addattr(prop, at[prop]);
+						}
+					}
+					s.append(o);
+				}
+			}
+		}
+		
+		$.send_json({
+			data: send,
+			url: 'snippet?a=' + urlarg,
+			callback: setSelect,
+			log: 'Failed while loading select option values'
+		});
 	}
 	
 	// Pushing text in notifications bar
@@ -471,7 +543,7 @@
 			function getProjectData(r){
 				if(isSet(r) && r !== null) {
 					settings.elChangeLock = true;
-					simulateClick($('#dsn-326'));
+					simulateEvent('click', $('#dsn-326'));
 					$p.maxid = r.maxid;
 					$p.maxclass = r.maxclass;
 					$p.id = r.id;
@@ -614,18 +686,33 @@
 		// Later implementation of updating the stashes with the new name should be done
 		// Or an id based association should be implemented
 		function saveSnippet () {
+			// If locked we can't modify it, to protect the ones used with js scripts
+			// However the lock can be opened from snippet settings 
+			if( $n.c.locked === 'y') {
+				pushNotes("Can't save this snippet. It's locked. Read snippet description why...");
+				return;
+			}
 			let s = {}, namev = $('#dsn-314').value, typev = $('#dsn-315').value, statusv = $('#dsn-316').value, tEl;
 			if($('#dsn-334').classList.contains('active')) { 
 				if( pushNotes("Responsive mode activated. Can't save...")) {
 					return;
 				}
 			}
-			if(!isSet(el)) { return; }
+			if(!isSet(el)) { pushNotes("You must have an active element to save. Can't save..."); return; }
 			// Updating the current snippet object if name, type or status are desired for change
 			!empty(namev) && ( $n.c.name = namev );
 			!empty(typev) && ( $n.c.type = typev );
 			!empty(statusv) && ( $n.c.status = statusv);
-			el.classList.remove('dsn-active');
+			
+			// Removing dsn classes
+			function hideClassesRemove() {
+				for(let i = 0; i < hideClasses.length; i++) {
+					this.classList.contains(hideClasses[i]) && this.classList.remove(hideClasses[i]);
+				}
+				this.hasAttribute('class') && this.getAttribute('class') === '' && this.removeAttribute('class'); 
+				this.childElementCount > 0 && $(this).walkChild( hideClassesRemove );
+			}
+			snb.walkChild( hideClassesRemove );
 			tEl = el;
 			undefineEl();
 			$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
@@ -673,149 +760,6 @@
 			}
 		}
 		
-		/**
-		 * Will search and list snippets for download, favorites as default or apply filters for search
-		 * $fn functions derived from this
-		 *      $fn.menu.searchSnippets = searchSnippets;
-		 *      $fn.body.searchSnippets = searchSnippets;
-		 */
-		function searchSnippets() {
-			let selfCaller = this, gro = { callback: { } }, opp = { callback: { } }, parent = arguments[0], searchIds;
-			searchIds = ['d-2-2', 'd-2-3', 'd-2-4', 'd-2-5', 'd-2-6'];
-			
-			function addSnippetListEvents() {
-				if(this.classList.contains('download')) {
-					this.setAttribute('data-dsnfname', 'downloadSnipet');
-					this.setAttribute('data-snippet-name', arguments[0]);
-					
-				} 
-			}
-			
-			function buildSnippetList() {
-				let row, j, buttons, k = 0, r = arguments[0];
-				if(r){
-					for(j = 0; j < r.length; j++){
-						row = $.snipetHandler.sett.call({obj: this.rowElement, recipient: this.rowElementParent});
-						row && (row.firstElementChild.textContent = r[j].name);
-						row && ( buttons = row.children[1].childNodes );
-						while(k < buttons.length){
-							addSnippetListEvents.call(buttons[k], r[j].name);
-							k++;
-						}
-						k = 0;
-					}
-				}
-			}
-			
-			$fn.body.updateGroups = function() {
-				fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{project: this.value}} );
-			};
-			
-			opp.callback.listSnippets = function() {
-				let h = 4, i, intobj = {rowElement:this, rowElementParent: arguments[0]}, send = {};
-				send.project = $p.name;
-				
-				selfCaller && selfCaller.id === 'd-2-7' && ( send = getFormValuesById(searchIds, send) );
-				
-				$.send_json({
-					data: send,
-					url: 'snippet?a=search-snippets',
-					log: 'snippet list loading failed',
-					callback: (r) => { buildSnippetList.call(intobj, r)}
-				});
-				/* leave this here for testing
-				do{
-					$.snipetHandler.sett.call({obj: this, recipient: rec});
-					h--;i++;
-				}while(h);*/
-			};
-			
-			function loadFilters() {
-				fillSelectFields('load-projects-name', '#d-2-2', {v:$p.name, t:$p.name, attr:{'data-dsnfname':'updateGroups'}} );
-				fillSelectFields('load-snippet-type', '#d-2-3', {v:'', t:''} );
-				fillSelectFields('load-snippet-status', '#d-2-4', {v:'', t:''} );
-				fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{ project: $p.name} });
-			}
-			
-			//opp.callback = fn;
-			function getSearchSnippetBody() {
-				$.send_json({
-					data : { name :'search snippet page', project: 'dard'},
-					url : 'snippet?a=get-snippet-by-name',
-					callback: function(r) {
-						if( isSet(r.body) ){
-							$.snipetHandler.sett.call({ obj: r.body, recipient: snb, position: 'beforeend' }, opp);
-							loadFilters();
-						}
-					},
-					log: 'search snippet page body loading failed'
-				});
-			}
-			
-			function searchAndListSnippets () {
-				$.send_json({
-					data : { name :'search snippet row', project: 'dard'},
-					url : 'snippet?a=get-snippet-by-name',
-					callback: function(r) {
-						let recipient_parent = $('#d-2-1');
-						if(r) {
-							$('#d-2-1').empty();
-							$.snipetHandler.sett.call({ obj: r.body, recipient: $('#d-2-1'), position: 'beforeend' }, opp);
-						}
-					}
-				});
-			}
-			if(this){
-				this.id === 'd-2-7' && searchAndListSnippets();
-				this.id === 'dsn-337' && $d.staticBody( getSearchSnippetBody, () => {} );
-			} else {
-				$d.staticBody( getSearchSnippetBody, () => {} );
-			}
-			
-			
-		}
-		$fn.menu.searchSnippets = searchSnippets;
-		$fn.body.searchSnippets = searchSnippets;
-		
-		/** Empty then
-		*   Populate the select option with data
-		*   @def [ optional ] object default first item {v: 'any value', t: 'text to be inserted' }
-		*/
-		function fillSelectFields(urlarg, id ) {
-			let s = $(id), arg, send = {}, at;
-			s.empty();
-			( isSet(arguments[2] ) && isObj(arguments[2]) && ( arg = arguments[2] ));
-			isSet(arg) && arg.keyIn('send') && ( send = arg.send );
-			isSet(arg) && arg.keyIn('attr') && ( at = arg.attr );
-			if(isSet(arg) && empty(arg.v))
-				s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
-			function setSelect(r){
-				let p, o;
-				//console.log(at);
-				if(r) {
-					for( let i = 0; i < r.length; i++) {
-						p = r[i];
-						o = $('<option>', p.name).addattr('value', p.name);
-						if(isSet(arg) && p.name === arg.v)
-							o.addattr('selected');
-						if(isSet(at) && isObj(at)){
-							for( let prop in at){
-								at.hasOwnProperty(prop) && o.addattr(prop, at[prop]);
-							}
-						}
-						s.append(o);
-					}
-				}
-			}
-			
-			$.send_json({
-				data: send,
-				url: 'snippet?a=' + urlarg,
-				callback: setSelect,
-				log: 'Failed while loading select option values'
-			});
-		}
-		
 		// Switch what and when to fill in the fields under snippet tabs
 		function snipetTabBehavior (){
 			let att;
@@ -842,6 +786,168 @@
 			}
 		}
 		
+		$fn.menu.generateIdAndClass = function () {
+			let field, link, val;
+			this.id === 'dsn-346' && ( field = $('#dsn_a_0') ) && (link = 'get-auto-id') && (val = 'newid' );
+			this.id === 'dsn-345' && ( field = $('#dsn_96') ) && (link = 'get-auto-class') && (val = 'newclass');
+			if(!el) {
+				pushNotes('NO element selected. Can\'t generate new id');
+				return;
+			}
+			$.send_json({
+				data: { project: $p.name },
+				url: 'snippet?a=' + link,
+				callback: function (r){
+					if(r[val]){
+						field.value = 'd-' + $p.id + '-' + r[val];
+						simulateEvent('change', field);
+					}
+				}
+			});
+		}
+		
+		function updateSnippetSettings() {
+			let selfCaller = this, snippmenu = false, fieldIds, send = { project : $p.name, id : $n.c.id }, search = {}, over;
+			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H' ];
+			
+			this.id === 'dsn-344' && ( snippmenu = true );
+			
+			// Return void from snippet settings if there is no current snippet set
+			if(snippmenu && !$n.c.name) {
+				pushNotes('No snippet set for working enviroment. Exiting settings...  ');
+				return;
+			}
+			// From download search list menu altering the default values
+			if(!snippmenu && $('#d-2-2') ){
+				send.project = $('#d-2-2').value;
+				send.name = selfCaller.getAttribute('data-snippet-name');
+				over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
+			}
+						
+			// Sending data to server and updating current snippet settings
+			// $fn.body get this function for the save button
+			$fn.body.doUpdateSnippetSettings = function () {
+				send = getFormValuesById(fieldIds, send);
+				send.newgroup !== '' && ( send.sgroup = send.newgroup );
+				$.send_json ({
+					data : send,
+					url : 'snippet?a=update-snippet-settings',
+					callback : function(r) {
+						// Called from snippet settings menu
+						if( isSet(r.lastId) && r.lastId === '0' && snippmenu ) {
+							$.send_json({ 
+								data : { project: $p.name, name : send.name},
+								url : 'snippet?a=get-snippet-by-name',
+								callback : function(re) {
+									if(isSet(re)) {
+										for( let prop in re) {
+											prop !== ('body' || 'id') && ( $n.c[prop] = re[prop] );
+										}
+										fieldDisable();
+										refreshFieldsValue();
+										pushNotes('Snippet: ' + send.name + ' - settings updated');
+										pushName(send.name);
+										$d.staticBody( () => {}, () => {});
+									}
+								},
+								log : 'Error ocured assigning the new snippet settings update'
+							});
+						// Called from download search list menu
+						} else if( isSet(r.lastId) && r.lastId === '0' && !snippmenu ) {
+							pushNotes('Snippet: ' + search.name + ' - settings updated');
+							// Upadating the name shown in the search list and on the caller button
+							selfCaller.parentElement.previousElementSibling.textContent = send.name;
+							$(selfCaller).addattr('data-snippet-name', send.name);
+							search = {};
+							snb.removeChild(over);
+						} else {
+							pushNotes('Snippet settings update failed');
+						}
+					}
+				});
+			}
+			// Called for snippet settings menu
+			function loadStaticBody(r) {
+				const elem = $.snipetHandler.sett.call({ obj: r, recipient: snb, position: 'beforeend' });
+				elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: $n.c.type, send:{ project: $p.name} });
+				elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: $n.c.status, send:{ project: $p.name} });
+				elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: $n.c.sgroup, send:{ project: $p.name} });
+				elem && setFormValuesById( fieldIds, $n.c );
+				return elem;
+				
+			}
+			// Called for download search list menu
+			function loadSearchBody(r) {
+				const elem = $.snipetHandler.sett.call({ obj: r, recipient: over, position: 'beforeend' });
+				$.send_json({
+					data : { project : send.project, name : send.name },
+					url : 'snippet?a=get-snippet-by-name',
+					callback : function(r) {
+						if(r){
+							for (let prop in r) {
+								if(r.hasOwnProperty(prop)) {
+									prop !== 'body' && ( search[prop] = r[prop] );
+									prop === 'id' && (send.id = r[prop]);
+								}
+							}
+							elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: search.type, send:{ project: send.project} });
+							elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: search.status, send:{ project: send.project} });
+							elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: search.sgroup, send:{ project: send.project} });
+							elem && setFormValuesById( fieldIds, search );
+						}
+					}
+				});
+				return elem;
+			}
+			
+			// Getting the snippet body
+			function getSnippetBody() {
+				$.send_json({
+					data : { name :'snippet settings', project: 'dard'},
+					url : 'snippet?a=get-snippet-body',
+					callback: function(r) {
+						if( isSet(r) ){
+							snippmenu && loadStaticBody(r) ;
+							!snippmenu && loadSearchBody(r) ;
+						}
+					},
+					log: 'snippet settings page body loading failed'
+				});
+			}
+			snippmenu ? $d.staticBody( getSnippetBody, () => {} ) : getSnippetBody();
+		}
+		$fn.menu.updateSnippetSettings = updateSnippetSettings;
+		$fn.body.updateSnippetSettings = updateSnippetSettings;
+		
+		// Preview the snippet from search rows
+		function previewSnippet() {
+			let send = {} ;
+			send.project = $('#d-2-2').value;
+			send.name = this.getAttribute('data-snippet-name');
+			
+			$.send_json({
+				data : { project : send.project, name : send.name },
+				url : 'snippet?a=get-snippet-by-name',
+				callback : function (r) {
+					if(isSet(r)) {
+						console.log(r);
+						const over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
+						const cont = $('<div>');
+						// Default background is white
+						r.background !== '' ? cont.style.backgroundColor = r.background : cont.style.backgroundColor = '#ffffff';
+						// Default width is 100%
+						r.width !== '' ? cont.style.width = r.width : cont.style.width = '100%';
+						//cont.style.marginTop = '4rem';
+						cont.classList.add('pad-20');
+						cont.classList.add('c-box');
+						$.snipetHandler.sett.call( { obj: r.body, recipient: cont, position: 'beforeend' });
+						$(over).append(cont);
+					}
+				}
+			});
+		}
+		$fn.body.previewSnippet = previewSnippet;
+		
 		$('.dsn-307', fieldLockListener );
 		$('.dsn-308', fieldEmptyListener );
 		$('#dsn-309').addEventListener('click', $fn.menu.downloadSnipet);
@@ -864,17 +970,27 @@
 	 * Probably in future will be moved to an external file
 	 */
 	 function generalSettings() {
+	    let highlight;
 	    
 	    // highlight all elemnts
 	    function highlightAll() {
-	        let hil = 0;
+	        let bool = false, self = {};
 	        function addDottedBorder(){
-	            this.classList.toggle('dsn-highlighted');
+	            !bool && this.classList.add('dsn-highlighted');
+	            bool && this.classList.remove('dsn-highlighted') && (this.classList.length === 0 && this.removeAttribute('class') );
 	            if(this.childElementCount > 0)
 	                $(this).walkChild(addDottedBorder);
 	        }
-	        $('.dsn-body').walkChild( addDottedBorder);
+	        self.run = function() {
+	            $('.dsn-body').walkChild( addDottedBorder);
+	            bool ? bool = false : bool = true ;
+	            console.log(bool);
+	        };
+	        
+	        self.get = () => {return bool;};
+	        return self;
 	    }
+	    $fn.menu.highlightAll = new highlightAll();
 
 		function addCssFiles() {
 			let self={}, files, pos, path = '/src/css/', existing = [], parent = $('#dsn_5'), newpath, open = false;
@@ -1023,7 +1139,7 @@
 		}
 		
 	    let cssfiles = new addCssFiles();
-	    $('#dsn-335').addEventListener('click', () => {highlightAll() } );
+	    $('#dsn-335').addEventListener('click', () => {$fn.menu.highlightAll.run() } );
 	    $('#dsn-336').addEventListener('click', () => { cssfiles.add() } );
 	 }
 	
@@ -1087,17 +1203,19 @@
 		let self = {}, snipetClickable, snipetMoveout, snipetMoveover;
 		
 		snipetMoveover = function(ev){
-			let e = ev.target;
+			let e = ev.target, ep = ev.target.parentElement;
 			if(settings.elChangeLock){
 				e.classList.toggle('dsn-hover');
+				ep.classList.toggle('dsn-ep-hover');
 			}
 		}
 		
 		snipetMoveout = function(ev){
-			let e = ev.target;
+			let e = ev.target, ep = ev.target.parentElement;
 			if(settings.elChangeLock){
 				if(e && e.classList.contains("dsn-hover")){
 					e.classList.toggle('dsn-hover');
+					ep.classList.contains("dsn-ep-hover") && ep.classList.toggle('dsn-ep-hover');
 					e.hasAttribute('class') && ( e.getAttribute('class') === '' && e.removeAttribute('class'));
 				}
 			}
@@ -1532,8 +1650,9 @@
 				showObj.snipet.recipient = document.getElementById("dsn_98");
 				el.hasAttribute('class') && ( l = el.getAttribute('class'));
 				!empty(l) && ( at.cl = l.split(' '));
-				arrayRemove(at.cl, "dsn-active");
-				arrayRemove(at.cl, "dsn-hover");
+				for (let i = 0; i < hideClasses.length; i++) {
+					arrayRemove(at.cl, hideClasses[i] );
+				}
 				for(let i = 0; i < at.cl.length; i++){
 					showObj.snipet.recipient = document.getElementById("dsn_98");
 					showObj.datatype = "class";
@@ -1583,7 +1702,7 @@
 					}
 				}
 				for( let prop in at.all ){
-					if(at.all.keyIn(prop) && prop !== "class" && prop !== "contenteditable"){
+					if(at.all.keyIn(prop) && !hideAttributes.includes( prop ) ){
 						( at.rq.indexOf(prop) < 0 ) && buildCustomAttribute(at.all[prop], prop);
 					}
 				}
@@ -1702,7 +1821,7 @@
 		
 		function handleType(){
 			let classname = this.v;
-			if (! reseting ){
+			if (! reseting && el){
 				switch(this.d){
 					case 'class':
 						showObj.snipet.recipient = document.getElementById("dsn_98");
@@ -1939,11 +2058,114 @@
 	asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
 	let bbg = $.snipetHandler.sett.call(asd);
 	
-	
+		
+	/**
+	* Will search and list snippets for download, favorites as default for initial loading or apply filters for search
+	* $fn functions derived from this
+	*      $fn.menu.searchSnippets = searchSnippets;
+	*      $fn.body.searchSnippets = searchSnippets;
+	*/
+	function searchSnippets() {
+		let selfCaller = this, gro = { callback: { } }, opp = { callback: { } }, parent = arguments[0], searchIds;
+		searchIds = ['d-2-2', 'd-2-3', 'd-2-4', 'd-2-5', 'd-2-6'];
+		function addSnippetListEvents() {
+			if(this.classList.contains('download')) {
+				this.setAttribute('data-dsnfname', 'downloadSnipet');
+				this.setAttribute('data-snippet-name', arguments[0]);
+			}
+			if(this.classList.contains('settings')) {
+				this.setAttribute('data-dsnfname', 'updateSnippetSettings');
+				this.setAttribute('data-snippet-name', arguments[0]);
+			}
+			if(this.classList.contains('preview')) {
+				this.setAttribute('data-dsnfname', 'previewSnippet');
+				this.setAttribute('data-snippet-name', arguments[0]);
+			}
+		}
+		
+		function buildSnippetList() {
+			let row, j, buttons, k = 0, r = arguments[0];
+			if(r){
+				for(j = 0; j < r.length; j++){
+					row = $.snipetHandler.sett.call({obj: this.rowElement, recipient: this.rowElementParent});
+					row && (row.firstElementChild.textContent = r[j].name);
+					row && ( buttons = row.children[1].childNodes );
+					while(k < buttons.length){
+						addSnippetListEvents.call(buttons[k], r[j].name);
+						k++;
+					}
+					k = 0;
+				}
+			}
+		}
+			
+		$fn.body.updateGroups = function() {
+			fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{project: this.value}} );
+		};
+			
+		opp.callback.listSnippets = function() {
+			let intobj = {rowElement:this, rowElementParent: arguments[0]}, send = {};
+			send.project = $p.name;
+			
+			selfCaller && selfCaller.id === 'd-2-7' && ( send = getFormValuesById(searchIds, send) );
+			
+			$.send_json({
+				data: send,
+				url: 'snippet?a=search-snippets',
+				log: 'snippet list loading failed',
+				callback: (r) => { buildSnippetList.call(intobj, r)}
+			});
+		};
+			
+		function loadFilters() {
+			fillSelectFields('load-projects-name', '#d-2-2', {v:$p.name, t:$p.name, attr:{'data-dsnfname':'updateGroups'}} );
+			fillSelectFields('load-snippet-type', '#d-2-3', {v:'', t:''} );
+			fillSelectFields('load-snippet-status', '#d-2-4', {v:'', t:''} );
+			fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{ project: $p.name} });
+		}
+			
+		//opp.callback = fn;
+		function getSearchSnippetBody() {
+			$.send_json({
+				data : { name :'search snippet page', project: 'dard'},
+				url : 'snippet?a=get-snippet-by-name',
+				callback: function(r) {
+					if( isSet(r.body) ){
+						$.snipetHandler.sett.call({ obj: r.body, recipient: snb, position: 'beforeend' }, opp);
+						loadFilters();
+					}
+				},
+				log: 'search snippet page body loading failed'
+			});
+		}
+			
+		function searchAndListSnippets () {
+			$.send_json({
+				data : { name :'search snippet row', project: 'dard'},
+				url : 'snippet?a=get-snippet-by-name',
+				callback: function(r) {
+					let recipient_parent = $('#d-2-1');
+					if(r) {
+						$('#d-2-1').empty();
+						$.snipetHandler.sett.call({ obj: r.body, recipient: $('#d-2-1'), position: 'beforeend' }, opp);
+					}
+				}
+			});
+		}
+		if(this){
+			this.id === 'd-2-7' && searchAndListSnippets();
+			this.id === 'dsn-337' && $d.staticBody( getSearchSnippetBody, () => {} );
+		} else {
+			$d.staticBody( getSearchSnippetBody, () => {} );
+		}
+	}
+	$fn.menu.searchSnippets = searchSnippets;
+	$fn.body.searchSnippets = searchSnippets;
 	
 	
 	
 	$d.init();
+	searchSnippets();
 	return $d;
 };
 

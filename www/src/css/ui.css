@@ -9,14 +9,18 @@
 /*  COLUMN SETUP  */ 
 .col { display: block;float:left;margin: 0 0 0 1.6%; }
 .col-f { display: block;float: left;margin: 0; } /* .col-full */
-.col-rs { display: block;float: left;margin: 0; } /* .col-responsive */
-.col-rs-1 { display: block;float: left;margin: 0; } /* .col-responsive */
+.col-rs { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px 960px screen width*/
+.col-rs-s { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px screen width*/
+.col-rs-sm { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px margin top bottom 10px */
+.col-rs-sbm { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px margin bottom 10px */
 .col-rs-2 { display: block;float: left;margin: 0; } /* .col-responsive */
 .col-r { display: block;float: right;margin: 0 1.6% 0 0; } /* .col-right */
 .col:first-child { margin-left: 0; }
 .col-r:first-child { margin-right: 0; }
 /* GRID OF ONE AND ROWS*/
 .span-100 { width: 100%; }
+.span-96, .span-96-c { width: 96%; }
+.span-94, .span-94-c  { width: 94%; }
 .span-90 { width: 90%; }
 .span-80 { width: 80%; }
 .span-74 { width: 74%; }
@@ -92,6 +96,7 @@
 .right { float: right; }
 .c-text { text-align: center; } /* center-text */
 .c-box { margin-left: auto; margin-right: auto; display: block; } /* center-box-section */
+.span-96-c, .span-94-c { margin-left: auto; margin-right: auto; display: block; }
 .indent { text-indent: 1.5rem; }
 .indent-02 { text-indent: .2rem; }
 .indent-05 { text-indent: .5rem; }
@@ -145,6 +150,16 @@
 .b-pad-25 { padding-bottom: 25px; }
 .b-pad-30 { padding-bottom: 30px; }
 
+/** BOX PADDING WHOLE **/
+/***************************/
+.pad-all-5 { padding: 5px; }
+.pad-all-10 { padding: 10px; }
+.pad-all-15 { padding: 15px; }
+.pad-all-20 { padding: 20px; }
+.pad-all-25 { padding: 25px; }
+.pad-all-30 { padding: 30px; }
+
+
 /** GRID SPACING FROM LEFT AND RIGHT**/
 /***************************/
 .left-g-1 { margin-left: 1.6%;}
@@ -178,25 +193,78 @@
 .right-9 { margin-right: 9%; }
 .right-10 { margin-right: 10%; }
 .right-15 { margin-right: 15%; }
-/** TEXT AND LINE HEIGHT PROPERTIES**/
+
+/** TEXT AND LINE HEIGHT PROPERTIES **/
 /***************************/
 .rem-1-2 {line-height: 2rem; font-size: 1rem;}
 .rem-1-14 {line-height: 1.4rem; font-size: 1rem;}
 .rem-1-15 {line-height: 1.5rem; font-size: 1rem;}
 .rem-1-16 {line-height: 1.6rem; font-size: 1rem;}
 .rem-1-18 {line-height: 1.8rem; font-size: 1rem;}
+
+/** BOX HEIGHT PROPERTIES IN REM **/
+/***************************/
+.h-1-rem { height: 1rem; }
+.h-1-2-rem { height: 1.2rem; }
+.h-1-4-rem { height: 1.4rem; }
+.h-1-5-rem { height: 1.5rem; }
+.h-1-6-rem { height: 1.6rem; }
+.h-1-8-rem { height: 1.8rem; }
+.h-2-rem { height: 2rem; }
+.h-3-rem { height: 3rem; }
+.h-4-rem { height: 4rem; }
+.h-5-rem { height: 5rem; }
+.h-6-rem { height: 6rem; }
+.h-7-rem { height: 7rem; }
+.h-8-rem { height: 8rem; }
+.h-9-rem { height: 9rem; }
+.h-10-rem { height: 10rem; }
+
+/** BOX MIN-HEIGHT PROPERTIES IN REM **/
+/***************************/
+.hm-1-rem { min-height: 1rem; }
+.hm-1-2-rem { min-height: 1.2rem; }
+.hm-1-4-rem { min-height: 1.4rem; }
+.hm-1-5-rem { min-height: 1.5rem; }
+.hm-1-6-rem { min-height: 1.6rem; }
+.hm-1-8-rem { min-height: 1.8rem; }
+.hm-2-rem { min-height: 2rem; }
+.hm-3-rem { min-height: 3rem; }
+.hm-4-rem { min-height: 4rem; }
+.hm-5-rem { min-height: 5rem; }
+.hm-6-rem { min-height: 6rem; }
+.hm-7-rem { min-height: 7rem; }
+.hm-8-rem { min-height: 8rem; }
+.hm-9-rem { min-height: 9rem; }
+.hm-10-rem { min-height: 10rem; }
+
+/** BOX HEIGHT PROPERTIES IN PERCENT **/
+/***************************/
+.h-full, .h-100 { height: 100%; }
+.h-half, .h-50 { height: 50%; }
+.h-quarter, .h-25 { height: 25%; }
+.h-third, .h-33-3 { height: 33.3%; }
+
 /** RESPONSIVE WIDTH PROPERTIES**/
 /***************************/
 @media only screen and (max-width: 600px) {
-	.col-rs, .col-rs-2 {
+	.col-rs, .col-rs-s, .col-rs-sm, .col-rs-sbm {
 	  width: 100%;
 	  margin-left: 0;
 	  margin-right: 0;
 	}
+	
+	.col-rs-sm {
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.col-rs-sbm {
+		margin-bottom: 10px;
+	}
   }
   
-  @media only screen and (max-width: 850px) {
-	.col-rs, .col-rs-1 {
+  @media only screen and (max-width: 960px) {
+	.col-rs {
 	  width: 100%;
 	  margin-left: 0;
 	  margin-right: 0;
@@ -286,33 +354,28 @@
 }
 
 .dard-form input[type="text"],
-.dard-form textarea {
-	display:block;
-	border: 1px solid #dadada;
-	line-height: 22px;
-	font-size: 1rem;
-	margin: 0 auto 10px auto;
-	color: #878787;
-	border-radius: 3px;
-	padding: 6px;
-	width: 80%;
-	outline: none;
-}
+.dard-form textarea ,
 .dard-form select {
 	display:block;
 	border: 1px solid #dadada;
-	line-height: 22px;
-	font-size: 1rem;
-	margin: 0 auto 10px auto;
+	line-height: 1.8rem;
+	font-size: .9rem;
 	color: #878787;
 	border-radius: 3px;
-	padding: 6px;
-	width: 82%;
 	outline: none;
-	background-color: #efefef;
 	box-sizing: border-box;
+	padding: 0;
+	text-indent: 0.3rem;
+	transition: ease-in-out all 220ms;
 }
-
+.dard-form input[type="text"],
+.dard-form select {
+	height: 1.8rem;
+}
+.dard-form textarea {
+	line-height: 1.2rem;
+	padding: 0 4px;
+}
 .dard-form fieldset {
 	width: 80%;
 	margin: 0 auto 15px auto;
@@ -325,7 +388,8 @@
 .dard-form input:focus,
 .dard-form textarea:focus,
 .dard-form select:focus {
-	border: 1px solid #474747;/*#005aeb;/*#04b315;*/
+	border: 1px solid #cdcdcd;
+	box-shadow: 0 1px 4px 2px rgba(79, 79, 79, 0.19);
 }
 .dard-form input::placeholder,
 .dard-form textarea::placeholder {
@@ -335,66 +399,91 @@
 .dard-form input[type="checkbox"],
 .dard-form input[type="radio"] {
 	appearance: auto;
+	-webkit-appearance: none;
+	-moz-appearance: none;
 	outline: none;
-	border: 1px solid #dadada;
+	border: 2px solid #ababab;
+	background-color: #eeeeeb;
 	display: block;
 	float: left;
-	min-width: 2rem;
-	min-height: 2rem;
+	width: 1.8rem;
+	height: 1.8rem;
+	box-shadow: inset 0 1px 1px 1px #828282;
+	transition: 160ms all ease-in-out;
+}
+.dard-form input[type="checkbox"] {
+	border-radius: 5px;
+}
+.dard-form input[type="radio"]{
+	border-radius: 50%;
+}
+.dard-form input[type="checkbox"]:checked, 
+.dard-form input[type="radio"]:checked,
+.dard-form input[type="radio"]:focus{
+	border: 2px solid #878787;
+	background-color: #b8f0ff;
+	box-shadow: inset 0 6px 8px 2px #828282;
+	outline: 2px solid #14ffff;
+	outline-offset: -3px;
 }
 
-.dard-form input[type="submit"] {
-	min-width: 150px;
-	height: 50px;
-	background: #05409e;
-	color: #FFFFFF;
-	font-size: 1.5rem;
-	text-align:center;
+.dard-form input[type="submit"],
+.dard-form input[type="button"],
+.dard-form button {
+	background: #ece4e4;
+	color: #4d4d4d;
+	font-size: 1.2rem;
 	display: block;
-	margin: 20px auto;
-	border: none;
+	border-radius: 3px;
+	border: 2px solid #d9d9d9;
+	/*box-shadow: 0 1px 3px 1px #828282;*/
+	transition: 120ms all ease-in-out;
 }
 
-.dard-form input[type="submit"]:hover {
-	background-color: #043585;
+.dard-form input[type="submit"]{
+	height: 2rem;
+	margin: 20px auto;
+	padding: 0 20px;
+}
+.dard-form input[type="button"],
+.dard-form button {
+	height: 1.8rem;
+	padding: 0 .5rem;
+}
+
+.dard-form input[type="submit"]:hover,
+.dard-form input[type="button"]:hover,
+.dard-form button:hover{
+	background-color: #e9e9e9;
+	border: 2px solid #d1d1d1;
+	box-shadow: 0 1px 3px 1px rgba(130, 130, 130, 0.3);
 }
 
 .dard-form label {
-	display: inline-block;
-	text-indent: 1rem;
-	padding: 6px;
+	text-indent: .5rem;
 	color: #878787;
-	border-left: 1px solid #dadada;
-	position: relative;
-	margin-left: 10%;
-	border-top: 1px solid #dadada;
-	border-right: 1px solid #dadada;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+	font-size: .9rem;
 }
 
-.dard-form label.dard-form-check-label {
-	margin: 0 auto 10px auto;
+.dard-form label.check-label {
+	margin: 0 0 5px 0;
 	display: block;
-	width: 80%;
-	line-height: 2rem;
-	padding: 0 0 6px 0;
-	cursor: pointer;
-	border: none;
-	border-bottom: 1px solid rgba(255, 255, 255, .8);
+	height: 1.8rem;
+	line-height: 1.8rem;
 }
 
-.dard-form label.dard-form-check-label:hover {
+.dard-form label.check-label:hover {
 	color: #373737;
 }
 
-.dard-form-succes-dir {
+.dard-form .succes {
 	width: 100%;
-	height: 60px;
-	margin: 40px auto;
+	min-height: 2rem;
+	padding: 5px 0;
+	margin: 10px auto;
 	border: 5px solid #49a800;
 }
-.block-form-succes-dir p {
+.block-form .succes p {
 	text-align: center;
 	color: #49a800;
 }
@@ -421,19 +510,29 @@
 	height : 100%;
 	background-color: rgba(0, 0, 0, 0.8);
 	margin: 0;
-	z-index: 100;
+	z-index: 1000;
+	overflow-y: auto;
 }
 
-.overlay-body .overlay-cl-btn {
-	float: right;
-	padding: 1.2rem;
+.overlay-body .overlaybtn {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	z-index: 1500;
+	padding: .3rem .4rem;
 	outline: none;
 	border: none;
 	color: #ffffff;
 	font-size: 2rem;
+	text-align: center;
 	line-height: 2rem;
 	opacity: 0.6;
-	background-color: rgba(0,0,0, 0);
+	background-color: rgba(0,0,0, .3);
+	border-radius: 50%;
+}
+.overlay-body .overlaybtn:hover {
+	opacity: 0.9;
+	background-color: rgba(0,0,0, .4);
 }
 
 .overlay-body .overlay-header{

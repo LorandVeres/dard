@@ -68,7 +68,7 @@
 					
 					<!-- Class list -->
 					
-					<div id="dsn-class-properties" class="space-15">
+					<div id="dsn-class-properties" class="t-space-15">
 						<p>Class list :</p>
 						<div id="dsn_98" class="dsn-dark-box b-space-20">
 							
@@ -78,7 +78,12 @@
 							<input id="dsn_96" type="text" placeholder="Enter class name here" data-type="class" data-value="">
 						</div>
 					</div>
-					
+					<div class="section group span-100 box h-1-8-rem b-space-10">
+						<div class="span-30 col-r">
+							<button id="dsn-345" title="auto class" class="dsn-ctl-btn" style="margin-left: 1.5rem;margin-right: 1rem;" data-dsnfname="generateIdAndClass"></button>
+							<button id="dsn-346" title="auto id" class="dsn-ctl-btn" data-dsnfname="generateIdAndClass"></button>
+						</div>
+					</div>
 					<!-- Atributes list -->
 					<div id="dsn_97" class="span-100" style="overflow:auto;">
 						<div class="section group dsn-attr" data-type="attribute" data-value="id">
@@ -95,7 +100,7 @@
 					
 					<button class="collapse dsn-naked-collapse-button">Custom attributes</button>
 					<div class="collapse-content dsn-element-properties">
-						<p class="b-space-10 left-5">Attributes list :</p>
+						<p class="space-10 left-5">Attributes list :</p>
 						<div id="dsn_99" class="dsn-dark-box b-space-20">
 							
 						</div>
@@ -616,7 +621,7 @@
 						<button id="dsn-310" title="Save" class="dsn-snipet-btn"></button>
 						<button id="dsn-311" title="Add new" class="dsn-snipet-btn"></button>
 						<button id="dsn-313" title="Clear screen" class="dsn-snipet-btn"></button>
-						<button id="dsn-344" title="Settings" class="dsn-snipet-btn"></button>
+						<button id="dsn-344" title="Settings" data-dsnfname="updateSnippetSettings" class="dsn-snipet-btn"></button>
 					</div>
 				</div>
 				<div class="dsn-snipet-tab-content">
@@ -690,8 +695,8 @@
 				<div id="dsn-318" class="dsn-node-tree">
 					<button class="left dsn-node-link-25" title="After this" data-pos="afterend">after</button>
 					<button class="left dsn-node-link-25" title="Before this" data-pos="beforebegin">before</button>
-					<button class="left dsn-node-link-25" title="Inside at begin" data-pos="afterbegin">in at begin</button>
-					<button class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">in at end</button>
+					<button class="left dsn-node-link-25" title="Inside at begin" data-pos="afterbegin">at begin</button>
+					<button class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">at end</button>
 				</div>
 			</div>
 			
@@ -761,8 +766,8 @@
 			<div id="dsn-204" class="dsn-node-tree">
 				<button id="dsn-206" class="left dsn-node-link-25" title="After this" data-pos="afterend">after</button>
 				<button id="dsn-207" class="left dsn-node-link-25" title="Before this" data-pos="beforebegin">before</button>
-				<button id="dsn-208" class="left dsn-node-link-25" title="Inside at begin" data-pos="afterbegin">in at begin</button>
-				<button id="dsn-209" class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">in at end</button>
+				<button id="dsn-208" class="left dsn-node-link-25" title="Inside at begin" data-pos="afterbegin">at begin</button>
+				<button id="dsn-209" class="left dsn-node-link-25" title="Inside at end" data-pos="beforeend">at end</button>
 				<input id="dsn-205" type="hidden" name="layout-position" value="afterend">
 			</div>
 			<!--  LAYOUT HTML tags and blocks ---->
@@ -1144,17 +1149,9 @@
 		<!--  END OF HTML tags and blocks ---->
 		
 		</div>
+		<!--  SNIPPET CONTAINER BLOCK ---->
 		<div id="dsn_5" class="col-r dsn-body">
-		<div>
-			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
-			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
-			<p> A <b>funny</b> text for <i>test <span>little inside the fun</span></i></p>
 		</div>
-		<div id="wetest">
-			<p> A <b>funny bunny with id</b> text for <i>test <span>little inside the fun</span></i></p>
-		</div>
-		<div><input id="test" type=""><br><input type="button" value="get-snippet" data-dsn-fname="downloadSnipet" data-snippet-name="default"></div>
 		
-		</div>
 	</div>
 </div>
