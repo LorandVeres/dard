@@ -1177,17 +1177,19 @@
 		let self = {}, snipetClickable, snipetMoveout, snipetMoveover;
 		
 		snipetMoveover = function(ev){
-			let e = ev.target;
+			let e = ev.target, ep = ev.target.parentElement;
 			if(settings.elChangeLock){
 				e.classList.toggle('dsn-hover');
+				ep.classList.toggle('dsn-ep-hover');
 			}
 		}
 		
 		snipetMoveout = function(ev){
-			let e = ev.target;
+			let e = ev.target, ep = ev.target.parentElement;
 			if(settings.elChangeLock){
 				if(e && e.classList.contains("dsn-hover")){
 					e.classList.toggle('dsn-hover');
+					ep.classList.contains("dsn-ep-hover") && ep.classList.toggle('dsn-ep-hover');
 					e.hasAttribute('class') && ( e.getAttribute('class') === '' && e.removeAttribute('class'));
 				}
 			}
