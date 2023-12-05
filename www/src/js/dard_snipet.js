@@ -893,6 +893,34 @@
 		$fn.menu.updateSnippetSettings = updateSnippetSettings;
 		$fn.body.updateSnippetSettings = updateSnippetSettings;
 		
+		// Preview the snippet from search rows
+		function previewSnippet() {
+			let send = {} ;
+			send.project = $('#d-2-2').value;
+			send.name = this.getAttribute('data-snippet-name');
+			
+			$.send_json({
+				data : { project : send.project, name : send.name },
+				url : 'snippet?a=get-snippet-by-name',
+				callback : function (r) {
+					if(isSet(r)) {
+						console.log(r);
+						const over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
+						const cont = $('<div>');
+						// Default background is white
+						r.background !== '' ? cont.style.backgroundColor = r.background : cont.style.backgroundColor = '#ffffff';
+						// Default width is 100%
+						r.width !== '' ? cont.style.width = r.width : cont.style.width = '100%';
+						//cont.style.marginTop = '4rem';
+						cont.classList.add('pad-20');
+						cont.classList.add('c-box');
+						$.snipetHandler.sett.call( { obj: r.body, recipient: cont, position: 'beforeend' });
+						$(over).append(cont);
+					}
+				}
+			});
+		}
+		$fn.body.previewSnippet = previewSnippet;
 		
 		$('.dsn-307', fieldLockListener );
 		$('.dsn-308', fieldEmptyListener );
