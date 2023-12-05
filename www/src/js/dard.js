@@ -126,13 +126,24 @@ function toggle(el) {
 };
 
 /**
-* Dispatch a click event onTarget element
-* @param onTarget can be an element, or string like for the selector parameter: '#id' or '.class' or 'elementName' 
+* Dispatch an event onTarget element
+* @param event A valid event
+* @param @param onTarget can be an element, or string like for the selector parameter: '#id' or '.class' or 'elementName'
+* 
+* @USE simulateEvent('event', anyHTMLElement )
 */
-function simulateClick(onTarget) {
-	evt = new Event("click", { bubbles: false, cancelable: true });
+function simulateEvent() {
+	let ev, onTarget, evt;
+	if(arguments.length === 1 ) 
+		onTarget = arguments[0] && ( ev = 'click' ); 
+	if( arguments.length === 2 )
+		( ev = arguments[0] ) && ( onTarget =arguments[1] );
+	evt = new Event(ev, { bubbles: false, cancelable: true });
 	$(onTarget).dispatchEvent(evt);
 }
+// for a bit of back compatibility
+simulateClick = simulateEvent;
+
 /*
 * str2el(html_string)
 * Creates a valid DOM element from a html string
