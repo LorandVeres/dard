@@ -1991,11 +1991,114 @@
 	asd.obj = $.snipetHandler.gett($('.dsn-body'), true);
 	let bbg = $.snipetHandler.sett.call(asd);
 	
-	
+		
+	/**
+	* Will search and list snippets for download, favorites as default for initial loading or apply filters for search
+	* $fn functions derived from this
+	*      $fn.menu.searchSnippets = searchSnippets;
+	*      $fn.body.searchSnippets = searchSnippets;
+	*/
+	function searchSnippets() {
+		let selfCaller = this, gro = { callback: { } }, opp = { callback: { } }, parent = arguments[0], searchIds;
+		searchIds = ['d-2-2', 'd-2-3', 'd-2-4', 'd-2-5', 'd-2-6'];
+		function addSnippetListEvents() {
+			if(this.classList.contains('download')) {
+				this.setAttribute('data-dsnfname', 'downloadSnipet');
+				this.setAttribute('data-snippet-name', arguments[0]);
+			}
+			if(this.classList.contains('settings')) {
+				this.setAttribute('data-dsnfname', 'updateSnippetSettings');
+				this.setAttribute('data-snippet-name', arguments[0]);
+			}
+			if(this.classList.contains('preview')) {
+				this.setAttribute('data-dsnfname', 'previewSnippet');
+				this.setAttribute('data-snippet-name', arguments[0]);
+			}
+		}
+		
+		function buildSnippetList() {
+			let row, j, buttons, k = 0, r = arguments[0];
+			if(r){
+				for(j = 0; j < r.length; j++){
+					row = $.snipetHandler.sett.call({obj: this.rowElement, recipient: this.rowElementParent});
+					row && (row.firstElementChild.textContent = r[j].name);
+					row && ( buttons = row.children[1].childNodes );
+					while(k < buttons.length){
+						addSnippetListEvents.call(buttons[k], r[j].name);
+						k++;
+					}
+					k = 0;
+				}
+			}
+		}
+			
+		$fn.body.updateGroups = function() {
+			fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{project: this.value}} );
+		};
+			
+		opp.callback.listSnippets = function() {
+			let intobj = {rowElement:this, rowElementParent: arguments[0]}, send = {};
+			send.project = $p.name;
+			
+			selfCaller && selfCaller.id === 'd-2-7' && ( send = getFormValuesById(searchIds, send) );
+			
+			$.send_json({
+				data: send,
+				url: 'snippet?a=search-snippets',
+				log: 'snippet list loading failed',
+				callback: (r) => { buildSnippetList.call(intobj, r)}
+			});
+		};
+			
+		function loadFilters() {
+			fillSelectFields('load-projects-name', '#d-2-2', {v:$p.name, t:$p.name, attr:{'data-dsnfname':'updateGroups'}} );
+			fillSelectFields('load-snippet-type', '#d-2-3', {v:'', t:''} );
+			fillSelectFields('load-snippet-status', '#d-2-4', {v:'', t:''} );
+			fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{ project: $p.name} });
+		}
+			
+		//opp.callback = fn;
+		function getSearchSnippetBody() {
+			$.send_json({
+				data : { name :'search snippet page', project: 'dard'},
+				url : 'snippet?a=get-snippet-by-name',
+				callback: function(r) {
+					if( isSet(r.body) ){
+						$.snipetHandler.sett.call({ obj: r.body, recipient: snb, position: 'beforeend' }, opp);
+						loadFilters();
+					}
+				},
+				log: 'search snippet page body loading failed'
+			});
+		}
+			
+		function searchAndListSnippets () {
+			$.send_json({
+				data : { name :'search snippet row', project: 'dard'},
+				url : 'snippet?a=get-snippet-by-name',
+				callback: function(r) {
+					let recipient_parent = $('#d-2-1');
+					if(r) {
+						$('#d-2-1').empty();
+						$.snipetHandler.sett.call({ obj: r.body, recipient: $('#d-2-1'), position: 'beforeend' }, opp);
+					}
+				}
+			});
+		}
+		if(this){
+			this.id === 'd-2-7' && searchAndListSnippets();
+			this.id === 'dsn-337' && $d.staticBody( getSearchSnippetBody, () => {} );
+		} else {
+			$d.staticBody( getSearchSnippetBody, () => {} );
+		}
+	}
+	$fn.menu.searchSnippets = searchSnippets;
+	$fn.body.searchSnippets = searchSnippets;
 	
 	
 	
 	$d.init();
+	searchSnippets();
 	return $d;
 };
 
