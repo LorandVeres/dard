@@ -660,18 +660,33 @@
 		// Later implementation of updating the stashes with the new name should be done
 		// Or an id based association should be implemented
 		function saveSnippet () {
+			// If locked we can't modify it, to protect the ones used with js scripts
+			// However the lock can be opened from snippet settings 
+			if( $n.c.locked === 'y') {
+				pushNotes("Can't save this snippet. It's locked. Read snippet description why...");
+				return;
+			}
 			let s = {}, namev = $('#dsn-314').value, typev = $('#dsn-315').value, statusv = $('#dsn-316').value, tEl;
 			if($('#dsn-334').classList.contains('active')) { 
 				if( pushNotes("Responsive mode activated. Can't save...")) {
 					return;
 				}
 			}
-			if(!isSet(el)) { return; }
+			if(!isSet(el)) { pushNotes("You must have an active element to save. Can't save..."); return; }
 			// Updating the current snippet object if name, type or status are desired for change
 			!empty(namev) && ( $n.c.name = namev );
 			!empty(typev) && ( $n.c.type = typev );
 			!empty(statusv) && ( $n.c.status = statusv);
-			el.classList.remove('dsn-active');
+			
+			// Removing dsn classes
+			function hideClassesRemove() {
+				for(let i = 0; i < hideClasses.length; i++) {
+					this.classList.contains(hideClasses[i]) && this.classList.remove(hideClasses[i]);
+				}
+				this.hasAttribute('class') && this.getAttribute('class') === '' && this.removeAttribute('class'); 
+				this.childElementCount > 0 && $(this).walkChild( hideClassesRemove );
+			}
+			snb.walkChild( hideClassesRemove );
 			tEl = el;
 			undefineEl();
 			$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
