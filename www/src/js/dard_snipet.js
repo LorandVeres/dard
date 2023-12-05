@@ -226,6 +226,52 @@
 		return reobj;
 	}
 	
+	/** Empty then
+	*   Populate the select option with data
+	*   @param urlarg It is the url parameter to get the data from [ optional ] object default first item {v: 'any value', t: 'text to be inserted' }
+	*   @param id it is the id of the select field. Can be a string or an valid element
+	*   @param object {     [ optional ]    The whole object is optional
+	*       @prop v:        [ text ]        stands from the default option value
+	*       @prop t:        [ text ]        stands from the default option visible text
+	*       @prop send:     [ object{} ]    It is an object , Data to be sent to server
+	*       @prop attr:     [ objrct{} ]    Attributes value:pair to be added on option elements if needed
+	*   }
+	*/
+	function fillSelectFields(urlarg, id ) {
+		let s = $(id), arg, send = {}, at;
+		s.empty();
+		( isSet(arguments[2] ) && isObj(arguments[2]) && ( arg = arguments[2] ));
+		isSet(arg) && arg.keyIn('send') && ( send = arg.send );
+		isSet(arg) && arg.keyIn('attr') && ( at = arg.attr );
+		if(isSet(arg) && empty(arg.v))
+			s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
+		function setSelect(r){
+			let p, o;
+			//console.log(at);
+			if(r) {
+				for( let i = 0; i < r.length; i++) {
+					p = r[i];
+					o = $('<option>', p.name).addattr('value', p.name);
+					if(isSet(arg) && p.name === arg.v)
+						o.addattr('selected');
+					if(isSet(at) && isObj(at)){
+						for( let prop in at){
+							at.hasOwnProperty(prop) && o.addattr(prop, at[prop]);
+						}
+					}
+					s.append(o);
+				}
+			}
+		}
+		
+		$.send_json({
+			data: send,
+			url: 'snippet?a=' + urlarg,
+			callback: setSelect,
+			log: 'Failed while loading select option values'
+		});
+	}
+	
 	// Pushing text in notifications bar
 	function pushNotes() {
 		let arg = arguments[0], box = $('#dsn-notifications-text'), bg = $('#dsn-notifications');
@@ -673,6 +719,31 @@
 			}
 		}
 		
+		// Switch what and when to fill in the fields under snippet tabs
+		function snipetTabBehavior (){
+			let att;
+			att = this.getAttribute('id');
+			if(att === "dsn-326" || att === "dsn-328" ) {
+				$('#dsn-317').stepup(2).style.visibility = "hidden";
+				att === "dsn-326" ? refreshFieldsValue() : null;
+			}else {
+				$('#dsn-317').stepup(2).style.visibility = "visible";
+				refreshDownloadFieldsValue();
+			}
+			fieldDisable(true);
+		}
+		
+		function fieldLockListener() {
+			for(let i = 0; i < this.length; i++) {
+				this[i].addEventListener('click', function(){ fieldDisable()});
+			}
+		}
+		
+		function fieldEmptyListener() {
+			for(let i = 0; i < this.length; i++) {
+				this[i].addEventListener('click', emptyFieldsValue);
+			}
+		}
 		
 		$fn.menu.generateIdAndClass = function () {
 			let field, link, val;
