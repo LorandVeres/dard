@@ -31,7 +31,10 @@
 		$st = {id:0, body:{}, name:'', type:'', status:'live', css:'' },    // stash
 		$p = {id: 3, name:'sandbox', maxid: 0, maxclass: 0, $: {} },        // project
 		$i  = {},                                   // Sets and get value of input elements based on id
-		$fn = { body: {}, menu: {}};                // object containing functions to handle events on snippet container static body, and on the menu side
+		$fn = { body: {}, menu: {}},                // object containing functions to handle events on snippet container static body, and on the menu side
+		noneditable,                                // Not editable elements 
+		hideAttributes,                             // Attributes not shown on element settings
+		hideClasses;                                // Classes not shown on element settings
 		
 		
 		// Inline styling structure
@@ -46,11 +49,18 @@
 		};
 		
 		// Not editable elements 
-		let noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
+		noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
 		
-		$n.style.dsn += ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -1px; }\n";
-		$n.style.dsn += ".dsn-hover { outline: 1px solid #0264b4 !important; outline-offset: -1px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background-color: rgba(212, 235, 255, 0.1)
-		$n.style.dsn += ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; box-shadow: 0px 0px 1px 1px rgba(2, 100, 180, .2) inset; }\n";//background: rgba(212, 235, 255, 0.1)
+		// Attributes not shown on element settings
+		hideAttributes = [ 'class', 'contenteditable', 'dsn-highlighted', 'style', 'dsn-ep-hover'];
+		
+		// Classes not shown on element settings
+		hideClasses = [ 'dsn-hover', 'dsn-active', 'dsn-highlighted'];
+		
+		$n.style.dsn += ".dsn-highlighted { outline: 1px dashed #7d9eb9 !important; outline-offset: -3px; }\n";
+		$n.style.dsn += ".dsn-hover { outline: 1px solid #0264b4 !important; outline-offset: -1px; box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .15) inset; }\n";//background-color: rgba(212, 235, 255, 0.1)
+		$n.style.dsn += ".dsn-active { outline: 2px solid #3b97e3 !important; outline-offset: -2px; box-shadow: 0px 0px 3px 3px rgba(2, 100, 180, .1) inset; }\n";//background: rgba(212, 235, 255, 0.1)
+		$n.style.dsn += ".dsn-ep-hover { outline: 2px solid rgba(172, 224, 0, .2) !important; outline-offset: 2px; box-shadow: 0px 0px 5px 5px rgba(2, 100, 180, .1) inset; }\n";
 		$n.style.dsn += ".dsn-minsize, dsn-min-size { min-height:2rem; padding:5px; }\n";
 		
 		// default general settings 
@@ -224,6 +234,22 @@
 			}
 		}
 		return reobj;
+	}
+	
+	function setFormValuesById () {
+		let vobj = arguments[1], o = arguments[0], val, name;
+		for (let i = 0; i < o.length; i++) {
+			const element = $('#' + o[i]);
+			let nameattr = element.attr('name');
+			if( element.nodeName.toLowerCase() === 'input' && element.attr('type') === 'text') {
+				vobj.keyIn(nameattr) && ( element.value = vobj[nameattr] );
+			}
+			if(element.nodeName.toLowerCase() === 'select' ){
+				vobj.keyIn(nameattr) && element.walkChild(function() { 
+					this.value === vobj[nameattr] && $(this).addattr('selected')
+				});
+			}
+		}
 	}
 	
 	/** Empty then
@@ -517,7 +543,7 @@
 			function getProjectData(r){
 				if(isSet(r) && r !== null) {
 					settings.elChangeLock = true;
-					simulateClick($('#dsn-326'));
+					simulateEvent('click', $('#dsn-326'));
 					$p.maxid = r.maxid;
 					$p.maxclass = r.maxclass;
 					$p.id = r.id;
@@ -1113,7 +1139,7 @@
 		}
 		
 	    let cssfiles = new addCssFiles();
-	    $('#dsn-335').addEventListener('click', () => {highlightAll() } );
+	    $('#dsn-335').addEventListener('click', () => {$fn.menu.highlightAll.run() } );
 	    $('#dsn-336').addEventListener('click', () => { cssfiles.add() } );
 	 }
 	
@@ -1624,8 +1650,9 @@
 				showObj.snipet.recipient = document.getElementById("dsn_98");
 				el.hasAttribute('class') && ( l = el.getAttribute('class'));
 				!empty(l) && ( at.cl = l.split(' '));
-				arrayRemove(at.cl, "dsn-active");
-				arrayRemove(at.cl, "dsn-hover");
+				for (let i = 0; i < hideClasses.length; i++) {
+					arrayRemove(at.cl, hideClasses[i] );
+				}
 				for(let i = 0; i < at.cl.length; i++){
 					showObj.snipet.recipient = document.getElementById("dsn_98");
 					showObj.datatype = "class";
@@ -1675,7 +1702,7 @@
 					}
 				}
 				for( let prop in at.all ){
-					if(at.all.keyIn(prop) && prop !== "class" && prop !== "contenteditable"){
+					if(at.all.keyIn(prop) && !hideAttributes.includes( prop ) ){
 						( at.rq.indexOf(prop) < 0 ) && buildCustomAttribute(at.all[prop], prop);
 					}
 				}
@@ -1794,7 +1821,7 @@
 		
 		function handleType(){
 			let classname = this.v;
-			if (! reseting ){
+			if (! reseting && el){
 				switch(this.d){
 					case 'class':
 						showObj.snipet.recipient = document.getElementById("dsn_98");
