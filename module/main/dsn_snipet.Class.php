@@ -12,7 +12,7 @@ class dsn_snipet extends FormCleaner {
 		'add_snippet',
 		'add_project',
 		'update_snippet',
-		'get_snipet',
+		'get_snippet_body',
 		'get_project_data',
 		'save_snippet',
 		'delete_snippet',
@@ -26,7 +26,10 @@ class dsn_snipet extends FormCleaner {
 		'load_tags',
 		'responsive',
 		'list_css_files',
-		'search_snippets'
+		'search_snippets',
+		'get_auto_id',
+		'get_auto_class',
+		'update_snippet_settings'
 		);
 	private $action;
 	private $jx_data = array( 'project_table' => '');
@@ -203,6 +206,28 @@ class dsn_snipet extends FormCleaner {
 			$res = array($res);
 		echo json_encode($res);
 		
+	}
+	
+	private function get_auto_id() {
+		$res = $this -> stmt( str_replace('dsn_', '', $this -> jx_data['project_table']), array(), 'snippet__getMaxId', array());
+		echo json_encode($res);
+	}
+	
+	private function get_auto_class() {
+		$res = $this -> stmt( str_replace('dsn_', '', $this -> jx_data['project_table']), array(), 'snippet__getMaxClass', array());
+		echo json_encode($res);
+	}
+	
+	private function update_snippet_settings ($dard) {
+		$vorder = array ( 'name', 'type', 'status', 'css', 'sgroup', 'stared', 'locked', 'background', 'width', 'description', 'id');
+		$params = array();
+		for($i = 0 ; $i < count($vorder) ; $i++) {
+			$params[$i] = $this -> jx_data [ $vorder[$i] ];
+		}
+		$res = $this -> stmt( $this -> jx_data['project_table'], $params, 'snippet__updateSettings', $params);
+		//$res = $this -> stmt( $obj['data']['project'], $params, 'snippet__updateSettings', $params);
+		$this -> data_error ? $res = json_encode( $this -> data_error ) : $res = json_encode($res);
+		echo $res;
 	}
 }
 ?>

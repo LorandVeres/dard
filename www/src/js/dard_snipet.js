@@ -673,174 +673,140 @@
 			}
 		}
 		
-		/**
-		 * Will search and list snippets for download, favorites as default or apply filters for search
-		 * $fn functions derived from this
-		 *      $fn.menu.searchSnippets = searchSnippets;
-		 *      $fn.body.searchSnippets = searchSnippets;
-		 */
-		function searchSnippets() {
-			let selfCaller = this, gro = { callback: { } }, opp = { callback: { } }, parent = arguments[0], searchIds;
-			searchIds = ['d-2-2', 'd-2-3', 'd-2-4', 'd-2-5', 'd-2-6'];
-			
-			function addSnippetListEvents() {
-				if(this.classList.contains('download')) {
-					this.setAttribute('data-dsnfname', 'downloadSnipet');
-					this.setAttribute('data-snippet-name', arguments[0]);
-					
-				} 
-			}
-			
-			function buildSnippetList() {
-				let row, j, buttons, k = 0, r = arguments[0];
-				if(r){
-					for(j = 0; j < r.length; j++){
-						row = $.snipetHandler.sett.call({obj: this.rowElement, recipient: this.rowElementParent});
-						row && (row.firstElementChild.textContent = r[j].name);
-						row && ( buttons = row.children[1].childNodes );
-						while(k < buttons.length){
-							addSnippetListEvents.call(buttons[k], r[j].name);
-							k++;
-						}
-						k = 0;
-					}
-				}
-			}
-			
-			$fn.body.updateGroups = function() {
-				fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{project: this.value}} );
-			};
-			
-			opp.callback.listSnippets = function() {
-				let h = 4, i, intobj = {rowElement:this, rowElementParent: arguments[0]}, send = {};
-				send.project = $p.name;
-				
-				selfCaller && selfCaller.id === 'd-2-7' && ( send = getFormValuesById(searchIds, send) );
-				
-				$.send_json({
-					data: send,
-					url: 'snippet?a=search-snippets',
-					log: 'snippet list loading failed',
-					callback: (r) => { buildSnippetList.call(intobj, r)}
-				});
-				/* leave this here for testing
-				do{
-					$.snipetHandler.sett.call({obj: this, recipient: rec});
-					h--;i++;
-				}while(h);*/
-			};
-			
-			function loadFilters() {
-				fillSelectFields('load-projects-name', '#d-2-2', {v:$p.name, t:$p.name, attr:{'data-dsnfname':'updateGroups'}} );
-				fillSelectFields('load-snippet-type', '#d-2-3', {v:'', t:''} );
-				fillSelectFields('load-snippet-status', '#d-2-4', {v:'', t:''} );
-				fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{ project: $p.name} });
-			}
-			
-			//opp.callback = fn;
-			function getSearchSnippetBody() {
-				$.send_json({
-					data : { name :'search snippet page', project: 'dard'},
-					url : 'snippet?a=get-snippet-by-name',
-					callback: function(r) {
-						if( isSet(r.body) ){
-							$.snipetHandler.sett.call({ obj: r.body, recipient: snb, position: 'beforeend' }, opp);
-							loadFilters();
-						}
-					},
-					log: 'search snippet page body loading failed'
-				});
-			}
-			
-			function searchAndListSnippets () {
-				$.send_json({
-					data : { name :'search snippet row', project: 'dard'},
-					url : 'snippet?a=get-snippet-by-name',
-					callback: function(r) {
-						let recipient_parent = $('#d-2-1');
-						if(r) {
-							$('#d-2-1').empty();
-							$.snipetHandler.sett.call({ obj: r.body, recipient: $('#d-2-1'), position: 'beforeend' }, opp);
-						}
-					}
-				});
-			}
-			if(this){
-				this.id === 'd-2-7' && searchAndListSnippets();
-				this.id === 'dsn-337' && $d.staticBody( getSearchSnippetBody, () => {} );
-			} else {
-				$d.staticBody( getSearchSnippetBody, () => {} );
-			}
-			
-			
-		}
-		$fn.menu.searchSnippets = searchSnippets;
-		$fn.body.searchSnippets = searchSnippets;
 		
-		/** Empty then
-		*   Populate the select option with data
-		*   @def [ optional ] object default first item {v: 'any value', t: 'text to be inserted' }
-		*/
-		function fillSelectFields(urlarg, id ) {
-			let s = $(id), arg, send = {}, at;
-			s.empty();
-			( isSet(arguments[2] ) && isObj(arguments[2]) && ( arg = arguments[2] ));
-			isSet(arg) && arg.keyIn('send') && ( send = arg.send );
-			isSet(arg) && arg.keyIn('attr') && ( at = arg.attr );
-			if(isSet(arg) && empty(arg.v))
-				s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
-			function setSelect(r){
-				let p, o;
-				//console.log(at);
-				if(r) {
-					for( let i = 0; i < r.length; i++) {
-						p = r[i];
-						o = $('<option>', p.name).addattr('value', p.name);
-						if(isSet(arg) && p.name === arg.v)
-							o.addattr('selected');
-						if(isSet(at) && isObj(at)){
-							for( let prop in at){
-								at.hasOwnProperty(prop) && o.addattr(prop, at[prop]);
-							}
-						}
-						s.append(o);
+		$fn.menu.generateIdAndClass = function () {
+			let field, link, val;
+			this.id === 'dsn-346' && ( field = $('#dsn_a_0') ) && (link = 'get-auto-id') && (val = 'newid' );
+			this.id === 'dsn-345' && ( field = $('#dsn_96') ) && (link = 'get-auto-class') && (val = 'newclass');
+			if(!el) {
+				pushNotes('NO element selected. Can\'t generate new id');
+				return;
+			}
+			$.send_json({
+				data: { project: $p.name },
+				url: 'snippet?a=' + link,
+				callback: function (r){
+					if(r[val]){
+						field.value = 'd-' + $p.id + '-' + r[val];
+						simulateEvent('change', field);
 					}
 				}
-			}
-			
-			$.send_json({
-				data: send,
-				url: 'snippet?a=' + urlarg,
-				callback: setSelect,
-				log: 'Failed while loading select option values'
 			});
 		}
 		
-		// Switch what and when to fill in the fields under snippet tabs
-		function snipetTabBehavior (){
-			let att;
-			att = this.getAttribute('id');
-			if(att === "dsn-326" || att === "dsn-328" ) {
-				$('#dsn-317').stepup(2).style.visibility = "hidden";
-				att === "dsn-326" ? refreshFieldsValue() : null;
-			}else {
-				$('#dsn-317').stepup(2).style.visibility = "visible";
-				refreshDownloadFieldsValue();
+		function updateSnippetSettings() {
+			let selfCaller = this, snippmenu = false, fieldIds, send = { project : $p.name, id : $n.c.id }, search = {}, over;
+			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H' ];
+			
+			this.id === 'dsn-344' && ( snippmenu = true );
+			
+			// Return void from snippet settings if there is no current snippet set
+			if(snippmenu && !$n.c.name) {
+				pushNotes('No snippet set for working enviroment. Exiting settings...  ');
+				return;
 			}
-			fieldDisable(true);
+			// From download search list menu altering the default values
+			if(!snippmenu && $('#d-2-2') ){
+				send.project = $('#d-2-2').value;
+				send.name = selfCaller.getAttribute('data-snippet-name');
+				over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
+			}
+						
+			// Sending data to server and updating current snippet settings
+			// $fn.body get this function for the save button
+			$fn.body.doUpdateSnippetSettings = function () {
+				send = getFormValuesById(fieldIds, send);
+				send.newgroup !== '' && ( send.sgroup = send.newgroup );
+				$.send_json ({
+					data : send,
+					url : 'snippet?a=update-snippet-settings',
+					callback : function(r) {
+						// Called from snippet settings menu
+						if( isSet(r.lastId) && r.lastId === '0' && snippmenu ) {
+							$.send_json({ 
+								data : { project: $p.name, name : send.name},
+								url : 'snippet?a=get-snippet-by-name',
+								callback : function(re) {
+									if(isSet(re)) {
+										for( let prop in re) {
+											prop !== ('body' || 'id') && ( $n.c[prop] = re[prop] );
+										}
+										fieldDisable();
+										refreshFieldsValue();
+										pushNotes('Snippet: ' + send.name + ' - settings updated');
+										pushName(send.name);
+										$d.staticBody( () => {}, () => {});
+									}
+								},
+								log : 'Error ocured assigning the new snippet settings update'
+							});
+						// Called from download search list menu
+						} else if( isSet(r.lastId) && r.lastId === '0' && !snippmenu ) {
+							pushNotes('Snippet: ' + search.name + ' - settings updated');
+							// Upadating the name shown in the search list and on the caller button
+							selfCaller.parentElement.previousElementSibling.textContent = send.name;
+							$(selfCaller).addattr('data-snippet-name', send.name);
+							search = {};
+							snb.removeChild(over);
+						} else {
+							pushNotes('Snippet settings update failed');
+						}
+					}
+				});
+			}
+			// Called for snippet settings menu
+			function loadStaticBody(r) {
+				const elem = $.snipetHandler.sett.call({ obj: r, recipient: snb, position: 'beforeend' });
+				elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: $n.c.type, send:{ project: $p.name} });
+				elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: $n.c.status, send:{ project: $p.name} });
+				elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: $n.c.sgroup, send:{ project: $p.name} });
+				elem && setFormValuesById( fieldIds, $n.c );
+				return elem;
+				
+			}
+			// Called for download search list menu
+			function loadSearchBody(r) {
+				const elem = $.snipetHandler.sett.call({ obj: r, recipient: over, position: 'beforeend' });
+				$.send_json({
+					data : { project : send.project, name : send.name },
+					url : 'snippet?a=get-snippet-by-name',
+					callback : function(r) {
+						if(r){
+							for (let prop in r) {
+								if(r.hasOwnProperty(prop)) {
+									prop !== 'body' && ( search[prop] = r[prop] );
+									prop === 'id' && (send.id = r[prop]);
+								}
+							}
+							elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: search.type, send:{ project: send.project} });
+							elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: search.status, send:{ project: send.project} });
+							elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: search.sgroup, send:{ project: send.project} });
+							elem && setFormValuesById( fieldIds, search );
+						}
+					}
+				});
+				return elem;
+			}
+			
+			// Getting the snippet body
+			function getSnippetBody() {
+				$.send_json({
+					data : { name :'snippet settings', project: 'dard'},
+					url : 'snippet?a=get-snippet-body',
+					callback: function(r) {
+						if( isSet(r) ){
+							snippmenu && loadStaticBody(r) ;
+							!snippmenu && loadSearchBody(r) ;
+						}
+					},
+					log: 'snippet settings page body loading failed'
+				});
+			}
+			snippmenu ? $d.staticBody( getSnippetBody, () => {} ) : getSnippetBody();
 		}
+		$fn.menu.updateSnippetSettings = updateSnippetSettings;
+		$fn.body.updateSnippetSettings = updateSnippetSettings;
 		
-		function fieldLockListener() {
-			for(let i = 0; i < this.length; i++) {
-				this[i].addEventListener('click', function(){ fieldDisable()});
-			}
-		}
-		
-		function fieldEmptyListener() {
-			for(let i = 0; i < this.length; i++) {
-				this[i].addEventListener('click', emptyFieldsValue);
-			}
-		}
 		
 		$('.dsn-307', fieldLockListener );
 		$('.dsn-308', fieldEmptyListener );
