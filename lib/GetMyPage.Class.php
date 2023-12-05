@@ -220,8 +220,6 @@ class GetMyPage extends DardSession {
 					$newtags[] = $value;
 				}
 			}
-<<<<<<< Updated upstream
-=======
 			if( isset($_SESSION['snippet']['project-name']) && is_array($csspath))
 				array_push( $csspath,  "/src/css/dsn/" .$_SESSION['snippet']['project-name'] . ".css");
 			// It seams it's still not working as expected
@@ -239,7 +237,6 @@ class GetMyPage extends DardSession {
 					));
 				}
 			}
->>>>>>> Stashed changes
 			$this -> link_tags = $newtags;
 			// sorting js files
 			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
