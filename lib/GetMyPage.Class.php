@@ -220,12 +220,14 @@ class GetMyPage extends DardSession {
 					$newtags[] = $value;
 				}
 			}
+<<<<<<< Updated upstream
+=======
 			if( isset($_SESSION['snippet']['project-name']) && is_array($csspath))
 				array_push( $csspath,  "/src/css/dsn/" .$_SESSION['snippet']['project-name'] . ".css");
 			// It seams it's still not working as expected
-			if(count($_SESSION['snippet']['cssfiles']) > 0)
+			if( isset( $_SESSION['snippet']['cssfiles'] ) && count($_SESSION['snippet']['cssfiles']) > 0)
 				array_merge( $csspath, $_SESSION['snippet']['cssfiles']);
-			if(count($csspath) >= 1 ){
+			if(is_array($csspath) && count($csspath) >= 1 ){
 				foreach ($csspath as $val) {
 					array_push($newtags, array(
 						"rel"=>"stylesheet",
@@ -237,6 +239,7 @@ class GetMyPage extends DardSession {
 					));
 				}
 			}
+>>>>>>> Stashed changes
 			$this -> link_tags = $newtags;
 			// sorting js files
 			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {

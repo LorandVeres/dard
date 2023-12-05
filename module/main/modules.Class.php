@@ -112,7 +112,7 @@ class modules extends FormCleaner {
 				$query = "SELECT `snipet` FROM `snipets` WHERE `page_id` = 15;";
 				echo trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0");
 			}else{
-				$query = "SELECT `body` FROM `dsn_dard` WHERE `name` = 'default';"; //`page_id` = 15 AND `name` = 'add_module';";
+				$query = "SELECT `body` FROM `dsn_dard` WHERE `name` = 'add module';";
 				$snipet = json_decode(trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0"), TRUE);
 				$tag -> print_doc($this -> snipet_json_to_html($snipet, $tag), 4);
 			}
