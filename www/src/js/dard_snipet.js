@@ -944,17 +944,27 @@
 	 * Probably in future will be moved to an external file
 	 */
 	 function generalSettings() {
+	    let highlight;
 	    
 	    // highlight all elemnts
 	    function highlightAll() {
-	        let hil = 0;
+	        let bool = false, self = {};
 	        function addDottedBorder(){
-	            this.classList.toggle('dsn-highlighted');
+	            !bool && this.classList.add('dsn-highlighted');
+	            bool && this.classList.remove('dsn-highlighted') && (this.classList.length === 0 && this.removeAttribute('class') );
 	            if(this.childElementCount > 0)
 	                $(this).walkChild(addDottedBorder);
 	        }
-	        $('.dsn-body').walkChild( addDottedBorder);
+	        self.run = function() {
+	            $('.dsn-body').walkChild( addDottedBorder);
+	            bool ? bool = false : bool = true ;
+	            console.log(bool);
+	        };
+	        
+	        self.get = () => {return bool;};
+	        return self;
 	    }
+	    $fn.menu.highlightAll = new highlightAll();
 
 		function addCssFiles() {
 			let self={}, files, pos, path = '/src/css/', existing = [], parent = $('#dsn_5'), newpath, open = false;
