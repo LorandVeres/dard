@@ -23,7 +23,7 @@
 		elName,                                     // current element name to lowercase
 		esb = [],                                   // element siblings if any
 		ep,                                         // element parentElement
-		$n = { dummy:{}, c:{}, p:{}, style:{} },    // dsn snippet objects
+		$n = { dummy:{}, c:{}, p:{}, style:{}, menu:{} },    // dsn snippet objects
 		settings = { },                             // will store various settings
 		elStruct = { },                             // elStruct.elementName{ id:'', exAttr:[], rqAttr:[], dsnId:''}
 		snipets = {},                               // the snippet tempalates used for the page
@@ -133,7 +133,7 @@
 		$d.copyEl();
 		
 		$d.tagsLayout();
-		
+		snippetTemplateMenu();
 	};
 	
 	// Can be used in one line conditional statement to throw errors
@@ -798,7 +798,7 @@
 		
 		function updateSnippetSettings() {
 			let selfCaller = this, snippmenu = false, fieldIds, send = { project : $p.name, id : $n.c.id }, search = {}, over;
-			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H' ];
+			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H', 'd-2-O', 'd-2-N' ];
 			
 			this.id === 'dsn-344' && ( snippmenu = true );
 			
@@ -819,6 +819,8 @@
 			$fn.body.doUpdateSnippetSettings = function () {
 				send = getFormValuesById(fieldIds, send);
 				send.newgroup !== '' && ( send.sgroup = send.newgroup );
+				send.newsubcat !== '' && ( send.subcat = send.newsubcat );
+				send.newsubcat === '' && send.subcat === '' ? send.subcat = null : null;
 				$.send_json ({
 					data : send,
 					url : 'snippet?a=update-snippet-settings',
@@ -862,6 +864,7 @@
 				elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: $n.c.type, send:{ project: $p.name} });
 				elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: $n.c.status, send:{ project: $p.name} });
 				elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: $n.c.sgroup, send:{ project: $p.name} });
+				elem && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: $n.c.subcat, send:{ project: $p.name} });
 				elem && setFormValuesById( fieldIds, $n.c );
 				return elem;
 				
@@ -883,6 +886,7 @@
 							elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: search.type, send:{ project: send.project} });
 							elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: search.status, send:{ project: send.project} });
 							elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: search.sgroup, send:{ project: send.project} });
+							elem && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: search.subcat, send:{ project: send.project} });
 							elem && setFormValuesById( fieldIds, search );
 						}
 					}
@@ -920,14 +924,13 @@
 				url : 'snippet?a=get-snippet-by-name',
 				callback : function (r) {
 					if(isSet(r)) {
-						console.log(r);
 						const over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
 						const cont = $('<div>');
 						// Default background is white
 						r.background !== '' ? cont.style.backgroundColor = r.background : cont.style.backgroundColor = '#ffffff';
 						// Default width is 100%
 						r.width !== '' ? cont.style.width = r.width : cont.style.width = '100%';
-						//cont.style.marginTop = '4rem';
+						cont.style.marginTop = '4rem';
 						cont.classList.add('pad-20');
 						cont.classList.add('c-box');
 						$.snipetHandler.sett.call( { obj: r.body, recipient: cont, position: 'beforeend' });
@@ -974,7 +977,6 @@
 	        self.run = function() {
 	            $('.dsn-body').walkChild( addDottedBorder);
 	            bool ? bool = false : bool = true ;
-	            console.log(bool);
 	        };
 	        
 	        self.get = () => {return bool;};
@@ -1466,7 +1468,7 @@
 		function removeAttr() {
 			let att = this.getAttribute("data-value");
 			this.removeEventListener("click", removeAttr);
-			el.removeAttribute(att);
+			el && el.removeAttribute(att);
 			at.all[att] && delete at.all[att];
 			this.parentElement.parentElement.removeChild(this.parentElement);
 		};
@@ -1493,8 +1495,8 @@
 		function removeClass() {
 			let att = this.getAttribute("data-value");
 			this.removeEventListener("click", removeClass);
-			el.removeAttribute(att);
-			el.classList.remove(arguments[0]);
+			el && el.removeAttribute(att);
+			el && el.classList.remove(arguments[0]);
 			this.parentElement.parentElement.removeChild(this.parentElement);
 		}
 		
@@ -2177,7 +2179,70 @@
 	$fn.menu.searchSnippets = searchSnippets;
 	$fn.body.searchSnippets = searchSnippets;
 	
+	/**
+	*
+	*
+	*/
+	function snippetTemplateMenu(){
+		let prj, entry, content, index = 0;
+		!arguments[0] ? prj = 'dsn' : prj = arguments[0];
+		const menubody = $('#dsn_7');
+		
+		
+		function menuEntry(arg) {
+			entry = $('<button>', capitalize(arg)).addattr('class', 'dns-collapse-button collapse');
+			content = $('<div>').addattr('class', 'collapse-content dsn-element-properties');
+			menubody.append(entry);
+			menubody.append(content);
+		}
+		
+		function subcatBody(arg) {
+			const bt = $('<button>', capitalize(arg.catname)).addattr('class', 'dsn-naked-collapse-button dark collapse');
+			const bd = $('<div>').addattr('class', 'collapse-content dsn-element-properties dsnlmenu');
+			// listing the items
+			for( let k = 0; k < arg.items.length; k++) {
+				const row = $('<div>').addattr('class', 'section group row');
+				const cell = $('<div>', capitalize(arg.items[k].name)).addattr('class', 'col-f cell');
+				const btn = $('<div>', '+').addattr('class', 'col-f btn').addattr('data-index', index).addattr('data-dsnfname', 'snippetFromMenu').addattr('data-name', arg.items[k].name);
+				row.append(cell).append(btn);
+				bd.append(row);
+				isSet(arg.items[k].body) && ( $n.menu[index] = JSON.parse(arg.items[k].body )) && index++;
+			}
+			content.append(bt) && content.append(bd);
+		}
+		
+		$fn.menu.snippetFromMenu = function () {
+			let ob = $n.menu[this.getAttribute('data-index')], elem = el, pos = settings.layoutPosition;
+			if( !settings.elChangeLock ) { return; }
+			if(!el) {
+				elem = snb;
+				pos = 'beforeend';
+			}
+			if(ob) {
+				$.snipetHandler.sett.call( { obj : ob, recipient: elem, position : pos });
+				pushNotes('Snippet inserted...');
+			} else {
+				pushNotes("Can't locate the snippet from menu...");
+			}
+		}
+		
+		$.send_json({
+			data : { project: prj},
+			url : 'snippet?a=get-basic-menu',
+			callback : function(r) {
+				if(r) {
+					for(let i = 0; i < r.length; i++) {
+						menuEntry(r[0].menu);
+						for( let j = 0; j < r[0].subcat.length; j++){
+							subcatBody(r[0].subcat[j]);
+						}
+					}
+				}
+			},
+			log: 'opps no menu'
+		});
 	
+	}
 	
 	$d.init();
 	searchSnippets();
@@ -2188,5 +2253,5 @@
 // Finaly let the fun begun
 if($('#dsn_5')){
 	$.ds = new dard_snipet();
-	$.collapse();
+	$.ds && setTimeout( () => { $.collapse() }, 2000);
 }
