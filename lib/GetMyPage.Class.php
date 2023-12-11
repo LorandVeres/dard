@@ -169,17 +169,24 @@ class GetMyPage extends DardSession {
 	}
 
 	private function check_user_priv() {
-		$params = array( $this->current_page_id );
-		if(!isset($_SESSION['user_loged']) || !$_SESSION['user_loged']){
-			$params[1] = 0;
-		}elseif(isset($_SESSION['user_id'])){
-			$params[1] = $_SESSION['user_id'];
-		}else{
+		if( !isset( $this -> page['id'] ) || $this -> page['id'] === NULL ) {
 			$this -> get_error_page('500');
-		}
-		$result = $this ->stmt ('', $params, 'checkUserPrivilegePerPage', $params);
-		if ($result['access'] === NULL || $result['access'] === '0') {
-				$this -> get_error_page('403');
+		} else if( ( $this -> page['type'] === 'main' || $this -> page['type'] === 'main-sub') && ( !isset($_SESSION['user_loged'] ) || !$_SESSION['user_loged'] ) ) {
+			//Preventing crawlers and boots from getting info about the admin side 
+			$this -> get_error_page('404');
+		} else {
+			$params = array( $this -> page['id'] );
+			if(!isset($_SESSION['user_loged']) || !$_SESSION['user_loged']){
+				$params[1] = 0;
+			}elseif(isset($_SESSION['user_id'])){
+				$params[1] = $_SESSION['user_id'];
+			}else{
+				$this -> get_error_page('500');
+			}
+			$result = $this ->stmt ('', $params, 'checkUserPrivilegePerPage', $params);
+			if ($result['access'] === NULL || $result['access'] === '0') {
+					$this -> get_error_page('403');
+			}
 		}
 	}
 
