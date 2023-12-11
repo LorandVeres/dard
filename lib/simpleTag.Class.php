@@ -119,6 +119,11 @@ class simpleTag {
 			$tag[] = $o . $e . $tagname . $c;
 
 		} elseif ($single) {
+			$tagname === 'img' ||
+			$tagname === 'i' ||
+			$tagname === 'b' ||
+			$tagname === 'br' ? 
+			$n = '' : null;
 			$tag = ($o . $tagname . $this -> setAttr($attr) . $c . $n);
 		} elseif(empty($tagname)) {
 			$tag = $txt;
@@ -188,7 +193,7 @@ class simpleTag {
 	 */
 	private function check_tag_type($tag, $array) {
 		$n = false;
-		$txt_tag;
+		$txt_tag = '';
 		if (is_array($tag)) {
 			if (count($tag) >= 1){
 				is_string($tag[0]) ? $txt_tag = $tag[0] : null;
@@ -223,7 +228,9 @@ class simpleTag {
 					} elseif (is_array($val)){
 						if(count($val) === 3 ){
 							if($this -> check_tag_type(preg_replace('/[<\/>]+/i', "" , $val[0] ), $this -> inline_tag)) {
-								$temp = $val[0] . $val[1][0] . $val[2];
+								if(!isset($val[1][0])) 
+									trigger_error('Dard notice: print_inline_tag $val[1][0] not set in simpleTag line 233', E_USER_NOTICE);
+								$temp = $val[0] . ( isset($val[1][0]) ? $val[1][0] : $val[1] ). $val[2];
 								$inline .= str_replace("\n", "", $temp);
 							}
 						}
