@@ -2091,6 +2091,8 @@
 			}
 		}
 		
+		// Will repeat the rows showing the snippets
+		// Called in opp.callback.listSnippets function
 		function buildSnippetList() {
 			let row, j, buttons, k = 0, r = arguments[0];
 			if(r){
@@ -2107,10 +2109,13 @@
 			}
 		}
 			
+		// Update the groups select field once the project was changed in the filters
 		$fn.body.updateGroups = function() {
 			fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{project: this.value}} );
 		};
-			
+		
+		// Attached to opp object pased to snipethandler parameters to be called on the row snippet. 
+		// Activated from snipethandler found on dsnfnobj data attribute on the snippet object
 		opp.callback.listSnippets = function() {
 			let intobj = {rowElement:this, rowElementParent: arguments[0]}, send = {};
 			send.project = $p.name;
@@ -2132,7 +2137,8 @@
 			fillSelectFields('load-snippet-group', '#d-2-5', {v:'', t:'', send:{ project: $p.name} });
 		}
 			
-		//opp.callback = fn;
+		// opp.callback = fn;
+		// This will open the search page. Called when a search button is pressed by user from menu
 		function getSearchSnippetBody() {
 			$.send_json({
 				data : { name :'search snippet page', project: 'dard'},
@@ -2146,7 +2152,8 @@
 				log: 'search snippet page body loading failed'
 			});
 		}
-			
+
+		// Called from the search button after filters has been applied by user
 		function searchAndListSnippets () {
 			$.send_json({
 				data : { name :'search snippet row', project: 'dard'},
