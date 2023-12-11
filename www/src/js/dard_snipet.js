@@ -383,18 +383,8 @@
 			color = v;
 		}
 		
-		function getCssPath() {
-			let scssc = document.styleSheets, arr = new Array();
-			for (let i = 0; i < scssc.length; i++) {
-				const hrefv = scssc[i].href;
-				hrefv !== null && ( arr[i] = hrefv.substring(hrefv.indexOf("/", 8)));
-			}
-			scssc = undefined;
-			return arr;
-		}
-		
 		function reponsiveMode(){
-			let editable, cssprop = getCssPath();
+			let editable;
 			if(this.classList.contains('active') ){
 				setProperties(monitorWidth);
 				$('.dsn-body').empty();
@@ -406,7 +396,7 @@
 				$('.dsn-body').empty();
 				$.send_json({
 					url: 'snippet?a=responsive',
-					data: { body: $n.c.body, cssfiles: cssprop},
+					data: { body: $n.c.body, projectname: $p.name },
 					callback: function(r){
 						setTimeout( (r == null && framing()) , 200);
 					}
@@ -1033,6 +1023,10 @@
 								i++;
 							}
 						}
+						if(this.nodeName.toLowerCase() === 'style' && this.hasAttribute('data-filepath')){
+							existing[i] = this.getAttribute('data-filepath')
+							i++;
+						}
 					});
 			}
 			
@@ -1053,36 +1047,50 @@
 					ex.append(sp);
 				}
 				$('.dsn-add-list-title').insertAdjacentElement("afterend", ex);
-				ex.style.height = ex.scrollHeight + "px"
+				ex.style.height = ex.scrollHeight + "px";
 			}
 			
 			function addFile () {
-				let link, rbt, filepath;
-				filepath = this.parentElement.parentElement.children[0].getAttribute('data-file-path')
-				link = $('<link>').addattrlist({'rel':'stylesheet', 'type':'text/css', 'href':filepath});
-				rbt = $('<button>').addattrlist({'class':'span-100 box dsn-ctl-btn-l dsn-24-m-rem-bt'});
-				pos.insertAdjacentElement("beforebegin", link)
-				this.parentElement.previousElementSibling.appendChild(rbt);
-				this.removeEventListener('click', addFile);
-				this.parentElement.removeChild(this);
-				rbt.addEventListener('click', remFile);
-				existing.push(filepath);
-				listExisting();
+				let style, rbt, filepath, elem = this;
+				filepath = this.parentElement.parentElement.children[0].getAttribute('data-filepath')
+				$.send_json({
+					data : { addcssfile: filepath},
+					url : 'snippet?a=load-css-file',
+					callback : function (r) {
+						style = $('<style>', r ).addattrlist({'data-filepath': filepath});
+						rbt = $('<button>').addattrlist({'class':'span-100 box dsn-ctl-btn-l dsn-24-m-rem-bt'});
+						pos.insertAdjacentElement("beforebegin", style)
+						elem.parentElement.previousElementSibling.appendChild(rbt);
+						elem.removeEventListener('click', addFile);
+						elem.parentElement.removeChild(elem);
+						rbt.addEventListener('click', remFile);
+						existing.push(filepath);
+						listExisting();
+					},
+					log : 'Bad json css file read...'
+				});
 			}
 			
 			function remFile() {
 				let link, abt, rempath;
 				abt = $('<button>').addattrlist({'class':'span-100 box dsn-ctl-btn-l dsn-24-m-add-bt'});
-				rempath = this.parentElement.previousElementSibling.getAttribute('data-file-path');
+				rempath = this.parentElement.previousElementSibling.getAttribute('data-filepath');
 				$('head').walkChild(
 					function(){
-						if(this.nodeName.toLowerCase() === 'link' && this.hasAttribute('type')){
-							if(this.getAttribute('type') === "text/css" && this.getAttribute('href') === rempath) {
+						if(this.nodeName.toLowerCase() === 'style' && this.hasAttribute('data-filepath')){
+							if(this.getAttribute('data-filepath') === rempath) {
 								this.parentElement.removeChild(this);
 							}
 						}
 					}
 				);
+				$.send_json({
+					data : { removecssfile: rempath},
+					url : 'snippet?a=load-css-file',
+					callback : function (r) {
+						;
+					}
+				});
 				this.parentElement.nextElementSibling.appendChild(abt);
 				abt.addEventListener('click', addFile);
 				this.removeEventListener('click', remFile);
@@ -1099,7 +1107,7 @@
 						newpath = '';
 						newpath = path + o.files[i];
 						li = $('<li>').addattrlist({'class':'span-90 c-box'});
-						f = $('<span>', o.files[i]).addattrlist({'class':'span-80 col-f left', 'data-file-path': newpath});
+						f = $('<span>', o.files[i]).addattrlist({'class':'span-80 col-f left', 'data-filepath': newpath});
 						r = $('<span>').addattrlist({'class':'span-10 col-f left', 'style':'height: 2rem'});
 						a = $('<span>').addattrlist({'class':'span-10 col-f left', 'style':'height: 2rem'});
 						if(existing.includes(newpath)){
