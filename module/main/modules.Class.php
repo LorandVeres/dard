@@ -114,7 +114,7 @@ class modules extends FormCleaner {
 			}else{
 				$query = "SELECT `body` FROM `dsn_dard` WHERE `name` = 'add module';";
 				$snipet = json_decode(trim($dard ->selectDB('', $query, TRUE, 'string'), " ,\'\n\r\t\v\0"), TRUE);
-				$tag -> print_doc($this -> snipet_json_to_html($snipet, $tag), 4);
+				$this -> snipet_json_print($snipet, $tag);
 			}
 				break;
 
