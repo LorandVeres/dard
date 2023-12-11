@@ -23,13 +23,16 @@ class dsn_snipet extends FormCleaner {
 		'load_snippet_type',
 		'load_snippet_status',
 		'load_snippet_group',
+		'load_snippet_subcat',
 		'load_tags',
 		'responsive',
 		'list_css_files',
 		'search_snippets',
 		'get_auto_id',
 		'get_auto_class',
-		'update_snippet_settings'
+		'update_snippet_settings',
+		'get_basic_menu',
+		'load_css_file',
 		);
 	private $action;
 	private $jx_data = array( 'project_table' => '');
@@ -144,6 +147,13 @@ class dsn_snipet extends FormCleaner {
 		echo json_encode( $res );
 	}
 	
+	private function load_snippet_subcat($dard) {
+		$query = "SELECT DISTINCT `subcat` AS `name` FROM `". $this -> jx_data['project_table']. "` WHERE `subcat` <> '';";
+		$res = $this ->selectDB('', $query, TRUE, 'array');
+		count($res) === 1 ? $res = array($res) : null ;
+		echo json_encode( $res );
+	}
+	
 	private function load_snippet_status($dard) {
 		$query = "SHOW COLUMNS FROM `snipets` LIKE 'status';";
 		$res = $this ->selectDB('', $query, TRUE, 'array');
@@ -178,7 +188,7 @@ class dsn_snipet extends FormCleaner {
 	private function responsive ($dard, $tag) {
 		if ( $_SERVER['REQUEST_METHOD']  === 'POST'){
 			$body = json_encode($this -> jx_data['body']);
-			$_SESSION['snippet']['cssfiles'] = $this -> jx_data['cssfiles'];
+			$_SESSION['snippet']['project-name'] = $this -> jx_data['projectname'];
 			$query = "UPDATE `dsn` SET `body`='". $body . "' WHERE `name` = 'responsive-stash';";
 			$res = $this ->selectDB($body, $query, TRUE, 'array');
 			echo json_encode($res);
@@ -186,7 +196,7 @@ class dsn_snipet extends FormCleaner {
 			$query = "SELECT `body` FROM `dsn` WHERE `name` = 'responsive-stash';";
 			$res = $this ->selectDB('', $query, TRUE, 'array') ;
 			$body = json_decode($res['body'], true);
-			$tag -> print_doc($this -> snipet_json_to_html( $body, $tag), 2);
+			$tag -> print_doc($this -> snippet_json_to_html( $body, $tag), 2);
 		}
 	}
 	
@@ -219,7 +229,7 @@ class dsn_snipet extends FormCleaner {
 	}
 	
 	private function update_snippet_settings ($dard) {
-		$vorder = array ( 'name', 'type', 'status', 'css', 'sgroup', 'stared', 'locked', 'background', 'width', 'description', 'id');
+		$vorder = array ( 'name', 'type', 'status', 'css', 'sgroup', 'stared', 'locked', 'background', 'width', 'description', 'id', 'subcat');
 		$params = array();
 		for($i = 0 ; $i < count($vorder) ; $i++) {
 			$params[$i] = $this -> jx_data [ $vorder[$i] ];
@@ -228,6 +238,44 @@ class dsn_snipet extends FormCleaner {
 		//$res = $this -> stmt( $obj['data']['project'], $params, 'snippet__updateSettings', $params);
 		$this -> data_error ? $res = json_encode( $this -> data_error ) : $res = json_encode($res);
 		echo $res;
+	}
+	
+	private function get_basic_menu() {
+		$prj = $this -> jx_data['project_table'];
+		$main = array(); $mi = 0;
+		$si =0;
+		$res = $this -> stmt ('', array($prj), 'snippet__getMenuMain', array($prj));
+		foreach ( $res as $key => $values) {
+			$main[$mi]['subcat'] = $this -> stmt ($prj, array($values), 'snippet__getMenuSubCat', array($values));
+			$main[$mi]['menu'] = $values;
+			foreach( $main[$mi]['subcat'] as $k => $val){
+				$main[$mi]['subcat'][$si]['catname'] = array_shift($val);
+				$main[$mi]['subcat'][$si]['items'] = $this -> stmt ($prj, array($values, $main[$mi]['subcat'][$si]['catname']), 'snippet__getMenuItems', array($values, $main[$mi]['subcat'][$si]['catname']));
+				$si++;
+			}
+			$mi++;
+			$si = 0;
+		}
+		//echo json_encode($this -> data_error);
+		echo json_encode($main);
+	}
+	
+	private function load_css_file(){
+		if( isset($this -> jx_data['addcssfile']) && is_file(getcwd(). $this -> jx_data['addcssfile']) ) {
+			$file = read_file_to_variable( getcwd(). $this -> jx_data['addcssfile']);
+			echo json_encode($file);
+			$_SESSION['snippet']['cssfiles'][] = $this -> jx_data['addcssfile'];
+		}
+		if( isset($this -> jx_data['removecssfile']) ) {
+			if(isset($_SESSION['snippet']['cssfiles'])) {
+				foreach($_SESSION['snippet']['cssfiles'] as $key => $value) {
+					if( $value === $this -> jx_data['removecssfile']) {
+						unset($_SESSION['snippet']['cssfiles'][$key]) ;
+					}
+				}
+				echo json_encode( $_SESSION['snippet']['cssfiles'] );
+			}
+		}
 	}
 }
 ?>

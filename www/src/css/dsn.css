@@ -342,7 +342,7 @@
 	}
 
 .dsn-node-tree{
-	height: 2rem;
+	min-height: 2rem;
     width: 100%;
     border-bottom: 1px solid #333333;
     /*border-top: 1px solid #333333;*/
@@ -367,6 +367,7 @@
 
 .dsn-node-link-25 {
 	width: 25%;
+	line-height: 2.4rem;
 }
 
 .dsn-node-link-25.active {
@@ -835,6 +836,55 @@
 .dsn-add-list-button:hover {
 	border: 2px solid #353535;
 	color: #2d2d2d;
+}
+.dsn-naked-collapse-button.dark {
+	background-color: #261c1c;
+}
+.dsnlmenu {
+	font-size: .8rem;
+	color: #979595;
+}
+.dsnlmenu .row{
+	width: 100%;
+	height: 2.8rem;
+	-webkit-box-shadow: 0px 1px 5px 0px rgba(255,255,255,.8);
+	-moz-box-shadow: 0px 1px 5px 0px rgba(255,255,255,.8);
+	box-shadow: 0px 1px 5px 0px rgba(255, 255, 255, 0.3);
+	transition: all ease-in-out 120ms;
+	width: 92%;
+	margin: 0 auto 1px auto;
+}
+.dsnlmenu .row:first-child {
+	margin-top: 1.6rem;
+	-webkit-box-shadow: 0px -1px 5px 1px rgba(255,255,255,.3);
+	-moz-box-shadow: 0px -1px 5px 1px rgba(255,255,255,.3);
+	box-shadow: 0px -1px 5px 1px rgba(255,255,255,.3);
+}
+.dsnlmenu .row:last-child {
+	margin-bottom: 1.6rem;
+}
+.dsnlmenu .row:hover {
+	color: #eeeeee;
+	font-size: 1.8rem;
+	background-color: #2a2323;
+}
+.dsnlmenu .cell{
+	line-height: 2.8rem;
+	font-size: .8rem;
+	width: 83%;
+	text-indent: 1rem;
+}
+.dsnlmenu .btn{
+	font-size: 1.2rem;
+	line-height: 2.8rem;
+	text-align: center;
+	width: 15%;
+	cursor: pointer;
+	margin: 0 1%;
+}
+.dsnlmenu .btn:hover {
+	color: #ffffff;
+	font-size: 1.8rem;
 }
 
 
