@@ -195,20 +195,21 @@ class GetMyPage extends DardSession {
 		$responsive = false;
 		$csspath = array();
 		$href = ''; $newtags = array();
-		if($this -> ajax) {
-			$obj = json_decode( file_get_contents('php://input'), true );
-			if(isset($obj['data']['cssfile']))
-				$csspath = $obj['data']['cssfile'];
-		}
-		if(!$this -> ajax && !isset($_SESSION['snippet']['project-name'])){
-			$_SESSION['snippet']['project-name'] = 'sandbox';
-		}
-		
-		
-		$dardjs = array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
-		$snipetjs = array( "file"=>"src/js/dard_snipet.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
 		
 		if ( $this -> top_page_name === 'snippet' ) {
+			if(!$this -> ajax && !isset($_SESSION['snippet']['project-name'])){
+				$_SESSION['snippet']['project-name'] = 'sandbox';
+			}
+			// Reset for page reloads
+			if (!$this -> ajax && !isset($this -> url_arguments['a']) &&  $_SERVER['REQUEST_METHOD']  === 'GET') {
+				if( isset($_SESSION['snippet']['cssfiles']) )
+					$_SESSION['snippet']['cssfiles'] = array();
+				$_SESSION['snippet']['project-name'] = 'sandbox';
+			}
+			
+			$dardjs = array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
+			$snipetjs = array( "file"=>"src/js/dard_snipet.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
+		
 			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive')
 				$responsive = true;
 			// sorting css
@@ -228,9 +229,8 @@ class GetMyPage extends DardSession {
 			}
 			if( isset($_SESSION['snippet']['project-name']) && is_array($csspath))
 				array_push( $csspath,  "/src/css/dsn/" .$_SESSION['snippet']['project-name'] . ".css");
-			// It seams it's still not working as expected
-			if( isset( $_SESSION['snippet']['cssfiles'] ) && count($_SESSION['snippet']['cssfiles']) > 0)
-				array_merge( $csspath, $_SESSION['snippet']['cssfiles']);
+			if($responsive && isset( $_SESSION['snippet']['cssfiles'] ) && count($_SESSION['snippet']['cssfiles']) > 0)
+				$csspath = array_merge( $csspath, $_SESSION['snippet']['cssfiles']);
 			if(is_array($csspath) && count($csspath) >= 1 ){
 				foreach ($csspath as $val) {
 					array_push($newtags, array(
