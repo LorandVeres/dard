@@ -111,11 +111,11 @@ class GetMyPage extends DardSession {
 	}
 
 	private function sql_top_page() {
-		$query = "SELECT `id`, `pagename`, `type`, `title`, HEX(`access`) AS access, `file_path`, `module_id`, `parentpage`, `status`  FROM `page` WHERE `pagename` = '$this->top_page_name';";
+		$query = "SELECT `id`, `pagename`, `type`, `title`, HEX(`access`) AS access, `file_path`, `module_id`, `parentpage`, `status`, `template`, `body`  FROM `page` WHERE `pagename` = '$this->top_page_name' AND  `parentpage` IS NULL;";
 		$result = $this -> selectDB($this -> top_page_name, $query, TRUE, 'array');
 		if( !$result){
 			$this -> get_error_page('404');
-		} else if( $result['parentpage'] != null && ($result['type'] != 'top' || $result['type'] != 'main')){
+		} else if( $result['parentpage'] !== NULL && ($result['type'] != 'top' || $result['type'] != 'main')){
 			$this -> get_error_page('500');
 		} elseif(is_array($result) && !empty($result)) {
 			$this -> check_active_page_status($result['status']) ? $this -> prep_all_page_properties($result) : $this -> get_error_page('404');
@@ -124,7 +124,7 @@ class GetMyPage extends DardSession {
 
 	private function sql_sub_page($sub_page) {
 		$query = "SET @parent_id = (SELECT `parentpage` FROM `page` WHERE `pagename` = '$sub_page');";
-		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`access`) AS access, S.`file_path`, S.`module_id`, S.`status`,  P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
+		$query .= "SELECT S.`id`, S.`pagename`, S.`type`, S.`title`, HEX(S.`access`) AS access, S.`file_path`, S.`module_id`, S.`status`, S.`template`, S.`body`,  P.`pagename` AS top_page_name FROM `page` AS S, `page` AS P WHERE P.`id` = @parent_id AND S.`pagename` = '$sub_page';";
 		$result = $this -> selectDB($sub_page, $query, TRUE, 'array');
 		if (!$result || $result['top_page_name'] !== $this -> URI[0]) {
 			$this -> get_error_page('404');
@@ -447,7 +447,6 @@ class GetMyPage extends DardSession {
 	}
 
 	private function printBottomDoc() {
-		//$doc = "\t\t<footer class=\"section group\"><p class=\"spacer_5 center_box row_9 center\">&copy; All Rights Reserved <a href=\"https://dard.dard\">Dard</a></p></footer>\n";
 		$doc = $this -> wrap_dard_Statistics();
 		$doc .= $this -> body_js_scripts;
 		$doc .= "\t</body>\n";
@@ -466,8 +465,23 @@ class GetMyPage extends DardSession {
 		if ($this -> checkAjax()) {
 			$this -> includeAjaxBody($tag);
 		} else {
-			$this -> printTopDoc($tag);
-			$this -> printBottomDoc();
+			if( ( $this -> page['type'] === 'blog' || $this -> page['file'] === NULL ) && isset($this -> page['theme']) && $this -> page['theme'] !== ''){
+				$dard = $this;
+				include '../lib/blog.Class.php';
+				$this -> create_doc_top($tag);
+				$blog -> print_page( $tag );
+				$this -> printBottomDoc();
+			} else { 
+				if ( file_exists($this -> page['file'])) { 
+					$this -> printTopDoc($tag);
+					$this -> printBottomDoc();
+				} else {
+					$this -> get_error_page('500');
+					$this -> create_doc_top($tag);
+					include_once $this -> page['file'];
+					$this -> printBottomDoc();
+				}
+			}
 		}
 	}
 
