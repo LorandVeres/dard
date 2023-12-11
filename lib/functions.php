@@ -125,6 +125,18 @@ function file_names_array($dir) {
 	return $list;
 }
 
+function read_file_to_variable($f) {
+	$buff = '';
+	$myfile = fopen($f, "r") or die("Unable to open file!");
+	
+	while(!feof($myfile)) {
+		$buff .= fgets($myfile);
+	}
+	if(fclose($myfile)) {
+	return $buff;
+	}
+}
+
 function print_user_sign_in($tag) {
 	$_SESSION['user_loged'] ? $user = $_SESSION['user_name'] : $user = 'Account';
 	$login_div = $tag -> tag('div', 'class="col-r user-account-logins"', '');
