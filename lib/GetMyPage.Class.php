@@ -1,7 +1,7 @@
 <?php
 
 class GetMyPage extends DardSession {
-
+	
 	protected $links;
 	protected $top_page_name;
 	protected $page_file_path;
@@ -14,10 +14,7 @@ class GetMyPage extends DardSession {
 	protected $body_js_scripts = '';
 	protected $head_js_sripts = array();
 	protected $URI = array(); // $_SERVER["REQUEST_URI"] directories splitted in an array
-	protected $current_page_id = 1;
-	protected $all_page_properties;
-	protected $current_page_groups_priv;
-	protected $current_module_id;
+	public $page = array();
 	public $ajax = FALSE;
 	public $url_arguments = array();
 	public $headers = array();
@@ -80,13 +77,15 @@ class GetMyPage extends DardSession {
 
 	private function prep_all_page_properties($arg) {
 		if(is_array($arg)) {
-			$this -> current_page_id = $arg['id'];
-			$this -> current_module_id = $arg['module_id'];
-			$this -> current_page_groups_priv = $arg['access'];
-			$this -> all_page_properties['page_name'] = $arg['pagename'];
-			$this -> all_page_properties['type'] = $arg['type'];
-			$this -> all_page_properties['title'] = $arg['title'];
-			$this -> all_page_properties['file_path'] = $arg['file_path'];
+			$this -> page['id'] = $arg['id'];
+			$this -> page['module_id'] = $arg['module_id'];
+			$this -> page['name'] = $arg['pagename'];
+			$this -> page['accesskey'] = $arg['access'];
+			$this -> page['type'] = $arg['type'];
+			$this -> page['title'] = $arg['title'];
+			$this -> page['file'] = $arg['file_path'];
+			if ( isset($arg['template']) ) $this -> page['theme'] = $arg['template'];
+			if( isset($arg['body']) ) $this -> page['themebody'] = $arg['body'];
 		}
 	}
 
@@ -327,28 +326,28 @@ class GetMyPage extends DardSession {
 		$this -> set_url_arguments();
 		$query = "SELECT `name`, `http-equiv`, `property`, `itemprop`, `content`, `charset`
 					FROM `meta_tag`
-					WHERE (`general` = 1 OR `per_module` = $this->current_module_id OR `all_public` = 'Y') AND `active` = 1
+					WHERE (`general` = 1 OR `per_module` = ".$this -> page['module_id']." OR `all_public` = 'Y') AND `active` = 1
 					UNION
 					SELECT M.`name`, M.`http-equiv`, M.`property`, M.`itemprop`, M.`content`, M.`charset`
 					FROM `meta_tag` AS M, `page_resources` AS R
-					WHERE R.`type`='meta' AND R.`page_id` = $this->current_page_id AND M.`id` = R.`res_id`;";
+					WHERE R.`type`='meta' AND R.`page_id` = ".$this -> page['id']." AND M.`id` = R.`res_id`;";
 		// Query for link tags
 		$query .= "SELECT `rel`, `type`, `sizes`, `title`, `href`, `media`
 					FROM `link_tag`
-					WHERE (`general` = 1 OR `per_module` = $this->current_module_id OR `all_public` = 'Y') AND `active` = 1
+					WHERE (`general` = 1 OR `per_module` = ".$this -> page['module_id']." OR `all_public` = 'Y') AND `active` = 1
 					UNION
 					SELECT L.`rel`, L.`type`, L.`sizes`, L.`title`, L.`href`, L.`media`
 					FROM `link_tag` AS L, `page_resources` AS R
-					WHERE R.`type`='link' AND R.`page_id` = $this->current_page_id AND L.`id` = R.`res_id`;";
+					WHERE R.`type`='link' AND R.`page_id` = ".$this -> page['id']." AND L.`id` = R.`res_id`;";
 		// Query for js scripts and files
 		$query .= "SELECT `file`, `script`, `type`, `placement`
 					FROM `js_files_script`
-					WHERE (`general` = 1 OR `per_module` = $this->current_module_id OR `all_public` = 'Y') AND `active` = 1
+					WHERE (`general` = 1 OR `per_module` = ".$this -> page['module_id']." OR `all_public` = 'Y') AND `active` = 1
 					UNION
 					SELECT J.`file`, J.`script`, J.`type`, J.`placement`
 					FROM `js_files_script` AS J, `page_resources` AS R
-					WHERE R.`type`='js' AND R.`page_id` = $this->current_page_id AND J.`id` = R.`res_id`";
-		$result = $this -> selectDB($this -> current_page_id, $query, TRUE, 'default');
+					WHERE R.`type`='js' AND R.`page_id` = ".$this -> page['id']." AND J.`id` = R.`res_id`";
+		$result = $this -> selectDB($this -> page['id'], $query, TRUE, 'default');
 		$this -> set_page_head_properties($result);
 		$this ->set_js_script_tags();
 		$result = array();
@@ -383,7 +382,7 @@ class GetMyPage extends DardSession {
 			}
 		};
 		
-		$tag -> append_tag($head, $tag -> tag('title', '', $this -> all_page_properties['title']));
+		$tag -> append_tag($head, $tag -> tag('title', '', $this -> page['title']));
 		$elements($tag, $this -> meta_tags, 'meta');
 		$elements($tag, $this -> link_tags, 'link');
 		$js($this ->head_js_sripts, $tag);
@@ -406,23 +405,23 @@ class GetMyPage extends DardSession {
 	}
 
 	private function includeAjaxBody($tag) {
-		if (file_exists($this -> all_page_properties['file_path'])) {
+		if (file_exists($this -> page['file'])) {
 			$dard = $this;
 
-			include_once $this -> all_page_properties['file_path'];
-		} elseif (!file_exists($this -> all_page_properties['file_path'])) {
+			include_once $this -> page['file'];
+		} elseif (!file_exists($this -> page['file'])) {
 			$this -> get_error_page('500');
 		}
 
 	}
 
 	private function printTopDoc($tag) {
-		if (file_exists($this -> all_page_properties['file_path'])) {
+		if (file_exists($this -> page['file'])) {
 			$this -> create_doc_top($tag);
 			$dard = $this;
 
-			include_once $this -> all_page_properties['file_path'];
-		} elseif (!file_exists($this -> all_page_properties['file_path'])) {
+			include_once $this -> page['file'];
+		} elseif (!file_exists($this -> page['file'])) {
 			$this -> get_error_page('500');
 			$this -> create_doc_top($tag);
 		}
