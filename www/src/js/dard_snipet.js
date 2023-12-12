@@ -52,7 +52,7 @@
 		noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
 		
 		// Attributes not shown on element settings
-		hideAttributes = [ 'class', 'contenteditable', 'dsn-highlighted', 'style', 'dsn-ep-hover'];
+		hideAttributes = [ 'class', 'contenteditable', 'dsn-highlighted', 'style', 'dsn-ep-hover', 'data-dsnthemebody', 'data-dsninclude'];
 		
 		// Classes not shown on element settings
 		hideClasses = [ 'dsn-hover', 'dsn-active', 'dsn-highlighted'];
@@ -1429,16 +1429,17 @@
 			showObj = { snipet:{ } }, // the object passed to showAttr {obj, arr, datatype, datavalue, callback}
 			bool = false, bool1 = false, // Do not touch! true once we have the listeners set up
 			reseting = false, // used to pause the attributes change while reseting listAttr
-			at = { ar:[], rq:[], exp:[], cl:[], cu:{}, all:{ } };
+			at = { ar:[], rq:[], exp:[], cl:[], cu:{}, all:{ }, dsn:[] };
 		
 		
 		showObj.snipet.obj = $n.customAttribute;
 		
 		function parentMaxHeight () {
 			let customContainer, settingsContainer = $('#dsn-el-setings').children[1];
-			customContainer = settingsContainer.children[3];
+			customContainer = settingsContainer.children[4];
 			if( settingsContainer.classList.contains('collapse-content') && settingsContainer.style.maxHeight ) {
-				customContainer.style.maxHeight = customContainer.scrollHeight + 'px';
+				if(customContainer.style.maxHeight)
+					setTimeout( () => {customContainer.style.maxHeight = customContainer.scrollHeight + 'px'}, 200);
 				settingsContainer.style.maxHeight = settingsContainer.scrollHeight + 'px';
 			}
 		}
@@ -1512,10 +1513,11 @@
 			
 			// Generete required attributes array, including the id and title
 			function bond() {
-				at.rq = []; at.rq = [ 'id', 'title']; at.exp = [];// an initial value set, as we have checks against it's lenght
+				at.rq = []; at.rq = [ 'id', 'title']; at.exp = []; at.dsn = [];// an initial value set, as we have checks against it's lenght
 				if(isSet(elStruct[elName])) {
 					at.exp = elStruct[elName].exAttr;
-					at.rq = arrayMerge( at.rq , elStruct[elName].reqAttr, elStruct[elName].exAttr );
+					at.dsn = elStruct[elName].dsnAttr;
+					at.rq = arrayMerge( at.rq , elStruct[elName].reqAttr, elStruct[elName].exAttr, elStruct[elName].dsnAttr );
 				}
 			}
 			
@@ -1524,12 +1526,13 @@
 				this.children[1].setAttribute( "id", 'dsn_a_' + i);
 				this.children[0].setAttribute( "for", 'dsn_a_' + i);
 				this.setAttribute( "data-type", 'attribute');
-				this.setAttribute( "data-value", at.rq[i]);
+				( isSet(at.dsn) && at.dsn.includes( at.rq[i] ) ) ? this.setAttribute( "data-value", "data-" + at.rq[i]) : this.setAttribute( "data-value", at.rq[i]);
 			}
 			
 			// from hard code text color a class should be implemented
 			function currentElAttr() {
 				let j = arguments[0], attr = at.rq[j], field = arguments[1];
+				( isSet(at.dsn) && at.dsn.includes( attr ) ) && ( attr = 'data-' + at.rq[j] );
 				j == 0 && ( attr = 'id');
 				j == 1 && ( attr = 'title');
 				(at.all[attr] !== undefined && isStr(at.all[attr]))? field.previousElementSibling.style.color = "#0a9c05" : null;
@@ -1580,11 +1583,15 @@
 					for( let i = 0; i < at.rq.length; i++){
 						i < 2 && ( field = parent.children[i] );
 						if( i > 1) {
-							txt = capitalize(at.rq[i])+' :';
+							txt = capitalize(at.rq[i]);
 							field = $.snipetHandler.sett.call(snipet, { contentArray: [ txt ] } ) ;
 							// First expected attribute div will have an extra space from required
 							if( isSet(at.exp) && at.exp.length > 0 ){
 								at.rq[i] === at.exp[0] && field.classList.add('dsn-vary-properties-top');
+							}
+							// First dsn attribute div will have an extra space from required
+							if( isSet(at.dsn) && at.dsn.length > 0 ){
+								at.rq[i] === at.dsn[0] && field.classList.add('dsn-vary-properties-top');
 							}
 							field.children[1].addEventListener('change', listen);
 							fieldsAttr.call(field, i);
@@ -1996,6 +2003,7 @@
 					
 					!empty( snipet_obj[i]['exp'] ) && ( elStruct[ elname ].exAttr = snipet_obj[i]['exp'].split(",") );
 					!empty( snipet_obj[i]['req'] ) && ( elStruct[elname].reqAttr = snipet_obj[i]['req'].split(",") );
+					!empty( snipet_obj[i]['dsn'] ) && ( elStruct[elname].dsnAttr = snipet_obj[i]['dsn'].split(",") );
 					elStruct[elname].group = snipet_obj[i]['tgroup'] ;
 				}
 			}
