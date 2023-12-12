@@ -91,3 +91,8 @@ header {
 	background-repeat: no-repeat;
 	background-position: center center;
 }
+.dash-menu-entry .snippets {
+	background: url('../../images/icons/c/32/snippets.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+}
