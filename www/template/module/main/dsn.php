@@ -42,7 +42,7 @@
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-tag-name">Current element :</label></div>
 						<div class="col-f span-50">
 							<input type="text" id="dsn_90" name="dsn-el-tag-name" class="span-70 left" disabled>
-							<span class="span-20 left"><button id="dsn_89" class="dsn-ctl-btn dsn-edit-btn span-100 left"></button></span>
+							<span class="span-20 left"><span class="dsn-ctl-btn dsn-saved-target-el span-100 left"></span></span>
 						</div>
 					</div>
 					<div class="section group b-space-10 dsn-dark-field">
@@ -53,9 +53,17 @@
 						<div class="col-f span-50"><label class="indent left-5" for="dsn-el-siblings">Siblings :</label></div>
 						<div class="col-f span-50"><input type="text" id="dsn_92" name="dsn-el-siblings" class="span-20" disabled></div>
 					</div>
-					<div class="section group b-space-25 dsn-dark-field">
+					<div class="section group b-space-10 dsn-dark-field">
 						<div class="col-f span-50"><label for="dsn-el-child-nodes">Children :</label></div>
 						<div class="col-f span-50"><input type="text" id="dsn_93" name="dsn-el-child-nodes" class="span-20" disabled></div>
+					</div>
+					<div class="section group b-space-25 dsn-dark-field">
+						<button id="dsn_84" class="dsn-ctl-btn dsn-save-target-btn" style="margin-right: 20px;"></button>
+						<button id="dsn_85" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_86" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_87" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_88" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_89" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;"></button>
 					</div>
 				</div>
 			</section>
