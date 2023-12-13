@@ -62,37 +62,37 @@ header {
 	border-bottom: 2px solid #a84f00;
 }
 .dash-menu-entry .dashboard {
-	background: url('../../images/icons/c/32/dashboard.png');
+	background: url('images/icons/c/32/dashboard.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
 .dash-menu-entry .modules {
-	background: url('../../images/icons/c/32/modules.png');
+	background: url('images/icons/c/32/modules.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
 .dash-menu-entry .users {
-	background: url('../../images/icons/c/32/users-management.png');
+	background: url('images/icons/c/32/users-management.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
 .dash-menu-entry .utility {
-	background: url('../../images/icons/c/32/utility.png');
+	background: url('images/icons/c/32/utility.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
 .dash-menu-entry .assets {
-	background: url('../../images/icons/c/32/asset-management.png');
+	background: url('images/icons/c/32/asset-management.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
 .dash-menu-entry .server {
-	background: url('../../images/icons/c/32/server.png');
+	background: url('images/icons/c/32/server.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
 .dash-menu-entry .snippets {
-	background: url('../../images/icons/c/32/snippets.png');
+	background: url('images/icons/c/32/snippets.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
