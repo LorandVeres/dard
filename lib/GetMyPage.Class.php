@@ -86,6 +86,7 @@ class GetMyPage extends DardSession {
 			$this -> page['file'] = $arg['file_path'];
 			if ( isset($arg['template']) ) $this -> page['theme'] = $arg['template'];
 			if( isset($arg['body']) ) $this -> page['themebody'] = $arg['body'];
+			if(  isset( $arg['sassets'] ) ) $this -> secure_assets_fill( $arg['sassets']);
 		}
 	}
 
@@ -111,7 +112,7 @@ class GetMyPage extends DardSession {
 	}
 
 	private function sql_top_page() {
-		$query = "SELECT `id`, `pagename`, `type`, `title`, HEX(`access`) AS access, `file_path`, `module_id`, `parentpage`, `status`, `template`, `body`  FROM `page` WHERE `pagename` = '$this->top_page_name' AND  `parentpage` IS NULL;";
+		$query = "SELECT `id`, `pagename`, `type`, `title`, HEX(`access`) AS access, `file_path`, `module_id`, `sassets`, `parentpage`, `status`, `template`, `body`  FROM `page` WHERE `pagename` = '$this->top_page_name' AND  `parentpage` IS NULL;";
 		$result = $this -> selectDB($this -> top_page_name, $query, TRUE, 'array');
 		if( !$result){
 			$this -> get_error_page('404');
@@ -206,13 +207,24 @@ class GetMyPage extends DardSession {
 					$_SESSION['snippet']['cssfiles'] = array();
 				$_SESSION['snippet']['project-name'] = 'sandbox';
 			}
-			
-			$dardjs = array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
-			$snipetjs = array( "file"=>"src/js/dard_snipet.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
-		
 			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive')
 				$responsive = true;
-			// sorting css
+			
+			// By default dard.js file it will be included
+			// dard_snippet.js will go from secure assets directory. Consider removing it for responsive
+			$dardjs = array( "file"=>"src/js/dard.js" , "script"=>NULL ,"type"=>"file", "placement"=>"body");
+			$this -> all_js_scripts = array ();
+			array_push( $this -> all_js_scripts, $dardjs );
+			if( $responsive && !$this -> ajax && $_SERVER['REQUEST_METHOD']  === 'GET') {
+				if ( isset( $this -> page['sassets']['js'] )) {
+					foreach ( $this -> page['sassets']['js'] as $key => $value) {
+						if( preg_match("/dard_snippet\.js/", $value) )
+							unset(  $this -> page['sassets']['js'][$key] );
+					}
+				}
+			}
+
+			// Sorting css. Deleting unecesary potential general css included in main module
 			foreach ($this -> link_tags as $key => $value) {
 				if (isset($value['rel']) && $value['rel'] === 'stylesheet') {
 					$href = $value['href'];
@@ -227,32 +239,35 @@ class GetMyPage extends DardSession {
 					$newtags[] = $value;
 				}
 			}
+			// Adding the default project css, just if the file exist
 			if( isset($_SESSION['snippet']['project-name']) && is_array($csspath))
-				array_push( $csspath,  "/src/css/dsn/" .$_SESSION['snippet']['project-name'] . ".css");
-			if($responsive && isset( $_SESSION['snippet']['cssfiles'] ) && count($_SESSION['snippet']['cssfiles']) > 0)
-				$csspath = array_merge( $csspath, $_SESSION['snippet']['cssfiles']);
+				if( file_exists( "/src/css/dsn/" .$_SESSION['snippet']['project-name'] . ".css" ))
+					array_push( $csspath,  "/src/css/dsn/" .$_SESSION['snippet']['project-name'] . ".css");
+			// Adding the css files set from snippet page for the active snippet in responsive mod
+			if($responsive && isset( $_SESSION['snippet']['cssfiles'] ) && count($_SESSION['snippet']['cssfiles']) > 0) {
+				if ( isset( $_SESSION['snippet']['cssfiles']['read'] ) ) {
+					foreach ( $_SESSION['snippet']['cssfiles']['read'] as $value ) { 
+						$this -> page['sassets']['css'][] = $value;
+					}
+				}
+				if( count($_SESSION['snippet']['cssfiles']) > 0 ) {
+					foreach ( $_SESSION['snippet']['cssfiles'] as $key => $value ) { 
+						if( $key !== 'read')
+						$csspath[] = $value;
+					}
+				}
+			}
+			// Finalizing the newtags array before pushing to $this -> link_tags 
 			if(is_array($csspath) && count($csspath) >= 1 ){
 				foreach ($csspath as $val) {
 					array_push($newtags, array(
 						"rel"=>"stylesheet",
 						"type"=>"text/css",
-						"sizes"=>NULL,
-						"title"=>NULL,
-						"href"=> $val,
-						"media"=>NULL
+						"href"=> $val
 					));
 				}
 			}
 			$this -> link_tags = $newtags;
-			// sorting js files
-			if(isset($this -> url_arguments['a'] ) && $this -> url_arguments['a'] === 'responsive') {
-				$this -> all_js_scripts = array();
-				array_push( $this -> all_js_scripts, $dardjs );
-			} else if( !isset( $this -> url_arguments['a'] ) || $this -> url_arguments['a'] !== 'responsive') {
-				$this -> all_js_scripts = array();
-					array_push( $this -> all_js_scripts, $dardjs );
-					array_push( $this -> all_js_scripts, $snipetjs );
-			}
 		} 
 	}
 	
@@ -264,6 +279,7 @@ class GetMyPage extends DardSession {
 	}
 	
 	private function set_js_script_tags() {
+		$this -> secure_assets_js();
 		$body = '';
 		$head = array();
 		$string = function($a, $path){
@@ -271,7 +287,7 @@ class GetMyPage extends DardSession {
 			if($a["type"] === "file"){
 				$src = "\n\t\t<script src=\"" . $path . $a["file"] . "\"></script>";
 			}else if(($a["type"] === "script")){
-				$src = "\n\t\t<script type=\"text/javascript\">". $a["script"] ."</script>";
+				$src = "\n\t\t<script>". $a["script"] ."</script>";
 			}
 			return $src;
 		};
@@ -282,7 +298,7 @@ class GetMyPage extends DardSession {
 				$src[] ="";
 				$src[] ="</script>";
 			}else if(($a["type"] === "script")){
-				$src[] = "<script type=\"text/javascript\">";
+				$src[] = "<script>";
 				$src[] = $a["script"];
 				$src[] ="</script>";
 			}
@@ -353,7 +369,7 @@ class GetMyPage extends DardSession {
 					UNION
 					SELECT J.`file`, J.`script`, J.`type`, J.`placement`
 					FROM `js_files_script` AS J, `page_resources` AS R
-					WHERE R.`type`='js' AND R.`page_id` = ".$this -> page['id']." AND J.`id` = R.`res_id`";
+					WHERE R.`type`='js' AND R.`page_id` = ".$this -> page['id']." AND J.`id` = R.`res_id` AND J.`active` = 1";
 		$result = $this -> selectDB($this -> page['id'], $query, TRUE, 'default');
 		$this -> set_page_head_properties($result);
 		$this ->set_js_script_tags();
@@ -366,8 +382,9 @@ class GetMyPage extends DardSession {
 		
 		$head = $tag -> tag('head', '', '');
 		$prepare_attributes = function($value, $key){
-			if($value !== null || !empty($value))
+			if(is_string($value) && isset( $key ) && is_string( $key )){
 				return $key.'="'.$value.'" ';
+			}
 		};
 		
 		$elements = function($tag, $varr, $el) use (&$prepare_attributes, &$head){
@@ -393,6 +410,8 @@ class GetMyPage extends DardSession {
 		$elements($tag, $this -> meta_tags, 'meta');
 		$elements($tag, $this -> link_tags, 'link');
 		$js($this ->head_js_sripts, $tag);
+		$this -> secure_assets_css( $head, $tag);
+		
 		
 		$doc = "<!DOCTYPE html>\n";
 		$doc .= "<html lang=" . $this -> cf_language . ">\n";
@@ -499,7 +518,44 @@ class GetMyPage extends DardSession {
 			printf("\t\t</div>\n");
 		}
 	}
-
+	
+	private function secure_assets_fill(){
+		$arg = func_get_args();
+		if($arg[0] === NULL) {
+			$this -> page['sassets'] = NULL;
+			return;
+		} else if(is_array($arg) && $arg[0] !== NULL){
+			$arg = explode('|', $arg[0]);
+			foreach($arg as $value) {
+				$key = substr($value, 0, strpos($value, ':'));
+				$this -> page['sassets'][$key] = explode( ',', substr($value, strpos($value, ':')+1));
+			}
+		}
+	}
+	
+	private function secure_assets_css(&$head, $tag) {
+		if(isset( $this -> page['sassets']['css'] )) {
+			$string = '';
+			foreach( $this -> page['sassets']['css'] as $val ) {
+				if(is_file('../'.$val))
+					$string .= read_file_to_variable( '../'.$val);
+					$string = str_replace("\t", "",str_replace("\n", "", $string));
+					$tag -> append_tag($head, $tag -> tag( 'style' , '', $string) );
+			}
+		}
+	}
+	
+	private function secure_assets_js() {
+		if(isset( $this -> page['sassets']['script'] )) {
+			$string = '';
+			foreach( $this -> page['sassets']['script'] as $val ) {
+				if(is_file('../'.$val))
+					$string .= read_file_to_variable( '../'.$val);
+					array_push( $this -> all_js_scripts, array( 'file' => NULL, 'script' => $string, 'type' => 'script', 'placement' => 'body'));
+			}
+		}
+	}
+	
 	public function crumbs() {
 		$crumb = '';
 		foreach ($this->URI as $value) {
