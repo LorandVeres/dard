@@ -1000,7 +1000,8 @@
 							listExisting();
 							build(files, path);
 						}
-					}
+					},
+					log: 'No css file list'
 				});
 			}
 			
@@ -1054,7 +1055,7 @@
 			
 			function addFile () {
 				let style, rbt, filepath, elem = this;
-				filepath = this.parentElement.parentElement.children[0].getAttribute('data-filepath')
+				filepath = this.parentElement.parentElement.children[0].getAttribute('data-filepath');
 				$.send_json({
 					data : { addcssfile: filepath},
 					url : 'snippet?a=load-css-file',
@@ -1129,14 +1130,22 @@
 				}
 				if(o.keyIn('dir')){
 					ob = o.dir;
-					
+					// if the folder has files in it will append a div with the folder name
 					for(let prop in ob) {
 						if(ob.hasOwnProperty(prop)){
 							newpath = '';
 							newpath = path + prop + '/';
-							parent.append($('<div>', 'FOLDER : ' + path + prop).addattrlist({'class':'span-70 c-box dsn-add-list-title'}));
+							if(ob[prop].keyIn('files'))
+								parent.append($('<div>', 'FOLDER : ' + path + prop).addattrlist({'class':'span-70 c-box dsn-add-list-title'}));
 							build(ob[prop], newpath);
 						}
+					}
+				}
+				// If the folder has multiple directories in it 
+				if(!o.keyIn('dir') && !o.keyIn('files') && isArray(o)) {
+					for (let j = 0; j < o.length; j++){
+						o[j].dir.keyIn('sassets') && (path = '/');
+						build(o[j], path);
 					}
 				}
 			}
