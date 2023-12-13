@@ -950,7 +950,6 @@ $.constructor.prototype.get_json = function() {
 			let newobj;
 			try {
 				newobj = JSON.parse(r);
-				obj.keyIn('log') && console.log(r); // for debuging
 				if(obj.keyIn('callback')){
 					if(isFunc( obj.callback)){
 						obj.callback(newobj);
