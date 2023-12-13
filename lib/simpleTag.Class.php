@@ -54,7 +54,7 @@
 class simpleTag {
 
 	private $Doc = '';
-	private $inline_tag = array('a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br',  'button', 'i', 'cite', 'code', 'dfn', 'dd', 'dt', 'em', 'hr', 'img', 'input', 'kbd', 'li', 'link', 'map', 'meta', 'object', 'option', 'q', 'script', 'samp',  'small', 'span', 'strong', 'sub', 'sup', 'textarea', 'td', 'th', 'time', 'title', 'tt', 'var');
+	private $inline_tag = array('a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br',  'button', 'i', 'cite', 'code', 'dfn', 'dd', 'dt', 'em', 'hr', 'img', 'input', 'kbd', 'li', 'link', 'map', 'meta', 'object', 'option', 'q', 'script', 'samp',  'small', 'span', 'strong' , 'style', 'sub', 'sup', 'textarea', 'td', 'th', 'time', 'title', 'tt', 'var');
 	private $block_tag = array('address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'label', 'legend', 'main', 'nav', 'noscript', 'ol', 'p', 'pre', 'section', 'select', 'table', 'tr', 'tfoot', 'ul', 'video');
 	private $single_tag = array('!DOCTYPE html', 'meta', 'link', 'br', 'img', 'hr', 'input', 'embed', 'bgsound', 'base', 'col', 'source');
 	private $indentNum = 0;
@@ -228,8 +228,10 @@ class simpleTag {
 					} elseif (is_array($val)){
 						if(count($val) === 3 ){
 							if($this -> check_tag_type(preg_replace('/[<\/>]+/i', "" , $val[0] ), $this -> inline_tag)) {
-								if(!isset($val[1][0])) 
+								if(!isset($val[1][0])){
 									trigger_error('Dard notice: print_inline_tag $val[1][0] not set in simpleTag line 233', E_USER_NOTICE);
+									trigger_error('Dard notice: print_inline_tag = '.$val[1].' It still being set 233', E_USER_NOTICE);
+								}
 								$temp = $val[0] . ( isset($val[1][0]) ? $val[1][0] : $val[1] ). $val[2];
 								$inline .= str_replace("\n", "", $temp);
 							}
