@@ -201,7 +201,10 @@ class dsn_snipet extends FormCleaner {
 	}
 	
 	private function list_css_files() {
-		echo json_encode(file_names_array('src/css'));
+		$cssfiles = array();
+		$sassets =array('dir' => array('sassets' => array( 'dir' => array('dard' => array( 'dir' => array( 'css' => file_names_array('../sassets/dard/css')))))));
+		$cssfiles = file_names_array('src/css');
+		echo json_encode( array( $cssfiles, $sassets ) );
 	}
 	
 	private function search_snippets() {
@@ -261,16 +264,32 @@ class dsn_snipet extends FormCleaner {
 	}
 	
 	private function load_css_file(){
-		if( isset($this -> jx_data['addcssfile']) && is_file(getcwd(). $this -> jx_data['addcssfile']) ) {
-			$file = read_file_to_variable( getcwd(). $this -> jx_data['addcssfile']);
-			echo json_encode($file);
-			$_SESSION['snippet']['cssfiles'][] = $this -> jx_data['addcssfile'];
+		if( isset($this -> jx_data['addcssfile']) ) {
+			$readf = explode('/', $this -> jx_data['addcssfile']);
+			$readf[1] === 'sassets' ? $readdir = '..' : $readdir = getcwd();
+			if( is_file($readdir. $this -> jx_data['addcssfile']) ) {
+				$file = read_file_to_variable( $readdir. $this -> jx_data['addcssfile']);
+				echo json_encode($file);
+				$readdir === getcwd() ?
+					$_SESSION['snippet']['cssfiles'][] = $this -> jx_data['addcssfile'] :
+					$_SESSION['snippet']['cssfiles']['read'][] = substr( $this -> jx_data['addcssfile'], 1) ;
+			}
 		}
 		if( isset($this -> jx_data['removecssfile']) ) {
+			$readf = explode('/', $this -> jx_data['removecssfile']);
+			
 			if(isset($_SESSION['snippet']['cssfiles'])) {
-				foreach($_SESSION['snippet']['cssfiles'] as $key => $value) {
-					if( $value === $this -> jx_data['removecssfile']) {
-						unset($_SESSION['snippet']['cssfiles'][$key]) ;
+				if( $readf[1] === 'sassets' && isset( $_SESSION['snippet']['cssfiles']['read'] )) {
+					foreach($_SESSION['snippet']['cssfiles']['read'] as $key => $value) {
+						if( $value === substr( $this -> jx_data['removecssfile'], 1) ) {
+							unset($_SESSION['snippet']['cssfiles']['read'][$key]) ;
+						}
+					}
+				} else {
+					foreach($_SESSION['snippet']['cssfiles'] as $key => $value) {
+						if( $value === $this -> jx_data['removecssfile']) {
+							unset($_SESSION['snippet']['cssfiles'][$key]) ;
+						}
 					}
 				}
 				echo json_encode( $_SESSION['snippet']['cssfiles'] );
