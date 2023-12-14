@@ -65,10 +65,11 @@
 		
 		// default general settings 
 		settings.layoutPosition = "beforeend";          // used when iserting new tags or layouts
-		settings.elChangeLock = true;                   // Used to stop mouse over and click events on elements to show the outline, and set the current el variable
+		settings.elChangeLock = false;                   // Used to stop mouse over and click events on elements to show the outline, and set the current el variable
 		settings.staticBody = undefined;
-		settings.targetElement = undefined;             // The event.targetElement while settings.elChangeLock = false. May be used by overlays or deleted in future
+		settings.targetElement = undefined;             // The event.targetElement while settings.elChangeLock = true. May be used by overlays or deleted in future
 		settings.lastCurrentElement = undefined;        // Saving the last active el if we would like to alter it from static settings pages
+		settings.safeContainer = false;                 // Define an element as snippet container. 
 		
 		
 		// default project settings
@@ -92,7 +93,7 @@
 	$d.init = function(){
 		// init el if not set
 		window.addEventListener("load", (event) => { 
-			settings.changeSwitch && $d.change.call($('.dsn-body').firstElementChild);
+			!settings.elChangeLock && $d.change.call($('.dsn-body').firstElementChild);
 			
 			// event listener on all elements of the side menu
 			smn.addEventListener('click', (ev) => {
@@ -178,8 +179,8 @@
 	 */
 	$d.staticBody = function(fn1, fn2) {
 		try{
-			if(settings.elChangeLock) {
-				settings.elChangeLock = false;
+			if(!settings.elChangeLock) {
+				settings.elChangeLock = true;
 				undefineEl();
 				!$n.c.tempbody && ( $n.c.tempbody = $.snipetHandler.gett(snb, true));
 				snb.empty();
@@ -189,7 +190,7 @@
 				snb.empty();
 				$n.c.tempbody !== undefined && $.snipetHandler.sett.call({ obj:$n.c.tempbody, recipient:snb})
 				delete $n.c.tempbody;
-				settings.elChangeLock = true;
+				settings.elChangeLock = false;
 				settings.targetElement = undefined;
 				settings.lastCurrentElement = undefined;
 				settings.staticBody = undefined;
@@ -532,7 +533,7 @@
 			//getDefaultSnippet();
 			function getProjectData(r){
 				if(isSet(r) && r !== null) {
-					settings.elChangeLock = true;
+					settings.elChangeLock = false;
 					simulateEvent('click', $('#dsn-326'));
 					$p.maxid = r.maxid;
 					$p.maxclass = r.maxclass;
@@ -721,8 +722,8 @@
 		function applyExtension () {
 			let parentel, pos, newel;
 			if( $(this).attr('id') === "dsn-323" ) {
-				!settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
-				if (isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && settings.elChangeLock) {
+				settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
+				if (isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && !settings.elChangeLock) {
 					isSet(el) && el instanceof HTMLElement ? 
 					( parentel = el) && ( pos = settings.layoutPosition ) :  
 					( parentel = snb ) && (pos = 'beforeend');
@@ -733,8 +734,8 @@
 		
 		function editDownload() {
 			let newel;
-			!settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
-			if ( isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && settings.elChangeLock) {
+			settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
+			if ( isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && !settings.elChangeLock) {
 				//fieldDisable(false);
 				//emptyFieldsValue();
 				saveSnippet();
@@ -1223,7 +1224,7 @@
 		
 		snipetMoveover = function(ev){
 			let e = ev.target, ep = ev.target.parentElement;
-			if(settings.elChangeLock){
+			if(!settings.elChangeLock){
 				e.classList.toggle('dsn-hover');
 				ep.classList.toggle('dsn-ep-hover');
 			}
@@ -1231,7 +1232,7 @@
 		
 		snipetMoveout = function(ev){
 			let e = ev.target, ep = ev.target.parentElement;
-			if(settings.elChangeLock){
+			if(!settings.elChangeLock){
 				if(e && e.classList.contains("dsn-hover")){
 					e.classList.toggle('dsn-hover');
 					ep.classList.contains("dsn-ep-hover") && ep.classList.toggle('dsn-ep-hover');
@@ -1242,8 +1243,8 @@
 		
 		snipetClickable = function(ev){
 			let e = ev.target, fname;
-			if(settings.elChangeLock){
-				$(e).attr('id') !== 'dsn_5' && $d.change.call(e);
+			if(!settings.elChangeLock){
+				( $(e).attr('id') !== 'dsn_5' && !$(this).hasAttribute('dsn-snippet-container') )  && $d.change.call(e);
 				ev.preventDefault();
 			} else {
 				settings.targetElement = e;
@@ -1278,7 +1279,7 @@
 	*/
 	 $d.change = function(){
 		// If this is the snipet container exit from function
-		if($(this).attr('id') !== 'dsn_5') {
+		if($(this).attr('id') !== 'dsn_5' && !$(this).hasAttribute('dsn-snippet-container') ) {
 			let noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
 			// remove the active class from current element
 			if(el && el.classList.contains("dsn-active")){
@@ -2230,7 +2231,7 @@
 		
 		$fn.menu.snippetFromMenu = function () {
 			let ob = $n.menu[this.getAttribute('data-index')], elem = el, pos = settings.layoutPosition;
-			if( !settings.elChangeLock ) { return; }
+			if( settings.elChangeLock ) { return; }
 			if(!el) {
 				elem = snb;
 				pos = 'beforeend';
