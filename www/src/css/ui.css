@@ -9,11 +9,11 @@
 /*  COLUMN SETUP  */ 
 .col { display: block;float:left;margin: 0 0 0 1.6%; }
 .col-f { display: block;float: left;margin: 0; } /* .col-full */
-.col-rs { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px 960px screen width*/
-.col-rs-s { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px screen width*/
-.col-rs-sm { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px margin top bottom 10px */
-.col-rs-sbm { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px margin bottom 10px */
-.col-rs-2 { display: block;float: left;margin: 0; } /* .col-responsive */
+/*.col-rs { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px 960px screen width*/
+/*.col-rs-s { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px screen width*/
+/*.col-rs-sm { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px margin top bottom 10px */
+/*.col-rs-sbm { display: block;float: left;margin: 0; } /* .col-responsive full screen under 600px margin bottom 10px */
+/*.col-rs-2 { display: block;float: left;margin: 0; } /* .col-responsive */
 .col-r { display: block;float: right;margin: 0 1.6% 0 0; } /* .col-right */
 .col:first-child { margin-left: 0; }
 .col-r:first-child { margin-right: 0; }
@@ -251,26 +251,71 @@
 /** RESPONSIVE WIDTH PROPERTIES**/
 /***************************/
 @media only screen and (max-width: 600px) {
-	.col-rs, .col-rs-s, .col-rs-sm, .col-rs-sbm {
+	.col-rs-s, .col-rsm, .col-rs-sm, .col-rs-sbm {
 	  width: 100%;
 	  margin-left: 0;
 	  margin-right: 0;
 	}
 	
-	.col-rs-sm {
-		margin-top: 10px;
-		margin-bottom: 10px;
+	.col-rsm-96 {
+		width: 96%;
+		margin-left: auto;
+		margin-right: auto;
 	}
+	
+	.col-rsm-94 {
+		width: 96%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.col-rsm-90 {
+		width: 90%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.col-rs-sm {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+	
 	.col-rs-sbm {
-		margin-bottom: 10px;
+		margin-bottom: 1rem;
 	}
   }
   
   @media only screen and (max-width: 960px) {
-	.col-rs {
+	.col-rs, .col-rst, .col-rsm, .col-rsbm {
 	  width: 100%;
 	  margin-left: 0;
 	  margin-right: 0;
+	}
+	
+	.col-rst-96 {
+		width: 96%;
+		margin: 0 auto;
+	}
+	
+	.col-rst-94 {
+		width: 96%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.col-rst-90 {
+		width: 90%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.col-rsm {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+	
+	.col-rsbm {
+		margin-bottom: 1rem;
 	}
   }
 
