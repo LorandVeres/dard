@@ -719,6 +719,34 @@
 			el.classList.add('dsn-active');
 		}
 		
+		// Used in applyExtension and editDownload to add the css files from snippet settings automatically to a style tag
+		function applyCss(obj) {
+			let cssf, incl = [], index = 0, child = 0;
+			$('head').walkChild(
+				function(){
+					this.hasAttribute('data-filepath') && incl.push( this.getAttribute('data-filepath') );
+					this.nodeName.toLowerCase() === 'style' && ( child = index);
+					index++;
+				}
+			);
+			cssf = obj.cssf.split("\n");
+			for (let i = 0; i < cssf.length; i++){
+				cssf[i].trim(' ');
+				let ch = cssf[i].split('');
+				ch[0] !== '/' && ( cssf[i] = '/' + cssf[i]);
+				if( incl.includes(cssf[i]) === false) {
+					$.send_json({
+						data: { addcssfile: cssf[i] },
+						url: 'snippet?a=load-css-file',
+						callback: function(rs){
+							$('head').children[child].insertAdjacentElement('beforebegin', $('<style>', rs).addattr('data-filepath', cssf[i]) );
+						},
+						log: 'Edit download snippet css loading failed.'
+					});
+				}
+			}
+		}
+		
 		function applyExtension () {
 			let parentel, pos, newel;
 			if( $(this).attr('id') === "dsn-323" ) {
@@ -728,26 +756,25 @@
 					( parentel = el) && ( pos = settings.layoutPosition ) :  
 					( parentel = snb ) && (pos = 'beforeend');
 					$.snipetHandler.sett.call( { obj: $n.p.body, recipient: parentel, position: pos});
+					$n.p.cssf !== '' && applyCss($n.p);
 				}
 			}
 		}
 		
 		function editDownload() {
-			let newel;
 			settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
+			
 			if ( isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && !settings.elChangeLock) {
-				//fieldDisable(false);
-				//emptyFieldsValue();
 				saveSnippet();
 				setTimeout(	function() {
-				clearWorkspace();
-				$.snipetHandler.sett.call( { obj: $n.p.body, recipient:$('.dsn-body')});
-				$n.c = $n.p;
-				pushName($n.c.name);
-				pushNotes($n.c.name + ' snippet ready...');
-				fieldDisable(true);
-				//$n.p = {};
-			},50);
+					clearWorkspace();
+					!settings.safeContainer ? $.snipetHandler.sett.call( { obj: $n.p.body, recipient: snb }) : $.snipetHandler.sett.call( { obj: $n.p.body, recipient: $('.dsn-safe-container') });
+					$n.c = $n.p;
+					$n.c.cssf !== '' && applyCss($n.c);
+					pushName($n.c.name);
+					pushNotes($n.c.name + ' snippet ready...');
+					fieldDisable(true);
+				},50);
 			}
 		}
 		
