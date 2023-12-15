@@ -65,11 +65,12 @@
 		
 		// default general settings 
 		settings.layoutPosition = "beforeend";          // used when iserting new tags or layouts
-		settings.elChangeLock = false;                   // Used to stop mouse over and click events on elements to show the outline, and set the current el variable
+		settings.elChangeLock = false;                  // Used to stop mouse over and click events on elements to show the outline, and set the current el variable
 		settings.staticBody = undefined;
 		settings.targetElement = undefined;             // The event.targetElement while settings.elChangeLock = true. May be used by overlays or deleted in future
 		settings.lastCurrentElement = undefined;        // Saving the last active el if we would like to alter it from static settings pages
-		settings.safeContainer = false;                 // Define an element as snippet container. 
+		settings.safeContainer = false;                  // Define an element as snippet container. Used in functions: saveSnippet, editDownload, createNewSnipet, ,highlightAll, clearWorkspace
+		settings.whiteBoard = undefined;
 		
 		
 		// default project settings
@@ -250,6 +251,9 @@
 					this.value === vobj[nameattr] && $(this).addattr('selected')
 				});
 			}
+			if( element.nodeName.toLowerCase() === 'textarea') {
+				vobj.keyIn(nameattr) && ( element.textContent = vobj[nameattr] );
+			}
 		}
 	}
 	
@@ -393,8 +397,8 @@
 				pushNotes("Edit mode activated...");
 			} else if( !this.classList.contains('active')) { 
 				undefineEl();
-				$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
-				$('.dsn-body').empty();
+				$n.c.body = $.snipetHandler.gett($('#dsn_5'), true);
+				$('#dsn_5').empty();
 				$.send_json({
 					url: 'snippet?a=responsive',
 					data: { body: $n.c.body, projectname: $p.name },
@@ -439,7 +443,7 @@
 		
 		// Delete the snipet from working enviroment to create a clean slate
 		function clearWorkspace() {
-			snb.empty();
+			!settings.safeContainer ? $('#dsn_5').empty() : $('.dsn-safe-container').empty();
 			undefineEl();
 			//fieldDisable(false);
 			//emptyFieldsValue();
@@ -472,7 +476,7 @@
 					!field.hasAttribute('disabled') && ( field.value = "" );
 				}
 			}
-			if ( $(this).attr('id') === 'dsn-325') {
+			if ( this && $(this).attr('id') === 'dsn-325') {
 				$n.p = {}  && fieldDisable(false); 
 				fieldempty();
 				fieldDisable();
@@ -561,8 +565,8 @@
 				let catchel;
 				clearWorkspace();
 				catchel = $('<p>', 'I am the catcher in the rye !');
-				$('.dsn-body').append(catchel);
-				snipet.body =  $.snipetHandler.gett($('.dsn-body'), true);
+				!settings.safeContainer ? $('#dsn_5').append(catchel) : $('.dsn-safe-container').append(catchel);
+				!settings.safeContainer ? snipet.body =  $.snipetHandler.gett( $('#dsn_5'), true) : snipet.body =  $.snipetHandler.gett( $( '.dsn-safe-container' ), true);
 			}
 			
 			function handleResponse(r){
@@ -703,10 +707,10 @@
 				this.hasAttribute('class') && this.getAttribute('class') === '' && this.removeAttribute('class'); 
 				this.childElementCount > 0 && $(this).walkChild( hideClassesRemove );
 			}
-			snb.walkChild( hideClassesRemove );
+			!settings.safeContainer ? $('#dsn_5').walkChild( hideClassesRemove ) : $('.dsn-safe-container').walkChild( hideClassesRemove );
 			tEl = el;
 			undefineEl();
-			$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
+			!settings.safeContainer ? $n.c.body = $.snipetHandler.gett( $( '#dsn_5' ), true) : $n.c.body = $.snipetHandler.gett( $('.dsn-safe-container'), true);
 			s = $n.c;
 			s.project = $p.name;
 			
@@ -826,7 +830,7 @@
 		
 		function updateSnippetSettings() {
 			let selfCaller = this, snippmenu = false, fieldIds, send = { project : $p.name, id : $n.c.id }, search = {}, over;
-			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H', 'd-2-O', 'd-2-N' ];
+			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H', 'd-2-O', 'd-2-N', 'd-2-P' ];
 			
 			this.id === 'dsn-344' && ( snippmenu = true );
 			
@@ -1049,7 +1053,7 @@
 	                $(this).walkChild(addDottedBorder);
 	        }
 	        self.run = function() {
-	            $('.dsn-body').walkChild( addDottedBorder);
+	            !settings.safeContainer ? $('#dsn_5').walkChild( addDottedBorder) : $('.dsn-safe-container').walkChild( addDottedBorder);
 	            bool ? bool = false : bool = true ;
 	        };
 	        
@@ -1231,6 +1235,34 @@
 			return self;
 		}
 		
+		function safeBoard () {
+			if(this.classList.contains('active')) {
+				if(confirm('Would like to remove the safeboard?')) {
+					settings.whiteBoard.classList.remove('dsn-safe-container')
+					snb.classList.add('dsn-safe-container');
+					undefineEl();
+					settings.whiteBoard = undefined;
+					this.classList.toggle('active');
+					settings.safeContainer = false;
+					pushNotes('Safe board disabled...');
+				}
+			} else {
+				if(!el){
+					pushNotes('No active element for a safe board ');
+					return;
+				}
+				snb.classList.remove('dsn-safe-container');
+				$(el).addclass('dsn-safe-container');
+				undefineEl();
+				settings.whiteBoard = $('.dsn-safe-container');
+				this.classList.toggle('active');
+				pushNotes('Safe board activated...');
+				settings.safeContainer = true;
+				pushNotes('Safe board activated...');
+			}
+		};
+		$fn.menu.safeBoard = safeBoard;
+		
 	    let cssfiles = new addCssFiles();
 	    $('#dsn-335').addEventListener('click', () => {$fn.menu.highlightAll.run() } );
 	    $('#dsn-336').addEventListener('click', () => { cssfiles.add() } );
@@ -1293,31 +1325,55 @@
 	 *
 	 */
 	function snippetListener(){
-		let self = {}, snipetClickable, snipetMoveout, snipetMoveover;
+		let self = {}, snipetClickable, snipetMoveout, snipetMoveover, editable, defineEditable;
+		
+		defineEditable = function(ev) {
+			let p ;
+			if (settings.safeContainer && ev && ev.parentElement && !editable) {
+				p = ev.parentElement;
+				editable = false;
+				if( !p.classList.contains('dsn-safe-container') ) {
+					if(p.parentElement) {
+						defineEditable(p)
+					}
+				} else if ( p.classList.contains('dsn-safe-container')) {
+					editable = true;
+					return;
+				}
+			} else if(ev && !settings.safeContainer){ 
+				editable = true; 
+			}
+		}
 		
 		snipetMoveover = function(ev){
 			let e = ev.target, ep = ev.target.parentElement;
-			if(!settings.elChangeLock){
-				e.classList.toggle('dsn-hover');
-				ep.classList.toggle('dsn-ep-hover');
+			if( !settings.elChangeLock ){
+				defineEditable(e);
+				if(editable) {
+					e.classList.toggle('dsn-hover');
+					ep.classList.toggle('dsn-ep-hover');
+				}
 			}
 		}
 		
 		snipetMoveout = function(ev){
 			let e = ev.target, ep = ev.target.parentElement;
-			if(!settings.elChangeLock){
+			if(!settings.elChangeLock && editable){
 				if(e && e.classList.contains("dsn-hover")){
 					e.classList.toggle('dsn-hover');
 					ep.classList.contains("dsn-ep-hover") && ep.classList.toggle('dsn-ep-hover');
 					e.hasAttribute('class') && ( e.getAttribute('class') === '' && e.removeAttribute('class'));
 				}
+				editable = false;
 			}
 		}
 		
 		snipetClickable = function(ev){
 			let e = ev.target, fname;
 			if(!settings.elChangeLock){
-				( $(e).attr('id') !== 'dsn_5' && !$(this).hasAttribute('dsn-snippet-container') )  && $d.change.call(e);
+				if(editable) {
+					( e.id !== 'dsn_5' )  && $d.change.call(e);
+				}
 				ev.preventDefault();
 			} else {
 				settings.targetElement = e;
@@ -1398,15 +1454,15 @@
 	
 	/** Move to parent element. Stops before exiting the snipet container */
 	
-	$d.goToParent = function(){ if(el && el.parentElement && !el.parentElement.classList.contains("dsn-body") ) $d.change.call(el.parentElement); };
+	$d.goToParent = function(){ if(el && el.parentElement && !el.parentElement.classList.contains('dsn-safe-container') ) $d.change.call(el.parentElement); };
 	
 	/** Move to the younger sibling DOWN :) */
 	
-	$d.goToYoungerBrother = function( ){ if(el && el.nextElementSibling) $d.change.call(el.nextElementSibling); };
+	$d.goToYoungerBrother = function( ){ if(el && el.nextElementSibling && !el.nextElementSibling.classList.contains('dsn-safe-container')) $d.change.call(el.nextElementSibling); };
 	
 	/** Move to the older sibling UP :) */
 	
-	$d.goToOlderBrother = function(){ if(el && el.previousElementSibling) $d.change.call(el.previousElementSibling); };
+	$d.goToOlderBrother = function(){ if(el && el.previousElementSibling && !el.previousElementSibling.classList.contains('dsn-safe-container')) $d.change.call(el.previousElementSibling); };
 	
 	/**
 	*************************************
