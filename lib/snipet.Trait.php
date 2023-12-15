@@ -57,7 +57,7 @@ trait snipetHandler{
 			// Creating the include container tag
 			// Future implemetation to consider: A structure, for templating, without a real existing element
 			$new_t = $tag -> tag(($snipp['e_name'] !== '#text' ? strtolower($snipp['e_name']) : ''), (isset($snipp['e_attr']) ? $set_attributes($snipp['e_attr']) : ''), '');
-			if(count($snipp['e_content']) >= 1) {
+			if(is_array($snipp['e_content']) && count($snipp['e_content']) >= 1) {
 				// Pushing up the existing elements before the included snippet
 				foreach( $snipp['e_content'] as $key => $value) {
 					if(is_array($value) && count($value) >=1)
@@ -69,10 +69,13 @@ trait snipetHandler{
 				if( $temp_holder && is_array($temp_holder))
 					$tag -> append_tag($new_t, $this -> snippet_json_to_html($temp_holder, $tag));
 			}
+			if(is_string($snipp['e_content'])){
+				$tag -> append_tag($new_t , $this -> snippet_json_to_html($temp_holder, $tag));
+			}
 			return $new_t;
         };
         
-        $tag_block = function ($snippet, $tag) use (&$set_attributes, &$new_tag, &$loop_snippet, &$themebody, &$dsn_include_append_on_array, &$dsn_include_append_on_text){
+        $tag_block = function ($snippet, $tag) use (&$set_attributes, &$new_tag, &$loop_snippet, &$themebody, &$dsn_include_append_on_array){
             if(isset($snippet['e_type'])){
 				if(is_string($snippet['e_content'])){
 					if(isset($snippet['e_attr']['data-dsnthemebody']) && $themebody ) {
