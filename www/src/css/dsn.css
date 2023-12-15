@@ -295,6 +295,21 @@
 #dsn-346:hover {
 	background-image: url('../../images/icons/g/16/m/hashtag.png');
 }
+.dsn-save-target-btn {
+	background-image: url('../../images/icons/g/24/l/array.png');
+}
+.dsn-save-target-btn:hover {
+	background-image: url('../../images/icons/g/24/m/array.png');
+}
+.dsn-save-target-btn.active {
+	background-image: url('../../images/icons/c/24/array-yellow.png');
+}
+#dsn-338 {
+	background-image: url('../../images/icons/g/24/l/js-file.png');
+}
+#dsn-338:hover {
+	background-image: url('../../images/icons/g/24/m/js-file.png');
+}
 
 .dsn-page .dsn-header{
     height: 2rem;

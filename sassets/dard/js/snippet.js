@@ -65,10 +65,12 @@
 		
 		// default general settings 
 		settings.layoutPosition = "beforeend";          // used when iserting new tags or layouts
-		settings.elChangeLock = true;                   // Used to stop mouse over and click events on elements to show the outline, and set the current el variable
+		settings.elChangeLock = false;                  // Used to stop mouse over and click events on elements to show the outline, and set the current el variable
 		settings.staticBody = undefined;
-		settings.targetElement = undefined;             // The event.targetElement while settings.elChangeLock = false. May be used by overlays or deleted in future
+		settings.targetElement = undefined;             // The event.targetElement while settings.elChangeLock = true. May be used by overlays or deleted in future
 		settings.lastCurrentElement = undefined;        // Saving the last active el if we would like to alter it from static settings pages
+		settings.safeContainer = false;                  // Define an element as snippet container. Used in functions: saveSnippet, editDownload, createNewSnipet, ,highlightAll, clearWorkspace
+		settings.whiteBoard = undefined;
 		
 		
 		// default project settings
@@ -92,7 +94,7 @@
 	$d.init = function(){
 		// init el if not set
 		window.addEventListener("load", (event) => { 
-			settings.changeSwitch && $d.change.call($('.dsn-body').firstElementChild);
+			!settings.elChangeLock && $d.change.call($('.dsn-body').firstElementChild);
 			
 			// event listener on all elements of the side menu
 			smn.addEventListener('click', (ev) => {
@@ -178,8 +180,8 @@
 	 */
 	$d.staticBody = function(fn1, fn2) {
 		try{
-			if(settings.elChangeLock) {
-				settings.elChangeLock = false;
+			if(!settings.elChangeLock) {
+				settings.elChangeLock = true;
 				undefineEl();
 				!$n.c.tempbody && ( $n.c.tempbody = $.snipetHandler.gett(snb, true));
 				snb.empty();
@@ -189,7 +191,7 @@
 				snb.empty();
 				$n.c.tempbody !== undefined && $.snipetHandler.sett.call({ obj:$n.c.tempbody, recipient:snb})
 				delete $n.c.tempbody;
-				settings.elChangeLock = true;
+				settings.elChangeLock = false;
 				settings.targetElement = undefined;
 				settings.lastCurrentElement = undefined;
 				settings.staticBody = undefined;
@@ -248,6 +250,9 @@
 				vobj.keyIn(nameattr) && element.walkChild(function() { 
 					this.value === vobj[nameattr] && $(this).addattr('selected')
 				});
+			}
+			if( element.nodeName.toLowerCase() === 'textarea') {
+				vobj.keyIn(nameattr) && ( element.textContent = vobj[nameattr] );
 			}
 		}
 	}
@@ -392,8 +397,8 @@
 				pushNotes("Edit mode activated...");
 			} else if( !this.classList.contains('active')) { 
 				undefineEl();
-				$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
-				$('.dsn-body').empty();
+				$n.c.body = $.snipetHandler.gett($('#dsn_5'), true);
+				$('#dsn_5').empty();
 				$.send_json({
 					url: 'snippet?a=responsive',
 					data: { body: $n.c.body, projectname: $p.name },
@@ -438,7 +443,7 @@
 		
 		// Delete the snipet from working enviroment to create a clean slate
 		function clearWorkspace() {
-			snb.empty();
+			!settings.safeContainer ? $('#dsn_5').empty() : $('.dsn-safe-container').empty();
 			undefineEl();
 			//fieldDisable(false);
 			//emptyFieldsValue();
@@ -471,7 +476,7 @@
 					!field.hasAttribute('disabled') && ( field.value = "" );
 				}
 			}
-			if ( $(this).attr('id') === 'dsn-325') {
+			if ( this && $(this).attr('id') === 'dsn-325') {
 				$n.p = {}  && fieldDisable(false); 
 				fieldempty();
 				fieldDisable();
@@ -532,7 +537,7 @@
 			//getDefaultSnippet();
 			function getProjectData(r){
 				if(isSet(r) && r !== null) {
-					settings.elChangeLock = true;
+					settings.elChangeLock = false;
 					simulateEvent('click', $('#dsn-326'));
 					$p.maxid = r.maxid;
 					$p.maxclass = r.maxclass;
@@ -560,8 +565,8 @@
 				let catchel;
 				clearWorkspace();
 				catchel = $('<p>', 'I am the catcher in the rye !');
-				$('.dsn-body').append(catchel);
-				snipet.body =  $.snipetHandler.gett($('.dsn-body'), true);
+				!settings.safeContainer ? $('#dsn_5').append(catchel) : $('.dsn-safe-container').append(catchel);
+				!settings.safeContainer ? snipet.body =  $.snipetHandler.gett( $('#dsn_5'), true) : snipet.body =  $.snipetHandler.gett( $( '.dsn-safe-container' ), true);
 			}
 			
 			function handleResponse(r){
@@ -702,10 +707,10 @@
 				this.hasAttribute('class') && this.getAttribute('class') === '' && this.removeAttribute('class'); 
 				this.childElementCount > 0 && $(this).walkChild( hideClassesRemove );
 			}
-			snb.walkChild( hideClassesRemove );
+			!settings.safeContainer ? $('#dsn_5').walkChild( hideClassesRemove ) : $('.dsn-safe-container').walkChild( hideClassesRemove );
 			tEl = el;
 			undefineEl();
-			$n.c.body = $.snipetHandler.gett($('.dsn-body'), true);
+			!settings.safeContainer ? $n.c.body = $.snipetHandler.gett( $( '#dsn_5' ), true) : $n.c.body = $.snipetHandler.gett( $('.dsn-safe-container'), true);
 			s = $n.c;
 			s.project = $p.name;
 			
@@ -718,35 +723,62 @@
 			el.classList.add('dsn-active');
 		}
 		
+		// Used in applyExtension and editDownload to add the css files from snippet settings automatically to a style tag
+		function applyCss(obj) {
+			let cssf, incl = [], index = 0, child = 0;
+			$('head').walkChild(
+				function(){
+					this.hasAttribute('data-filepath') && incl.push( this.getAttribute('data-filepath') );
+					this.nodeName.toLowerCase() === 'style' && ( child = index);
+					index++;
+				}
+			);
+			cssf = obj.cssf.split("\n");
+			for (let i = 0; i < cssf.length; i++){
+				cssf[i].trim(' ');
+				let ch = cssf[i].split('');
+				ch[0] !== '/' && ( cssf[i] = '/' + cssf[i]);
+				if( incl.includes(cssf[i]) === false) {
+					$.send_json({
+						data: { addcssfile: cssf[i] },
+						url: 'snippet?a=load-css-file',
+						callback: function(rs){
+							$('head').children[child].insertAdjacentElement('beforebegin', $('<style>', rs).addattr('data-filepath', cssf[i]) );
+						},
+						log: 'Edit download snippet css loading failed.'
+					});
+				}
+			}
+		}
+		
 		function applyExtension () {
 			let parentel, pos, newel;
 			if( $(this).attr('id') === "dsn-323" ) {
-				!settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
-				if (isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && settings.elChangeLock) {
+				settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
+				if (isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && !settings.elChangeLock) {
 					isSet(el) && el instanceof HTMLElement ? 
 					( parentel = el) && ( pos = settings.layoutPosition ) :  
 					( parentel = snb ) && (pos = 'beforeend');
 					$.snipetHandler.sett.call( { obj: $n.p.body, recipient: parentel, position: pos});
+					$n.p.cssf !== '' && applyCss($n.p);
 				}
 			}
 		}
 		
 		function editDownload() {
-			let newel;
-			!settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
-			if ( isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && settings.elChangeLock) {
-				//fieldDisable(false);
-				//emptyFieldsValue();
+			settings.elChangeLock && pushNotes('Close the opened admin page to get to the live snippet.');
+			
+			if ( isSet($n.p) && $n.p.body !== undefined && $n.p.body.size() > 0 && !settings.elChangeLock) {
 				saveSnippet();
 				setTimeout(	function() {
-				clearWorkspace();
-				$.snipetHandler.sett.call( { obj: $n.p.body, recipient:$('.dsn-body')});
-				$n.c = $n.p;
-				pushName($n.c.name);
-				pushNotes($n.c.name + ' snippet ready...');
-				fieldDisable(true);
-				//$n.p = {};
-			},50);
+					clearWorkspace();
+					!settings.safeContainer ? $.snipetHandler.sett.call( { obj: $n.p.body, recipient: snb }) : $.snipetHandler.sett.call( { obj: $n.p.body, recipient: $('.dsn-safe-container') });
+					$n.c = $n.p;
+					$n.c.cssf !== '' && applyCss($n.c);
+					pushName($n.c.name);
+					pushNotes($n.c.name + ' snippet ready...');
+					fieldDisable(true);
+				},50);
 			}
 		}
 		
@@ -798,7 +830,7 @@
 		
 		function updateSnippetSettings() {
 			let selfCaller = this, snippmenu = false, fieldIds, send = { project : $p.name, id : $n.c.id }, search = {}, over;
-			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H', 'd-2-O', 'd-2-N' ];
+			fieldIds = [ 'd-2-8', 'd-2-9', 'd-2-A', 'd-2-B', 'd-2-J', 'd-2-C', 'd-2-D', 'd-2-E', 'd-2-F', 'd-2-G', 'd-2-H', 'd-2-O', 'd-2-N', 'd-2-P' ];
 			
 			this.id === 'dsn-344' && ( snippmenu = true );
 			
@@ -915,28 +947,74 @@
 		
 		// Preview the snippet from search rows
 		function previewSnippet() {
-			let send = {} ;
-			send.project = $('#d-2-2').value;
-			send.name = this.getAttribute('data-snippet-name');
+			let send = {}, over, contattr, contw, contb, frameattr, cssf = [], frame, htm, head, body;
+			send.project = $('#d-2-2').value;                                               // project name from select field value
+			send.name = this.getAttribute('data-snippet-name');                             // snipet name from button data atribute
+			
+			// Defining iframe main elements
+			function initFrame(r) {
+				r.background !== '' ? contb = r.background : contb = '#ffffff';             // Default background is white
+				r.width !== '' ? contw = r.width : contw = '100%';                          // Default width is 100%
+				contattr = {
+					id : 'dsn-preview-content',
+					class: "section group c-box",
+					style : "width:" + contw + ";background:" + contb + ";height: 100%;"    // Future: consider a height from snippet settings
+				}
+				// Initial elements and the frame attributes
+				htm = $('<html>');
+				head = $('<head>')
+					.append( $('<link>').addattrlist( {rel:"stylesheet", type:"text/css", href:"/src/css/reset.css"} ) )
+					.append( $('<link>').addattrlist( {rel:"stylesheet", type:"text/css", href:"/src/css/ui.css"} ) );
+				body = $('<body>').addattrlist(contattr);
+				$.snipetHandler.sett.call( { obj: r.body, recipient: body, position: 'beforeend' });
+				frameattr = {
+					id : 'dsn-preview',
+					style: "display:block;height:85%;max-width:90%;width:calc(" + contw + " + 4rem);margin: 5rem auto 1rem;padding:2rem;overflow:auto;border:none;background: rgba(0,0,0,.2);",
+					sandbox : "allow-same-origin"
+				};
+			}
+			
+			// Loading the css files 
+			function getStyle(resstyle) {
+				cssf = resstyle.split("\n");
+				for (let i = 0; i < cssf.length; i++){
+					cssf[i].trim(' ');
+					let ch = cssf[i].split('');
+					ch[0] !== '/' && ( cssf[i] = '/' + cssf[i]);
+					$.send_json({
+						data: { addcssfile: cssf[i] },
+						url: 'snippet?a=load-css-file',
+						callback: function(rs){
+							head && head.append($('<style>', rs));
+							// At last css file loaded displaying the frame
+							if( i == cssf.length -1 ) {
+								displayFrame();
+							}
+						}
+					});
+				}
+			}
+			
+			// Displaying the frame 
+			function displayFrame() {
+				htm.append(head).append(body);
+				frameattr.srcdoc = htm.outerHTML;
+				frame = $('<iframe>').addattrlist(frameattr);
+				over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
+				over.classList.add('section');over.classList.add('group');
+				$(over).append(frame);
+			}
 			
 			$.send_json({
 				data : { project : send.project, name : send.name },
 				url : 'snippet?a=get-snippet-by-name',
 				callback : function (r) {
 					if(isSet(r)) {
-						const over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
-						const cont = $('<div>');
-						// Default background is white
-						r.background !== '' ? cont.style.backgroundColor = r.background : cont.style.backgroundColor = '#ffffff';
-						// Default width is 100%
-						r.width !== '' ? cont.style.width = r.width : cont.style.width = '100%';
-						cont.style.marginTop = '4rem';
-						cont.classList.add('pad-20');
-						cont.classList.add('c-box');
-						$.snipetHandler.sett.call( { obj: r.body, recipient: cont, position: 'beforeend' });
-						$(over).append(cont);
+						initFrame(r);
+						r.cssf !== '' ? getStyle(r.cssf) : displayFrame();
 					}
-				}
+				},
+				log : 'Snippet preview failed.'
 			});
 		}
 		$fn.body.previewSnippet = previewSnippet;
@@ -975,7 +1053,7 @@
 	                $(this).walkChild(addDottedBorder);
 	        }
 	        self.run = function() {
-	            $('.dsn-body').walkChild( addDottedBorder);
+	            !settings.safeContainer ? $('#dsn_5').walkChild( addDottedBorder) : $('.dsn-safe-container').walkChild( addDottedBorder);
 	            bool ? bool = false : bool = true ;
 	        };
 	        
@@ -1157,6 +1235,34 @@
 			return self;
 		}
 		
+		function safeBoard () {
+			if(this.classList.contains('active')) {
+				if(confirm('Would like to remove the safeboard?')) {
+					settings.whiteBoard.classList.remove('dsn-safe-container')
+					snb.classList.add('dsn-safe-container');
+					undefineEl();
+					settings.whiteBoard = undefined;
+					this.classList.toggle('active');
+					settings.safeContainer = false;
+					pushNotes('Safe board disabled...');
+				}
+			} else {
+				if(!el){
+					pushNotes('No active element for a safe board ');
+					return;
+				}
+				snb.classList.remove('dsn-safe-container');
+				$(el).addclass('dsn-safe-container');
+				undefineEl();
+				settings.whiteBoard = $('.dsn-safe-container');
+				this.classList.toggle('active');
+				pushNotes('Safe board activated...');
+				settings.safeContainer = true;
+				pushNotes('Safe board activated...');
+			}
+		};
+		$fn.menu.safeBoard = safeBoard;
+		
 	    let cssfiles = new addCssFiles();
 	    $('#dsn-335').addEventListener('click', () => {$fn.menu.highlightAll.run() } );
 	    $('#dsn-336').addEventListener('click', () => { cssfiles.add() } );
@@ -1219,31 +1325,55 @@
 	 *
 	 */
 	function snippetListener(){
-		let self = {}, snipetClickable, snipetMoveout, snipetMoveover;
+		let self = {}, snipetClickable, snipetMoveout, snipetMoveover, editable, defineEditable;
+		
+		defineEditable = function(ev) {
+			let p ;
+			if (settings.safeContainer && ev && ev.parentElement && !editable) {
+				p = ev.parentElement;
+				editable = false;
+				if( !p.classList.contains('dsn-safe-container') ) {
+					if(p.parentElement) {
+						defineEditable(p)
+					}
+				} else if ( p.classList.contains('dsn-safe-container')) {
+					editable = true;
+					return;
+				}
+			} else if(ev && !settings.safeContainer){ 
+				editable = true; 
+			}
+		}
 		
 		snipetMoveover = function(ev){
 			let e = ev.target, ep = ev.target.parentElement;
-			if(settings.elChangeLock){
-				e.classList.toggle('dsn-hover');
-				ep.classList.toggle('dsn-ep-hover');
+			if( !settings.elChangeLock ){
+				defineEditable(e);
+				if(editable) {
+					e.classList.toggle('dsn-hover');
+					ep.classList.toggle('dsn-ep-hover');
+				}
 			}
 		}
 		
 		snipetMoveout = function(ev){
 			let e = ev.target, ep = ev.target.parentElement;
-			if(settings.elChangeLock){
+			if(!settings.elChangeLock && editable){
 				if(e && e.classList.contains("dsn-hover")){
 					e.classList.toggle('dsn-hover');
 					ep.classList.contains("dsn-ep-hover") && ep.classList.toggle('dsn-ep-hover');
 					e.hasAttribute('class') && ( e.getAttribute('class') === '' && e.removeAttribute('class'));
 				}
+				editable = false;
 			}
 		}
 		
 		snipetClickable = function(ev){
 			let e = ev.target, fname;
-			if(settings.elChangeLock){
-				$(e).attr('id') !== 'dsn_5' && $d.change.call(e);
+			if(!settings.elChangeLock){
+				if(editable) {
+					( e.id !== 'dsn_5' )  && $d.change.call(e);
+				}
 				ev.preventDefault();
 			} else {
 				settings.targetElement = e;
@@ -1278,7 +1408,7 @@
 	*/
 	 $d.change = function(){
 		// If this is the snipet container exit from function
-		if($(this).attr('id') !== 'dsn_5') {
+		if($(this).attr('id') !== 'dsn_5' && !$(this).hasAttribute('dsn-snippet-container') ) {
 			let noneditable = ['html', 'meta', 'link', 'form', 'input', 'select', 'textarea', 'br', 'hr', 'ul', 'ol', 'dl', 'img', 'embed', 'bgsound', 'base', 'col', 'source', 'fieldset'];
 			// remove the active class from current element
 			if(el && el.classList.contains("dsn-active")){
@@ -1324,15 +1454,15 @@
 	
 	/** Move to parent element. Stops before exiting the snipet container */
 	
-	$d.goToParent = function(){ if(el && el.parentElement && !el.parentElement.classList.contains("dsn-body") ) $d.change.call(el.parentElement); };
+	$d.goToParent = function(){ if(el && el.parentElement && !el.parentElement.classList.contains('dsn-safe-container') ) $d.change.call(el.parentElement); };
 	
 	/** Move to the younger sibling DOWN :) */
 	
-	$d.goToYoungerBrother = function( ){ if(el && el.nextElementSibling) $d.change.call(el.nextElementSibling); };
+	$d.goToYoungerBrother = function( ){ if(el && el.nextElementSibling && !el.nextElementSibling.classList.contains('dsn-safe-container')) $d.change.call(el.nextElementSibling); };
 	
 	/** Move to the older sibling UP :) */
 	
-	$d.goToOlderBrother = function(){ if(el && el.previousElementSibling) $d.change.call(el.previousElementSibling); };
+	$d.goToOlderBrother = function(){ if(el && el.previousElementSibling && !el.previousElementSibling.classList.contains('dsn-safe-container')) $d.change.call(el.previousElementSibling); };
 	
 	/**
 	*************************************
@@ -2230,7 +2360,7 @@
 		
 		$fn.menu.snippetFromMenu = function () {
 			let ob = $n.menu[this.getAttribute('data-index')], elem = el, pos = settings.layoutPosition;
-			if( !settings.elChangeLock ) { return; }
+			if( settings.elChangeLock ) { return; }
 			if(!el) {
 				elem = snb;
 				pos = 'beforeend';

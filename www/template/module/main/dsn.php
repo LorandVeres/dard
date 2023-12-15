@@ -58,12 +58,12 @@
 						<div class="col-f span-50"><input type="text" id="dsn_93" name="dsn-el-child-nodes" class="span-20" disabled></div>
 					</div>
 					<div class="section group b-space-25 dsn-dark-field">
-						<button id="dsn_84" class="dsn-ctl-btn dsn-save-target-btn" style="margin-right: 20px;"></button>
-						<button id="dsn_85" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
-						<button id="dsn_86" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
-						<button id="dsn_87" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
-						<button id="dsn_88" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;display: none;"></button>
-						<button id="dsn_89" class="dsn-ctl-btn dsn-edit-btn" style="margin-right: 20px;"></button>
+						<button id="dsn_84" class="dsn-ctl-btn" style="margin-right: 20px;"></button>
+						<button id="dsn_85" class="dsn-ctl-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_86" class="dsn-ctl-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_87" class="dsn-ctl-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_88" class="dsn-ctl-btn" style="margin-right: 20px;display: none;"></button>
+						<button id="dsn_89" class="dsn-ctl-btn" style="margin-right: 20px;"></button>
 					</div>
 				</div>
 			</section>
@@ -605,7 +605,7 @@
 					<button id="dsn-335" title="" class="dsn-snipet-btn"></button>
 					<button id="dsn-336" title="" class="dsn-snipet-btn"></button>
 					<button id="dsn-338" title="" class="dsn-snipet-btn"></button>
-					<button id="dsn-339" title="" class="dsn-snipet-btn"></button>
+					<button id="dsn-339" title="Safe board" class="dsn-snipet-btn dsn-save-target-btn" data-dsnfname="safeBoard"></button>
 					<button id="dsn-340" title="" class="dsn-snipet-btn"></button>
 					<button id="dsn-341" title="" class="dsn-snipet-btn"></button>
 					<button id="dsn-342" title="" class="dsn-snipet-btn"></button>
@@ -785,7 +785,7 @@
 		
 		</div>
 		<!--  SNIPPET CONTAINER BLOCK ---->
-		<div id="dsn_5" class="col-r dsn-body">
+		<div id="dsn_5" class="col-r dsn-body" data-dsn-snippet-container="true">
 		</div>
 		
 	</div>
