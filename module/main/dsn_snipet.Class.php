@@ -135,7 +135,7 @@ class dsn_snipet extends FormCleaner {
 	}
 	
 	private function load_snippet_type($dard) {
-		$query = "SHOW COLUMNS FROM `snipets` LIKE 'type';";
+		$query = "SHOW COLUMNS FROM `dsn` LIKE 'type';";
 		$res = $this ->selectDB('', $query, TRUE, 'array');
 		echo json_encode( $this -> prepare_db_enum_field_to_json($res['Type']) );
 	}
@@ -150,7 +150,7 @@ class dsn_snipet extends FormCleaner {
 	private function load_snippet_subcat($dard) {
 		$query = "SELECT DISTINCT `subcat` AS `name` FROM `". $this -> jx_data['project_table']. "` WHERE `subcat` <> '';";
 		$res = $this ->selectDB('', $query, TRUE, 'array');
-		count($res) === 1 ? $res = array($res) : null ;
+		( is_array($res) && count($res) === 1 ) ? $res = array($res) : null ;
 		echo json_encode( $res );
 	}
 	
@@ -232,7 +232,7 @@ class dsn_snipet extends FormCleaner {
 	}
 	
 	private function update_snippet_settings ($dard) {
-		$vorder = array ( 'name', 'type', 'status', 'css', 'sgroup', 'stared', 'locked', 'background', 'width', 'description', 'id', 'subcat');
+		$vorder = array ( 'name', 'type', 'status', 'css', 'sgroup', 'stared', 'locked', 'background', 'width', 'description', 'id', 'subcat', 'cssf');
 		$params = array();
 		for($i = 0 ; $i < count($vorder) ; $i++) {
 			$params[$i] = $this -> jx_data [ $vorder[$i] ];
