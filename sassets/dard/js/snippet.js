@@ -943,28 +943,74 @@
 		
 		// Preview the snippet from search rows
 		function previewSnippet() {
-			let send = {} ;
-			send.project = $('#d-2-2').value;
-			send.name = this.getAttribute('data-snippet-name');
+			let send = {}, over, contattr, contw, contb, frameattr, cssf = [], frame, htm, head, body;
+			send.project = $('#d-2-2').value;                                               // project name from select field value
+			send.name = this.getAttribute('data-snippet-name');                             // snipet name from button data atribute
+			
+			// Defining iframe main elements
+			function initFrame(r) {
+				r.background !== '' ? contb = r.background : contb = '#ffffff';             // Default background is white
+				r.width !== '' ? contw = r.width : contw = '100%';                          // Default width is 100%
+				contattr = {
+					id : 'dsn-preview-content',
+					class: "section group c-box",
+					style : "width:" + contw + ";background:" + contb + ";height: 100%;"    // Future: consider a height from snippet settings
+				}
+				// Initial elements and the frame attributes
+				htm = $('<html>');
+				head = $('<head>')
+					.append( $('<link>').addattrlist( {rel:"stylesheet", type:"text/css", href:"/src/css/reset.css"} ) )
+					.append( $('<link>').addattrlist( {rel:"stylesheet", type:"text/css", href:"/src/css/ui.css"} ) );
+				body = $('<body>').addattrlist(contattr);
+				$.snipetHandler.sett.call( { obj: r.body, recipient: body, position: 'beforeend' });
+				frameattr = {
+					id : 'dsn-preview',
+					style: "display:block;height:85%;max-width:90%;width:calc(" + contw + " + 4rem);margin: 5rem auto 1rem;padding:2rem;overflow:auto;border:none;background: rgba(0,0,0,.2);",
+					sandbox : "allow-same-origin"
+				};
+			}
+			
+			// Loading the css files 
+			function getStyle(resstyle) {
+				cssf = resstyle.split("\n");
+				for (let i = 0; i < cssf.length; i++){
+					cssf[i].trim(' ');
+					let ch = cssf[i].split('');
+					ch[0] !== '/' && ( cssf[i] = '/' + cssf[i]);
+					$.send_json({
+						data: { addcssfile: cssf[i] },
+						url: 'snippet?a=load-css-file',
+						callback: function(rs){
+							head && head.append($('<style>', rs));
+							// At last css file loaded displaying the frame
+							if( i == cssf.length -1 ) {
+								displayFrame();
+							}
+						}
+					});
+				}
+			}
+			
+			// Displaying the frame 
+			function displayFrame() {
+				htm.append(head).append(body);
+				frameattr.srcdoc = htm.outerHTML;
+				frame = $('<iframe>').addattrlist(frameattr);
+				over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
+				over.classList.add('section');over.classList.add('group');
+				$(over).append(frame);
+			}
 			
 			$.send_json({
 				data : { project : send.project, name : send.name },
 				url : 'snippet?a=get-snippet-by-name',
 				callback : function (r) {
 					if(isSet(r)) {
-						const over = $.overlay({el: snb, elc:'overlay-body', elb: 'overlaybtn'});
-						const cont = $('<div>');
-						// Default background is white
-						r.background !== '' ? cont.style.backgroundColor = r.background : cont.style.backgroundColor = '#ffffff';
-						// Default width is 100%
-						r.width !== '' ? cont.style.width = r.width : cont.style.width = '100%';
-						cont.style.marginTop = '4rem';
-						cont.classList.add('pad-20');
-						cont.classList.add('c-box');
-						$.snipetHandler.sett.call( { obj: r.body, recipient: cont, position: 'beforeend' });
-						$(over).append(cont);
+						initFrame(r);
+						r.cssf !== '' ? getStyle(r.cssf) : displayFrame();
 					}
-				}
+				},
+				log : 'Snippet preview failed.'
 			});
 		}
 		$fn.body.previewSnippet = previewSnippet;
