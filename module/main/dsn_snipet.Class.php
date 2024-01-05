@@ -248,19 +248,30 @@ class dsn_snipet extends FormCleaner {
 		$main = array(); $mi = 0;
 		$si =0;
 		$res = $this -> stmt ('', array($prj), 'snippet__getMenuMain', array($prj));
-		foreach ( $res as $key => $values) {
-			$main[$mi]['subcat'] = $this -> stmt ($prj, array($values), 'snippet__getMenuSubCat', array($values));
-			$main[$mi]['menu'] = $values;
-			foreach( $main[$mi]['subcat'] as $k => $val){
-				$main[$mi]['subcat'][$si]['catname'] = array_shift($val);
-				$main[$mi]['subcat'][$si]['items'] = $this -> stmt ($prj, array($values, $main[$mi]['subcat'][$si]['catname']), 'snippet__getMenuItems', array($values, $main[$mi]['subcat'][$si]['catname']));
-				$si++;
+		if(!is_array($res)) {
+			echo json_encode($main);
+			//return;
+		} else {
+			foreach ( $res as $key => $values) {
+				isset($values['sgroup']) ? $values = $values['sgroup'] : null;
+				$main[$mi]['subcat'] = $this -> stmt ($prj, array($values), 'snippet__getMenuSubCat', array($values));
+				$main[$mi]['menu'] = $values;
+				// for single subcat in sgroup init a numeric indexed array
+				if(!isset($main[$mi]['subcat'][$si]))
+					$main[$mi]['subcat'] = array($main[$mi]['subcat']);
+				foreach( $main[$mi]['subcat'] as $k => $val){
+					$main[$mi]['subcat'][$si]['catname'] = array_shift($val);
+					$main[$mi]['subcat'][$si]['items'] = $this -> stmt ($prj, array($values, $main[$mi]['subcat'][$si]['catname']), 'snippet__getMenuItems', array($values, $main[$mi]['subcat'][$si]['catname']));
+					// for single item in subcategory init a numeric indexed array
+					if(isset($main[$mi]['subcat'][$si]['items']['body']))
+						$main[$mi]['subcat'][$si]['items'] = array($main[$mi]['subcat'][$si]['items']);
+					$si++;
+				}
+				$mi++;
+				$si = 0;
 			}
-			$mi++;
-			$si = 0;
+			echo json_encode($main);
 		}
-		//echo json_encode($this -> data_error);
-		echo json_encode($main);
 	}
 	
 	private function load_css_file(){
