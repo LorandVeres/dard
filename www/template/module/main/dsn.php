@@ -683,7 +683,7 @@
 				<div class="section group span-80 dsn-vary-properties dsn-dark-field c-box">
 					<div class="section group span-100 t-space-10 b-space-20">
 						<span class="col-f span-80 indent-05" style="line-height: 1.5rem;">Screen width</span>
-						<span class="col-f span-20"><input id="dsn-304" type="text" class="span-70 right" style="text-align:right" placeholder="px"></span>
+						<span class="col-f span-20"><input id="dsn-304" type="text" class="span-90 right" style="text-align:right" placeholder="px"></span>
 						
 					</div>
 					<div class="section group span-100" style="height: 2.6rem;">
