@@ -25,20 +25,12 @@ header {
 }
 
 .main-container{
-	display: flex;
 	min-height: 100%;
 	width: 100%;
-	align-items: stretch;
-	overflow-y: auto;
 }
 .main-container > nav {
-	flex-basis: 260px;
-	flex-grow: 0;
-	flex-shrink: 0;
 	min-height: 100%;
 	overflow-y: auto;
-	position: sticky;
-	top: 0;
 	border-right: 1px solid #a84f00;
 	border-bottom: 1px solid #a84f00;
 	color: #cc5f00;
@@ -185,4 +177,63 @@ header {
 	background: url('images/icons/c/32/snippets.png');
 	background-repeat: no-repeat;
 	background-position: center center;
+}
+
+.topbar {
+	border-bottom: 1px solid #383838;
+	margin-bottom: 1rem;
+}
+
+@media only screen and (max-width: 600px) {
+
+}
+@media only screen and (max-width: 959px) {
+	.main-container > nav {
+		/*display: none;*/
+		z-index: 1000;
+		width: 260px;
+		position: absolute;
+		top: 0;
+		left: -260px;
+		background: #ffffff;
+		transition:left .12s ease-in-out;
+	}
+	
+	.main-container > nav.moved {
+		left: 0;
+	}
+	
+	.main-container{
+		width: 100%;
+		display: block;
+		position: relative;
+	}
+	.main-container > main{
+		display: block;
+		position: absolute;
+		min-height: 100%;
+		width: 100%;
+	}
+}
+@media only screen and (min-width: 960px) {
+	.main-container{
+		display: flex;
+		align-items: stretch;
+		overflow-y: auto;
+	}
+	.main-container > nav {
+		flex-basis: 260px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		overflow-y: auto;
+		position: sticky;
+		top: 0;
+		border-right: 1px solid #a84f00;
+		border-bottom: 1px solid #a84f00;
+		color: #cc5f00;
+	}
+	.main-container > main{
+		flex-grow: 10;
+		flex-shrink: 10;
+	}
 }
