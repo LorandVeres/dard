@@ -734,15 +734,17 @@ var $ = function () {
 		el.constructor.prototype.walkChild = function() {
 			let arg = varyArgs(arguments),
 				callback = arg[0],
-				el = this.children;
-				for (let i = 0, j = el.length; i < j; i++) {
-					if (el[i] && isFunc(callback)) {
+				el = this.firstElementChild;
+				if(el) {
+					while(el){
+						const sb = el.nextElementSibling;
 						if (arg.length === 1)
-							callback.call(el[i]);
+							callback.call(el);
 						if (arg.length === 2 && (isObj(arg[1] || isArray(arg[1])))) {
-							callback.call(el[i], arg[1]);
+							callback.call(el, arg[1]);
 						}
-					}
+						sb ? el = sb : el = undefined;
+					};
 				}
 			return this;
 		};
