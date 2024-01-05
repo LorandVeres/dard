@@ -261,25 +261,28 @@
 	*   Populate the select option with data
 	*   @param urlarg It is the url parameter to get the data from [ optional ] object default first item {v: 'any value', t: 'text to be inserted' }
 	*   @param id it is the id of the select field. Can be a string or an valid element
-	*   @param object {     [ optional ]    The whole object is optional
-	*       @prop v:        [ text ]        stands from the default option value
-	*       @prop t:        [ text ]        stands from the default option visible text
-	*       @prop send:     [ object{} ]    It is an object , Data to be sent to server
-	*       @prop attr:     [ objrct{} ]    Attributes value:pair to be added on option elements if needed
+	*   @param object {     [ optional ]                    The whole object is optional
+	*       @prop v:        [ text ]                        Stands from the default option value
+	*       @prop t:        [ text ]                        Stands from the default option visible text
+	*       @prop send:     [ object{} ]                    It is an object , Data to be sent to server
+	*       @prop attr:     [ objrct{} ]                    Attributes value:pair to be added on option elements if needed
+	*       @prop empty:    [ obj{ v:'', t:'None'} ]        One first empty element will be added just if object.v not empty, empty.t  the text to be displayed. Not selected as defaullt
 	*   }
 	*/
 	function fillSelectFields(urlarg, id ) {
-		let s = $(id), arg, send = {}, at;
+		let s = $(id), arg, send = {}, at, emp;
 		s.empty();
 		( isSet(arguments[2] ) && isObj(arguments[2]) && ( arg = arguments[2] ));
 		isSet(arg) && arg.keyIn('send') && ( send = arg.send );
 		isSet(arg) && arg.keyIn('attr') && ( at = arg.attr );
+		isSet(arg) && arg.keyIn('empty') && ( emp = arg.empty );
 		if(isSet(arg) && empty(arg.v))
 			s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
 		function setSelect(r){
 			let p, o;
 			//console.log(at);
 			if(r) {
+				emp && (isSet(arg) && !empty(arg.v)) && s.append($('<option>', emp.t ).addattr('value', ""));
 				for( let i = 0; i < r.length; i++) {
 					p = r[i];
 					o = $('<option>', p.name).addattr('value', p.name);
@@ -331,6 +334,9 @@
 			tabletWidth = 820,
 			monitorWidth = parseInt( window.screen.width - menuWidth),
 			nowWidth,
+			nowHeight = '100%',
+			mobileHeight = '800px',
+			tabletHeight = '1024px',
 			color;
 			
 		nowWidth = monitorWidth + 'px';
@@ -344,23 +350,26 @@
 			let marg = parseInt( (window.screen.width - menuWidth - arg) / 2 );
 			marg = '0 ' + marg + 'px';
 			nowWidth = arg + 'px';
+			arg > 300 && arg <= 600 ? ( nowHeight = mobileHeight ) : arg > 600 && arg < 960 ? ( nowHeight = tabletHeight ) : nowHeight = '100%' ;
 			!isSet(color) ? snb.css( { 'width':nowWidth, 'margin':marg } ) : snb.css( { 'width':nowWidth, 'margin':marg, 'background-color':color  } );
+			$('#dsn-334').classList.contains('active') && ( $('#dsn-frame').style.height = nowHeight );
+			snb.style.maxHeight = nowHeight;
 			checkSideMenu();
 		}
 		
 		function selectMobile (){
 			setProperties(mobileWidth);
-			$('#dsn-304').value = "";
+			$('#dsn-304').value = mobileWidth;
 		}
 		
 		function selectTablet (){
 			setProperties(tabletWidth);
-			$('#dsn-304').value = "";
+			$('#dsn-304').value = tabletWidth;
 		}
 		
 		function selectMonitor (){
 			setProperties(monitorWidth);
-			$('#dsn-304').value = "";
+			$('#dsn-304').value = monitorWidth;
 		}
 		
 		function  selectCustom() {
@@ -392,6 +401,7 @@
 			let editable;
 			if(this.classList.contains('active') ){
 				setProperties(monitorWidth);
+				$('#dsn-304').value = monitorWidth;
 				$('.dsn-body').empty();
 				editable = $.snipetHandler.sett.call( { obj:$n.c.body, recipient: $('.dsn-body'), position:'beforeend' } );
 				pushNotes("Edit mode activated...");
@@ -407,6 +417,7 @@
 					}
 				});
 				pushNotes("Responsive mode activated...");
+				$('#dsn-304').value = nowWidth.replace('px', '');
 			}
 			$(this).attrtoggle('title', 'Responsive mode', 'Edit mode') ;
 			this.classList.toggle('active');
@@ -418,7 +429,7 @@
 				id: 'dsn-frame',
 				src: 'snippet?a=responsive',
 				title: 'Mobile frame',
-				style: "min-height:100%;width:100%;border:none;"
+				style: "height:100%;width:100%;border:none;background:#ffffff;"
 			};
 			fr = $('<iframe>').addattrlist(attr);
 			$('#dsn_5').append( fr );
@@ -433,7 +444,7 @@
 		$('#dsn-334').addEventListener('click', reponsiveMode);
 		$('#dsn-333').addEventListener('click', () => { let a = new fullScreen(); a.toggle(); });
 		
-		snb && ( snb.style.width = nowWidth );
+		snb && ( ( snb.style.width = nowWidth ) && ($('#dsn-304') && ( $('#dsn-304').value = nowWidth.replace('px', '') ) ) );
 	}
 	
 	/**
@@ -547,6 +558,7 @@
 					//getDefaultSnippet();
 					//searchSnippets();
 					setTimeout( () => { searchSnippets(); pushNotes('Switched to project: ' + $p.name) }, 50);
+					snippetTemplateMenu($p.name);
 				}
 			}
 			
@@ -895,8 +907,8 @@
 				const elem = $.snipetHandler.sett.call({ obj: r, recipient: snb, position: 'beforeend' });
 				elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: $n.c.type, send:{ project: $p.name} });
 				elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: $n.c.status, send:{ project: $p.name} });
-				elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: $n.c.sgroup, send:{ project: $p.name} });
-				elem && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: $n.c.subcat, send:{ project: $p.name} });
+				elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: $n.c.sgroup, send:{ project: $p.name}, empty:{ v:'', t:'Delete from group'} });
+				( elem && $n.c.sgroup ) && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: $n.c.subcat, send:{ project: $p.name, sgroup: $n.c.sgroup }, empty:{ v:'', t:'Delete from subcategory'} });
 				elem && setFormValuesById( fieldIds, $n.c );
 				return elem;
 				
@@ -917,8 +929,8 @@
 							}
 							elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: search.type, send:{ project: send.project} });
 							elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: search.status, send:{ project: send.project} });
-							elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: search.sgroup, send:{ project: send.project} });
-							elem && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: search.subcat, send:{ project: send.project} });
+							elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: search.sgroup, send:{ project: send.project}, empty:{ v:'', t:'Delete from group'} });
+							( elem && search.sgroup ) && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: search.subcat, send:{ project: send.project, sgroup: search.sgroup}, empty:{ v:'', t:'Delete from subcategory'} });
 							elem && setFormValuesById( fieldIds, search );
 						}
 					}
@@ -2331,14 +2343,23 @@
 	*
 	*/
 	function snippetTemplateMenu(){
-		let prj, entry, content, index = 0;
+		let prj, entryname, entry, content, index = 0, menuname;
 		!arguments[0] ? prj = 'dsn' : prj = arguments[0];
 		const menubody = $('#dsn_7');
-		
+		// Clean menu entry between project swaps
+		menubody.walkChild(function(){
+			if( this.hasAttribute('data-entryname') ) {
+				const att = this.getAttribute('data-entryname');
+				att !== 'dsnBasic' && menubody.rm(this) && (isSet($n.menu[att] ) && delete $n.menu[att]) ;
+			}
+		});
 		
 		function menuEntry(arg) {
-			entry = $('<button>', capitalize(arg)).addattr('class', 'dns-collapse-button collapse');
-			content = $('<div>').addattr('class', 'collapse-content dsn-element-properties');
+			menuname = arg;
+			entryname = camelCase(camelCase(prj.trim()) + ' ' + camelCase(arg.trim()));
+			$n.menu[entryname] = {};
+			entry = $('<button>', capitalize(arg)).addattr('class', 'dns-collapse-button collapse').addattr('data-entryname', entryname).addattr('data-prjname', prj);
+			content = $('<div>').addattr('class', 'collapse-content dsn-element-properties').addattr('data-entryname', entryname).addattr('data-prjname', prj);
 			menubody.append(entry);
 			menubody.append(content);
 		}
@@ -2349,20 +2370,24 @@
 			// listing the items
 			for( let k = 0; k < arg.items.length; k++) {
 				const row = $('<div>').addattr('class', 'section group row');
-				const cell = $('<div>', capitalize(arg.items[k].name)).addattr('class', 'col-f cell');
-				const btn = $('<div>', '+').addattr('class', 'col-f btn').addattr('data-index', index).addattr('data-dsnfname', 'snippetFromMenu').addattr('data-name', arg.items[k].name);
-				row.append(cell).append(btn);
-				bd.append(row);
-				isSet(arg.items[k].body) && ( $n.menu[index] = JSON.parse(arg.items[k].body )) && index++;
+				const menu = arg.items[k].name.replace(menuname, '').trim();
+				const cell = $('<div>', capitalize( menu ) ).addattr('class', 'col-f cell');
+				const btn = $('<div>', '+').addattr('class', 'col-f btn').addattr('data-entryname', entryname ).addattr('data-index', index ).addattr('data-dsnfname', 'snippetFromMenu').addattr('data-name', arg.items[k].name);
+				if( isSet(arg.items[k].body) ) {
+					( $n.menu[entryname][index] = JSON.parse(arg.items[k].body )) && index++;
+					row.append(cell).append(btn);
+					bd.append(row);
+				}
 			}
 			content.append(bt) && content.append(bd);
 		}
 		
-		$fn.menu.snippetFromMenu = function () {
-			let ob = $n.menu[this.getAttribute('data-index')], elem = el, pos = settings.layoutPosition;
+		!isSet($fn.menu.snippetFromMenu) && 
+		( $fn.menu.snippetFromMenu = function () {
+			let ob = $n.menu[this.getAttribute('data-entryname')][this.getAttribute('data-index')], elem = el, pos = settings.layoutPosition;
 			if( settings.elChangeLock ) { return; }
 			if(!el) {
-				elem = snb;
+				settings.safeContainer ? elem = $('.dsn-safe-container') : elem = snb;
 				pos = 'beforeend';
 			}
 			if(ob) {
@@ -2371,7 +2396,7 @@
 			} else {
 				pushNotes("Can't locate the snippet from menu...");
 			}
-		}
+		});
 		
 		$.send_json({
 			data : { project: prj},
@@ -2379,16 +2404,18 @@
 			callback : function(r) {
 				if(r) {
 					for(let i = 0; i < r.length; i++) {
-						menuEntry(r[0].menu);
-						for( let j = 0; j < r[0].subcat.length; j++){
-							subcatBody(r[0].subcat[j]);
+						if(r[i].subcat){
+							menuEntry(r[i].menu);
+							for( let j = 0; j < r[i].subcat.length; j++){
+								subcatBody(r[i].subcat[j]);
+							}
 						}
 					}
+					$.collapse();
 				}
 			},
 			log: 'opps no menu'
 		});
-	
 	}
 	
 	$d.init();
