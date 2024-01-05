@@ -361,7 +361,7 @@ class GetMyPage extends DardSession {
 					UNION
 					SELECT L.`rel`, L.`type`, L.`sizes`, L.`title`, L.`href`, L.`media`
 					FROM `link_tag` AS L, `page_resources` AS R
-					WHERE R.`type`='link' AND R.`page_id` = ".$this -> page['id']." AND L.`id` = R.`res_id`;";
+					WHERE R.`type`='link' AND R.`page_id` = ".$this -> page['id']." AND L.`id` = R.`res_id` AND L.`active` = 1;";
 		// Query for js scripts and files
 		$query .= "SELECT `file`, `script`, `type`, `placement`
 					FROM `js_files_script`
@@ -369,7 +369,7 @@ class GetMyPage extends DardSession {
 					UNION
 					SELECT J.`file`, J.`script`, J.`type`, J.`placement`
 					FROM `js_files_script` AS J, `page_resources` AS R
-					WHERE R.`type`='js' AND R.`page_id` = ".$this -> page['id']." AND J.`id` = R.`res_id` AND J.`active` = 1";
+					WHERE R.`type`='js' AND R.`page_id` = ".$this -> page['id']." AND J.`id` = R.`res_id` AND J.`active` = 1;";
 		$result = $this -> selectDB($this -> page['id'], $query, TRUE, 'default');
 		$this -> set_page_head_properties($result);
 		$this ->set_js_script_tags();
