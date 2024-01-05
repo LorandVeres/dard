@@ -261,25 +261,28 @@
 	*   Populate the select option with data
 	*   @param urlarg It is the url parameter to get the data from [ optional ] object default first item {v: 'any value', t: 'text to be inserted' }
 	*   @param id it is the id of the select field. Can be a string or an valid element
-	*   @param object {     [ optional ]    The whole object is optional
-	*       @prop v:        [ text ]        stands from the default option value
-	*       @prop t:        [ text ]        stands from the default option visible text
-	*       @prop send:     [ object{} ]    It is an object , Data to be sent to server
-	*       @prop attr:     [ objrct{} ]    Attributes value:pair to be added on option elements if needed
+	*   @param object {     [ optional ]                    The whole object is optional
+	*       @prop v:        [ text ]                        Stands from the default option value
+	*       @prop t:        [ text ]                        Stands from the default option visible text
+	*       @prop send:     [ object{} ]                    It is an object , Data to be sent to server
+	*       @prop attr:     [ objrct{} ]                    Attributes value:pair to be added on option elements if needed
+	*       @prop empty:    [ obj{ v:'', t:'None'} ]        One first empty element will be added just if object.v not empty, empty.t  the text to be displayed. Not selected as defaullt
 	*   }
 	*/
 	function fillSelectFields(urlarg, id ) {
-		let s = $(id), arg, send = {}, at;
+		let s = $(id), arg, send = {}, at, emp;
 		s.empty();
 		( isSet(arguments[2] ) && isObj(arguments[2]) && ( arg = arguments[2] ));
 		isSet(arg) && arg.keyIn('send') && ( send = arg.send );
 		isSet(arg) && arg.keyIn('attr') && ( at = arg.attr );
+		isSet(arg) && arg.keyIn('empty') && ( emp = arg.empty );
 		if(isSet(arg) && empty(arg.v))
 			s.append ( $('<option>', "").addattr('value', "").addattr('selected') );
 		function setSelect(r){
 			let p, o;
 			//console.log(at);
 			if(r) {
+				emp && (isSet(arg) && !empty(arg.v)) && s.append($('<option>', emp.t ).addattr('value', ""));
 				for( let i = 0; i < r.length; i++) {
 					p = r[i];
 					o = $('<option>', p.name).addattr('value', p.name);
@@ -895,8 +898,8 @@
 				const elem = $.snipetHandler.sett.call({ obj: r, recipient: snb, position: 'beforeend' });
 				elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: $n.c.type, send:{ project: $p.name} });
 				elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: $n.c.status, send:{ project: $p.name} });
-				elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: $n.c.sgroup, send:{ project: $p.name} });
-				elem && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: $n.c.subcat, send:{ project: $p.name} });
+				elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: $n.c.sgroup, send:{ project: $p.name}, empty:{ v:'', t:'Delete from group'} });
+				( elem && $n.c.sgroup ) && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: $n.c.subcat, send:{ project: $p.name, sgroup: $n.c.sgroup }, empty:{ v:'', t:'Delete from subcategory'} });
 				elem && setFormValuesById( fieldIds, $n.c );
 				return elem;
 				
@@ -917,8 +920,8 @@
 							}
 							elem && fillSelectFields('load-snippet-type', '#d-2-9', { v: search.type, send:{ project: send.project} });
 							elem && fillSelectFields('load-snippet-status', '#d-2-A', { v: search.status, send:{ project: send.project} });
-							elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: search.sgroup, send:{ project: send.project} });
-							elem && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: search.subcat, send:{ project: send.project} });
+							elem && fillSelectFields('load-snippet-group', '#d-2-B', { v: search.sgroup, send:{ project: send.project}, empty:{ v:'', t:'Delete from group'} });
+							( elem && search.sgroup ) && fillSelectFields('load-snippet-subcat', '#d-2-O', { v: search.subcat, send:{ project: send.project, sgroup: search.sgroup}, empty:{ v:'', t:'Delete from subcategory'} });
 							elem && setFormValuesById( fieldIds, search );
 						}
 					}
