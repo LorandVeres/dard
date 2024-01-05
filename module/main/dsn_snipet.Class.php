@@ -148,7 +148,7 @@ class dsn_snipet extends FormCleaner {
 	}
 	
 	private function load_snippet_subcat($dard) {
-		$query = "SELECT DISTINCT `subcat` AS `name` FROM `". $this -> jx_data['project_table']. "` WHERE `subcat` <> '';";
+		$query = "SELECT DISTINCT `subcat` AS `name` FROM `". $this -> jx_data['project_table']. "` WHERE `subcat` <> '' AND `sgroup` = '". $this ->  jx_data['sgroup'] ."';";
 		$res = $this ->selectDB('', $query, TRUE, 'array');
 		( is_array($res) && count($res) === 1 ) ? $res = array($res) : null ;
 		echo json_encode( $res );
