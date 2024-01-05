@@ -334,6 +334,9 @@
 			tabletWidth = 820,
 			monitorWidth = parseInt( window.screen.width - menuWidth),
 			nowWidth,
+			nowHeight = '100%',
+			mobileHeight = '800px',
+			tabletHeight = '1024px',
 			color;
 			
 		nowWidth = monitorWidth + 'px';
@@ -347,23 +350,26 @@
 			let marg = parseInt( (window.screen.width - menuWidth - arg) / 2 );
 			marg = '0 ' + marg + 'px';
 			nowWidth = arg + 'px';
+			arg > 300 && arg <= 600 ? ( nowHeight = mobileHeight ) : arg > 600 && arg < 960 ? ( nowHeight = tabletHeight ) : nowHeight = '100%' ;
 			!isSet(color) ? snb.css( { 'width':nowWidth, 'margin':marg } ) : snb.css( { 'width':nowWidth, 'margin':marg, 'background-color':color  } );
+			$('#dsn-334').classList.contains('active') && ( $('#dsn-frame').style.height = nowHeight );
+			snb.style.maxHeight = nowHeight;
 			checkSideMenu();
 		}
 		
 		function selectMobile (){
 			setProperties(mobileWidth);
-			$('#dsn-304').value = "";
+			$('#dsn-304').value = mobileWidth;
 		}
 		
 		function selectTablet (){
 			setProperties(tabletWidth);
-			$('#dsn-304').value = "";
+			$('#dsn-304').value = tabletWidth;
 		}
 		
 		function selectMonitor (){
 			setProperties(monitorWidth);
-			$('#dsn-304').value = "";
+			$('#dsn-304').value = monitorWidth;
 		}
 		
 		function  selectCustom() {
@@ -395,6 +401,7 @@
 			let editable;
 			if(this.classList.contains('active') ){
 				setProperties(monitorWidth);
+				$('#dsn-304').value = monitorWidth;
 				$('.dsn-body').empty();
 				editable = $.snipetHandler.sett.call( { obj:$n.c.body, recipient: $('.dsn-body'), position:'beforeend' } );
 				pushNotes("Edit mode activated...");
@@ -410,6 +417,7 @@
 					}
 				});
 				pushNotes("Responsive mode activated...");
+				$('#dsn-304').value = nowWidth.replace('px', '');
 			}
 			$(this).attrtoggle('title', 'Responsive mode', 'Edit mode') ;
 			this.classList.toggle('active');
@@ -421,7 +429,7 @@
 				id: 'dsn-frame',
 				src: 'snippet?a=responsive',
 				title: 'Mobile frame',
-				style: "min-height:100%;width:100%;border:none;"
+				style: "height:100%;width:100%;border:none;background:#ffffff;"
 			};
 			fr = $('<iframe>').addattrlist(attr);
 			$('#dsn_5').append( fr );
@@ -436,7 +444,7 @@
 		$('#dsn-334').addEventListener('click', reponsiveMode);
 		$('#dsn-333').addEventListener('click', () => { let a = new fullScreen(); a.toggle(); });
 		
-		snb && ( snb.style.width = nowWidth );
+		snb && ( ( snb.style.width = nowWidth ) && ($('#dsn-304') && ( $('#dsn-304').value = nowWidth.replace('px', '') ) ) );
 	}
 	
 	/**
