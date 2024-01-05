@@ -1474,12 +1474,15 @@ $.constructor.prototype.collapse = function() {
 		return ;
 	}
 	for(let i = 0; i < element.length; i++){
-		element[i].addEventListener(e, function() {
-			this.classList.toggle(active);
-			collapsible === 'undefined' ? content = this.nextElementSibling : content = collapsible[i] ;
-			find_height.call(content, content.scrollHeight);
-			content.style.maxHeight ? content.style.maxHeight = null : content.style.maxHeight = content.scrollHeight + "px";
-		});
+		if( $(element[i]).attr( 'data-collapse-listener' ) !== 'set') {
+			element[i].setAttribute('data-collapse-listener', 'set');
+			element[i].addEventListener(e, function() {
+				this.classList.toggle(active);
+				collapsible === 'undefined' ? content = this.nextElementSibling : content = collapsible[i] ;
+				find_height.call(content, content.scrollHeight);
+				content.style.maxHeight ? content.style.maxHeight = null : content.style.maxHeight = content.scrollHeight + "px";
+			});
+		}
 	}
 	
 }
