@@ -558,6 +558,7 @@
 					//getDefaultSnippet();
 					//searchSnippets();
 					setTimeout( () => { searchSnippets(); pushNotes('Switched to project: ' + $p.name) }, 50);
+					snippetTemplateMenu($p.name);
 				}
 			}
 			
@@ -2342,14 +2343,23 @@
 	*
 	*/
 	function snippetTemplateMenu(){
-		let prj, entry, content, index = 0;
+		let prj, entryname, entry, content, index = 0, menuname;
 		!arguments[0] ? prj = 'dsn' : prj = arguments[0];
 		const menubody = $('#dsn_7');
-		
+		// Clean menu entry between project swaps
+		menubody.walkChild(function(){
+			if( this.hasAttribute('data-entryname') ) {
+				const att = this.getAttribute('data-entryname');
+				att !== 'dsnBasic' && menubody.rm(this) && (isSet($n.menu[att] ) && delete $n.menu[att]) ;
+			}
+		});
 		
 		function menuEntry(arg) {
-			entry = $('<button>', capitalize(arg)).addattr('class', 'dns-collapse-button collapse');
-			content = $('<div>').addattr('class', 'collapse-content dsn-element-properties');
+			menuname = arg;
+			entryname = camelCase(camelCase(prj.trim()) + ' ' + camelCase(arg.trim()));
+			$n.menu[entryname] = {};
+			entry = $('<button>', capitalize(arg)).addattr('class', 'dns-collapse-button collapse').addattr('data-entryname', entryname).addattr('data-prjname', prj);
+			content = $('<div>').addattr('class', 'collapse-content dsn-element-properties').addattr('data-entryname', entryname).addattr('data-prjname', prj);
 			menubody.append(entry);
 			menubody.append(content);
 		}
@@ -2360,20 +2370,24 @@
 			// listing the items
 			for( let k = 0; k < arg.items.length; k++) {
 				const row = $('<div>').addattr('class', 'section group row');
-				const cell = $('<div>', capitalize(arg.items[k].name)).addattr('class', 'col-f cell');
-				const btn = $('<div>', '+').addattr('class', 'col-f btn').addattr('data-index', index).addattr('data-dsnfname', 'snippetFromMenu').addattr('data-name', arg.items[k].name);
-				row.append(cell).append(btn);
-				bd.append(row);
-				isSet(arg.items[k].body) && ( $n.menu[index] = JSON.parse(arg.items[k].body )) && index++;
+				const menu = arg.items[k].name.replace(menuname, '').trim();
+				const cell = $('<div>', capitalize( menu ) ).addattr('class', 'col-f cell');
+				const btn = $('<div>', '+').addattr('class', 'col-f btn').addattr('data-entryname', entryname ).addattr('data-index', index ).addattr('data-dsnfname', 'snippetFromMenu').addattr('data-name', arg.items[k].name);
+				if( isSet(arg.items[k].body) ) {
+					( $n.menu[entryname][index] = JSON.parse(arg.items[k].body )) && index++;
+					row.append(cell).append(btn);
+					bd.append(row);
+				}
 			}
 			content.append(bt) && content.append(bd);
 		}
 		
-		$fn.menu.snippetFromMenu = function () {
-			let ob = $n.menu[this.getAttribute('data-index')], elem = el, pos = settings.layoutPosition;
+		!isSet($fn.menu.snippetFromMenu) && 
+		( $fn.menu.snippetFromMenu = function () {
+			let ob = $n.menu[this.getAttribute('data-entryname')][this.getAttribute('data-index')], elem = el, pos = settings.layoutPosition;
 			if( settings.elChangeLock ) { return; }
 			if(!el) {
-				elem = snb;
+				settings.safeContainer ? elem = $('.dsn-safe-container') : elem = snb;
 				pos = 'beforeend';
 			}
 			if(ob) {
@@ -2382,7 +2396,7 @@
 			} else {
 				pushNotes("Can't locate the snippet from menu...");
 			}
-		}
+		});
 		
 		$.send_json({
 			data : { project: prj},
@@ -2390,16 +2404,18 @@
 			callback : function(r) {
 				if(r) {
 					for(let i = 0; i < r.length; i++) {
-						menuEntry(r[0].menu);
-						for( let j = 0; j < r[0].subcat.length; j++){
-							subcatBody(r[0].subcat[j]);
+						if(r[i].subcat){
+							menuEntry(r[i].menu);
+							for( let j = 0; j < r[i].subcat.length; j++){
+								subcatBody(r[i].subcat[j]);
+							}
 						}
 					}
+					$.collapse();
 				}
 			},
 			log: 'opps no menu'
 		});
-	
 	}
 	
 	$d.init();
