@@ -3,3 +3,5 @@ logs/*
 www/template/test.php
 temp/*
 www/images/*
+*.min.js
+*.min.css
