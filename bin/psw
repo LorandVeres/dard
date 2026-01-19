@@ -1,0 +1,16 @@
+#!/usr/bin/perl -w
+
+use 5.30.0;
+use strict;
+use warnings;
+
+use lib '/home/' . getpwuid($<) . '/.local/share/perl/';
+
+use Exporter qw/import/;
+
+#use Dard::FCGI;
+use Dard::Psw;
+
+my $psw = Dard::Psw->new();
+
+@ARGV >= 1 ? $psw->options() : $psw->start();
