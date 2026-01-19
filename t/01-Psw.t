@@ -5,7 +5,7 @@ use Test::More;       #  Declares how many tests to expect
 use Test::use::ok;    # Use the helper module
 
 # Check if a module loads correctly
-use_ok('Psw');
+use_ok('Dard::Psw');
 
 # A basic check (passes)
 ok( 1 + 1 == 2, 'Addition works' );

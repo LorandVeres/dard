@@ -5,7 +5,7 @@ use Test::More;       # Declares how many tests to expect
 use Test::use::ok;    # Use the helper module
 
 # Check if a module loads correctly
-use_ok('FCGI');
+use_ok('Dard::FCGI');
 
 # A basic check (passes)
 ok( 1 + 1 == 2, 'Addition works' );
