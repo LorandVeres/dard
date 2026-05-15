@@ -17,8 +17,7 @@ my $server;                 # The socket is bound to this variable
 my $queue         = {};     # Queue ( internal ) for the request sent from server
 my $_sock_memmory = 512;    # Memmory in megabytes alocated
 
-#my $SOCK_PATH = '/var/run/psw.sock' or /run/psw.sock';
-my $SOCK_PATH = '/home/' . getpwuid($<) . '/.local/run/psw.sock';
+my $SOCK_PATH = _set_sock_path();
 
 sub new
 {
@@ -92,6 +91,17 @@ sub start
     }
 
 } ## end sub start
+
+sub _set_sock_path
+{
+    if ( $< >= 1000 && -d '/home/' . getpwuid($<) ) {
+        '/home/' . getpwuid($<) . '/.local/run/psw.sock';
+    } else {
+        mkdir '/run/dard'           if ( !-d '/run/dard' );
+        unlink '/run/dard/psw.sock' if ( -e '/run/dard/psw.sock' );
+        '/run/dard/psw.sock'        if ( -e '/run' && !-e '/run/dard/psw.sock' );
+    }
+}
 
 # A handy tool for debuging in the console
 
