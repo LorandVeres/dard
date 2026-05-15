@@ -5,11 +5,11 @@ use 5.30.0;
 use strict;
 use warnings;
 
-our $VERSION = '0.00.01';
-
 use lib '/home/' . getpwuid($<) . '/.local/share/perl/';
 
 use Exporter qw/import/;
+
+our $VERSION = '0.00.01';
 
 our @EXPORT_OK = qw(
     $FCGI
