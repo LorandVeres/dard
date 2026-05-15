@@ -3,8 +3,7 @@ package Dard::Psw;
 use 5.30.0;
 use strict;
 use warnings;
-
-#our $VERSION = '0.00.01';
+use utf8;
 
 use lib '/home/' . getpwuid($<) . '/.local/share/perl/';
 
@@ -12,14 +11,13 @@ use IO::Socket::INET;
 use Dard::FCGI qw / $FCGI fcgi_response /;
 use Data::Dump qw/ dd /;
 
-our $VERSION = '0.00.01';
+our $VERSION = '0.00.02';
 
 my $server;                 # The socket is bound to this variable
 my $queue         = {};     # Queue ( internal ) for the request sent from server
 my $_sock_memmory = 512;    # Memmory in megabytes alocated
 
-#my $SOCK_PATH = '/var/run/psw.sock' or /run/psw.sock';
-my $SOCK_PATH = '/home/' . getpwuid($<) . '/.local/run/psw.sock';
+my $SOCK_PATH = _set_sock_path();
 
 sub new
 {
@@ -86,21 +84,24 @@ sub start
 
         my $client;
 
-        # my $data;
-
         $client = $server->accept();
-
-        # Unix client
-        #my $client_path = $client->peerpath();
-        #my $host_path = $client->hostpath();
-
-        # $client->recv( $data, $_sock_memmory * 1024 * 1024, 0 );
 
         _data_loop($client);
 
-    } ## end while (1)
+    }
 
 } ## end sub start
+
+sub _set_sock_path
+{
+    if ( $< >= 1000 && -d '/home/' . getpwuid($<) ) {
+        '/home/' . getpwuid($<) . '/.local/run/psw.sock';
+    } else {
+        mkdir '/run/dard'           if ( !-d '/run/dard' );
+        unlink '/run/dard/psw.sock' if ( -e '/run/dard/psw.sock' );
+        '/run/dard/psw.sock'        if ( -e '/run' && !-e '/run/dard/psw.sock' );
+    }
+}
 
 # A handy tool for debuging in the console
 
@@ -563,7 +564,7 @@ sub _wrap_http_env
     my $id = shift;
     my ( $val, $doc );
 
-    $doc = "\n\t\t" . '<br>' . "\n\tt" . '<div class="row-wrap">' . "\n";
+    $doc = "\n\t\t" . '<br>' . "\n\t\t" . '<div class="row-wrap">' . "\n";
 
     if ($id) {
         foreach my $var ( sort( keys( %{ $queue->{$id}{params} } ) ) ) {

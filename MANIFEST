@@ -5,7 +5,7 @@ MAINTAINERS
 Makefile.PL
 README.md
 bin/psw
-lib/FCGI.pm
-lib/Psw.pm
+lib/Dard/FCGI.pm
+lib/Dard/Psw.pm
 t/00-FCGI.t
 t/01-Psw.t

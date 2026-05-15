@@ -5,11 +5,11 @@ use 5.30.0;
 use strict;
 use warnings;
 
-our $VERSION = '0.00.01';
-
 use lib '/home/' . getpwuid($<) . '/.local/share/perl/';
 
 use Exporter qw/import/;
+
+our $VERSION = '0.00.01';
 
 our @EXPORT_OK = qw(
     $FCGI
@@ -91,7 +91,7 @@ sub fcgi_response
     return join( '',
         ( defined( $ref->{env} )     ? _request_params( $req_id, $params )   : '' ),
         ( defined( $ref->{content} ) ? _response_stdout( $req_id, $content ) : '' ),
-        _request_base( $req_id, $request_type, _response_end( $ref->{request_id}, $app_status, $protocol_status ) ) );
+        _response_end( $ref->{request_id}, $app_status, $protocol_status ) );
 
 } ## end sub fcgi_response
 
@@ -205,7 +205,7 @@ sub _response_stdout
     my ( $req_id, $content ) = @_;
 
     # All STDOUT records need a final empty record
-    my $empty_record = pack( 'CCnnCC', $FCGI->{VERSION_1}, $FCGI->{STDIN}, $req_id, 0, 0, 0, );
+    my $empty_record = pack( 'CCnnCC', $FCGI->{VERSION_1}, $FCGI->{STDOUT}, $req_id, 0, 0, 0, );
 
     $content ||= '';
     length($content) > 0 ? _request_base( $req_id, $FCGI->{STDOUT}, $content ) . $empty_record : $empty_record;
