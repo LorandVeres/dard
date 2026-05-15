@@ -8,6 +8,9 @@ WriteMakefile(
     NAME    => 'Dard',
     VERSION => '0.00.01',
 
+    INSTALLDIRS => 'site',    # force istall into site perl, not vendor or core
+    PREREQ_PM   => {
+
         # 'One::Module' => '6.44',
         #' Two'           => '2.97',
     },
