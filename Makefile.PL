@@ -6,7 +6,7 @@ use utf8;
 # the contents of the Makefile that is written.
 WriteMakefile(
     NAME    => 'Dard',
-    VERSION => '0.00.01',
+    VERSION => '0.00.02',
 
     INSTALLDIRS => 'site',    # force istall into site perl, not vendor or core
     PREREQ_PM   => {

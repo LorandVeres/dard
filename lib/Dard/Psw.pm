@@ -11,7 +11,7 @@ use IO::Socket::INET;
 use Dard::FCGI qw / $FCGI fcgi_response /;
 use Data::Dump qw/ dd /;
 
-our $VERSION = '0.00.01';
+our $VERSION = '0.00.02';
 
 my $server;                 # The socket is bound to this variable
 my $queue         = {};     # Queue ( internal ) for the request sent from server
