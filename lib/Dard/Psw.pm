@@ -3,8 +3,7 @@ package Dard::Psw;
 use 5.30.0;
 use strict;
 use warnings;
-
-#our $VERSION = '0.00.01';
+use utf8;
 
 use lib '/home/' . getpwuid($<) . '/.local/share/perl/';
 
@@ -86,19 +85,11 @@ sub start
 
         my $client;
 
-        # my $data;
-
         $client = $server->accept();
-
-        # Unix client
-        #my $client_path = $client->peerpath();
-        #my $host_path = $client->hostpath();
-
-        # $client->recv( $data, $_sock_memmory * 1024 * 1024, 0 );
 
         _data_loop($client);
 
-    } ## end while (1)
+    }
 
 } ## end sub start
 
@@ -563,7 +554,7 @@ sub _wrap_http_env
     my $id = shift;
     my ( $val, $doc );
 
-    $doc = "\n\t\t" . '<br>' . "\n\tt" . '<div class="row-wrap">' . "\n";
+    $doc = "\n\t\t" . '<br>' . "\n\t\t" . '<div class="row-wrap">' . "\n";
 
     if ($id) {
         foreach my $var ( sort( keys( %{ $queue->{$id}{params} } ) ) ) {
